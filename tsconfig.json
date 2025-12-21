@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022", "DOM"],
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": [
+    "credentials/EthereumRpc.credentials.ts",
+    "credentials/EthereumAccount.credentials.ts",
+    "nodes/Ethereum/Ethereum.node.ts",
+    "nodes/EthereumTrigger/EthereumTrigger.node.ts",
+    "utils/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "credentials/WalletCredential.credentials.ts",
+    "credentials/RpcNodeCredential.credentials.ts",
+    "credentials/AbiCredential.credentials.ts",
+    "utils/viemClient.ts",
+    "utils/publicClient.ts",
+    "utils/abiHelpers.ts",
+    "utils/types.ts",
+    "utils/erc20Abi.ts",
+    "utils/erc721Abi.ts",
+    "utils/erc1155Abi.ts"
+  ]
+}
