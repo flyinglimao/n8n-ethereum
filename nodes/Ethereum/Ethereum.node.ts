@@ -116,7 +116,7 @@ export class Ethereum implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Ethereum",
     name: "ethereum",
-    icon: "file:ethereum-eth-logo.png",
+    icon: "file:ethereum.svg",
     group: ["transform"],
     version: 1,
     subtitle: '={{$parameter["resource"] + ": " + $parameter["operation"]}}',

@@ -55,7 +55,7 @@ export class EthereumTrigger implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Ethereum Trigger",
     name: "ethereumTrigger",
-    icon: "file:ethereum-eth-logo.png",
+    icon: "file:ethereum.svg",
     group: ["trigger"],
     version: 1,
     subtitle: '={{$parameter["event"]}}',
