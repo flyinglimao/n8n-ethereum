@@ -16,26 +16,6 @@
     "sourceMap": true,
     "types": ["node"]
   },
-  "include": [
-    "credentials/EthereumRpc.credentials.ts",
-    "credentials/EthereumAccount.credentials.ts",
-    "nodes/Ethereum/Ethereum.node.ts",
-    "nodes/EthereumTrigger/EthereumTrigger.node.ts",
-    "utils/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "credentials/WalletCredential.credentials.ts",
-    "credentials/RpcNodeCredential.credentials.ts",
-    "credentials/AbiCredential.credentials.ts",
-    "utils/viemClient.ts",
-    "utils/publicClient.ts",
-    "utils/abiHelpers.ts",
-    "utils/types.ts",
-    "utils/erc20Abi.ts",
-    "utils/erc721Abi.ts",
-    "utils/erc1155Abi.ts"
-  ]
+  "include": ["credentials/**/*", "nodes/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

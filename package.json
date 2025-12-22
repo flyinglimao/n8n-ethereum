@@ -4,7 +4,7 @@
   "description": "Comprehensive Ethereum blockchain integration for n8n with unified node structure using viem",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "test": "vitest",
     "lint": "eslint . --ext .ts",
@@ -21,32 +21,33 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "credentials/EthereumRpc.credentials.ts",
-      "credentials/EthereumAccount.credentials.ts"
+      "dist/credentials/EthereumRpc.credentials.js",
+      "dist/credentials/EthereumAccount.credentials.js"
     ],
     "nodes": [
-      "nodes/Ethereum/Ethereum.node.ts",
-      "nodes/EthereumTrigger/EthereumTrigger.node.ts"
+      "dist/nodes/Ethereum/Ethereum.node.js",
+      "dist/nodes/EthereumTrigger/EthereumTrigger.node.js"
     ]
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "n8n-workflow": "^1.0.0",
+    "abitype": "^1.0.0",
     "n8n-core": "^1.0.0",
-    "viem": "^2.21.0",
-    "abitype": "^1.0.0"
+    "n8n-workflow": "^1.0.0",
+    "viem": "^2.21.0"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-viem": "^2.0.0",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
+    "gulp": "^5.0.1",
+    "hardhat": "^2.19.0",
     "prettier": "^3.0.0",
     "typescript": "^5.3.0",
-    "vitest": "^1.0.0",
-    "@nomicfoundation/hardhat-viem": "^2.0.0",
-    "hardhat": "^2.19.0"
+    "vitest": "^1.0.0"
   },
   "repository": {
     "type": "git",
