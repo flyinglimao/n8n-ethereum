@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-viem": "^2.0.0",
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.19.27",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
