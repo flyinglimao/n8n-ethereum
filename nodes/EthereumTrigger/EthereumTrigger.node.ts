@@ -313,6 +313,9 @@ export class EthereumTrigger implements INodeType {
       // Create public client
       const publicClient = createPublicClient(credentials);
 
+      // Get block limit from credentials (default to 1000 if not set)
+      const blockLimit = BigInt((credentials.blockLimit as number) || 1000);
+
       const items: INodeExecutionData[] = [];
 
       // ===========================================
@@ -410,8 +413,10 @@ export class EthereumTrigger implements INodeType {
 
         const currentBlock = await publicClient.getBlockNumber();
 
-        // Initialize on first run - fetch events without fromBlock (RPC will return recent events)
+        // Initialize on first run - fetch events from currentBlock - blockLimit to currentBlock
         if (!workflowStaticData.lastEventBlock) {
+          const fromBlock = currentBlock > blockLimit ? currentBlock - blockLimit : 0n;
+
           let logs;
           if (abiInput === "abiEvent") {
             const abiStr = this.getNodeParameter("abi") as string;
@@ -429,10 +434,11 @@ export class EthereumTrigger implements INodeType {
               );
             }
 
-            // First run: no fromBlock, only toBlock (RPC will use its default range)
+            // First run: use currentBlock - blockLimit ~ currentBlock range
             logs = await publicClient.getLogs({
               address: addresses,
               event: eventAbi,
+              fromBlock,
               toBlock: currentBlock,
             });
 
@@ -475,6 +481,7 @@ export class EthereumTrigger implements INodeType {
             // Topics-based filtering - first run
             logs = await publicClient.getLogs({
               address: addresses,
+              fromBlock,
               toBlock: currentBlock,
             } as any);
 
@@ -509,38 +516,89 @@ export class EthereumTrigger implements INodeType {
           return null;
         }
 
-        let logs;
-        if (abiInput === "abiEvent") {
-          const abiStr = this.getNodeParameter("abi") as string;
-          const abi = JSON.parse(abiStr);
-          const eventName = this.getNodeParameter("eventName") as string;
+        // Calculate block ranges to query (split into chunks if needed)
+        const blockRanges: Array<{ from: bigint; to: bigint }> = [];
+        let rangeStart = startBlock;
 
-          const eventAbi = abi.find(
-            (item: any) => item.type === "event" && item.name === eventName
-          );
+        while (rangeStart <= currentBlock) {
+          const rangeEnd =
+            rangeStart + blockLimit - 1n > currentBlock
+              ? currentBlock
+              : rangeStart + blockLimit - 1n;
+          blockRanges.push({ from: rangeStart, to: rangeEnd });
+          rangeStart = rangeEnd + 1n;
+        }
 
-          if (!eventAbi) {
-            throw new NodeOperationError(
-              this.getNode(),
-              `Event "${eventName}" not found in ABI`
+        // Query each block range
+        for (const range of blockRanges) {
+          let logs;
+          if (abiInput === "abiEvent") {
+            const abiStr = this.getNodeParameter("abi") as string;
+            const abi = JSON.parse(abiStr);
+            const eventName = this.getNodeParameter("eventName") as string;
+
+            const eventAbi = abi.find(
+              (item: any) => item.type === "event" && item.name === eventName
             );
-          }
 
-          logs = await publicClient.getLogs({
-            address: addresses,
-            event: eventAbi,
-            fromBlock: startBlock,
-            toBlock: currentBlock,
-          });
+            if (!eventAbi) {
+              throw new NodeOperationError(
+                this.getNode(),
+                `Event "${eventName}" not found in ABI`
+              );
+            }
 
-          for (const log of logs) {
-            try {
-              const decoded: any = decodeEventLog({
-                abi,
-                data: log.data,
-                topics: log.topics,
-              });
+            logs = await publicClient.getLogs({
+              address: addresses,
+              event: eventAbi,
+              fromBlock: range.from,
+              toBlock: range.to,
+            });
 
+            for (const log of logs) {
+              try {
+                const decoded: any = decodeEventLog({
+                  abi,
+                  data: log.data,
+                  topics: log.topics,
+                });
+
+                items.push({
+                  json: {
+                    address: log.address,
+                    blockNumber: log.blockNumber.toString(),
+                    blockHash: log.blockHash,
+                    transactionHash: log.transactionHash,
+                    transactionIndex: log.transactionIndex,
+                    logIndex: log.logIndex,
+                    removed: log.removed,
+                    eventName: decoded.eventName,
+                    args: decoded.args,
+                  } as IDataObject,
+                });
+              } catch (error) {
+                items.push({
+                  json: {
+                    address: log.address,
+                    blockNumber: log.blockNumber.toString(),
+                    blockHash: log.blockHash,
+                    transactionHash: log.transactionHash,
+                    data: log.data,
+                    topics: log.topics,
+                    error: "Failed to decode event",
+                  } as IDataObject,
+                });
+              }
+            }
+          } else {
+            // Topics-based filtering
+            logs = await publicClient.getLogs({
+              address: addresses,
+              fromBlock: range.from,
+              toBlock: range.to,
+            } as any);
+
+            for (const log of logs) {
               items.push({
                 json: {
                   address: log.address,
@@ -550,46 +608,11 @@ export class EthereumTrigger implements INodeType {
                   transactionIndex: log.transactionIndex,
                   logIndex: log.logIndex,
                   removed: log.removed,
-                  eventName: decoded.eventName,
-                  args: decoded.args,
-                } as IDataObject,
-              });
-            } catch (error) {
-              items.push({
-                json: {
-                  address: log.address,
-                  blockNumber: log.blockNumber.toString(),
-                  blockHash: log.blockHash,
-                  transactionHash: log.transactionHash,
                   data: log.data,
                   topics: log.topics,
-                  error: "Failed to decode event",
                 } as IDataObject,
               });
             }
-          }
-        } else {
-          // Topics-based filtering
-          logs = await publicClient.getLogs({
-            address: addresses,
-            fromBlock: startBlock,
-            toBlock: currentBlock,
-          } as any);
-
-          for (const log of logs) {
-            items.push({
-              json: {
-                address: log.address,
-                blockNumber: log.blockNumber.toString(),
-                blockHash: log.blockHash,
-                transactionHash: log.transactionHash,
-                transactionIndex: log.transactionIndex,
-                logIndex: log.logIndex,
-                removed: log.removed,
-                data: log.data,
-                topics: log.topics,
-              } as IDataObject,
-            });
           }
         }
 
@@ -618,49 +641,53 @@ export class EthereumTrigger implements INodeType {
 
         const currentBlock = await publicClient.getBlockNumber();
 
-        // Initialize on first run - scan only current block
+        // Initialize on first run - scan from currentBlock - blockLimit to currentBlock
         if (!workflowStaticData.lastTxBlock) {
           const processedTxHashes = new Set<string>();
+          const fromBlock = currentBlock > blockLimit ? currentBlock - blockLimit : 0n;
 
-          const block = await publicClient.getBlock({
-            blockNumber: currentBlock,
-            includeTransactions: true,
-          });
+          // Scan blocks from fromBlock to currentBlock
+          for (let blockNum = fromBlock; blockNum <= currentBlock; blockNum++) {
+            const block = await publicClient.getBlock({
+              blockNumber: blockNum,
+              includeTransactions: true,
+            });
 
-          for (const tx of block.transactions as any[]) {
-            const fromMatch = addresses.includes(tx.from.toLowerCase());
-            const toMatch = tx.to && addresses.includes(tx.to.toLowerCase());
+            for (const tx of block.transactions as any[]) {
+              const fromMatch = addresses.includes(tx.from.toLowerCase());
+              const toMatch = tx.to && addresses.includes(tx.to.toLowerCase());
 
-            let shouldEmit = false;
-            if (direction === "all") shouldEmit = fromMatch || !!toMatch;
-            else if (direction === "from") shouldEmit = fromMatch;
-            else if (direction === "to") shouldEmit = !!toMatch;
-            else if (direction === "value")
-              shouldEmit = (fromMatch || !!toMatch) && tx.value > 0n;
+              let shouldEmit = false;
+              if (direction === "all") shouldEmit = fromMatch || !!toMatch;
+              else if (direction === "from") shouldEmit = fromMatch;
+              else if (direction === "to") shouldEmit = !!toMatch;
+              else if (direction === "value")
+                shouldEmit = (fromMatch || !!toMatch) && tx.value > 0n;
 
-            if (shouldEmit) {
-              processedTxHashes.add(tx.hash);
+              if (shouldEmit) {
+                processedTxHashes.add(tx.hash);
 
-              items.push({
-                json: {
-                  hash: tx.hash,
-                  from: tx.from,
-                  to: tx.to,
-                  value: tx.value.toString(),
-                  valueEth: (Number(tx.value) / 1e18).toString(),
-                  blockNumber: tx.blockNumber.toString(),
-                  blockHash: tx.blockHash,
-                  transactionIndex: tx.transactionIndex,
-                  nonce: tx.nonce,
-                  gas: tx.gas.toString(),
-                  gasPrice: tx.gasPrice?.toString(),
-                  maxFeePerGas: tx.maxFeePerGas?.toString(),
-                  maxPriorityFeePerGas: tx.maxPriorityFeePerGas?.toString(),
-                  input: tx.input,
-                  type: tx.type,
-                  chainId: tx.chainId,
-                } as IDataObject,
-              });
+                items.push({
+                  json: {
+                    hash: tx.hash,
+                    from: tx.from,
+                    to: tx.to,
+                    value: tx.value.toString(),
+                    valueEth: (Number(tx.value) / 1e18).toString(),
+                    blockNumber: tx.blockNumber.toString(),
+                    blockHash: tx.blockHash,
+                    transactionIndex: tx.transactionIndex,
+                    nonce: tx.nonce,
+                    gas: tx.gas.toString(),
+                    gasPrice: tx.gasPrice?.toString(),
+                    maxFeePerGas: tx.maxFeePerGas?.toString(),
+                    maxPriorityFeePerGas: tx.maxPriorityFeePerGas?.toString(),
+                    input: tx.input,
+                    type: tx.type,
+                    chainId: tx.chainId,
+                  } as IDataObject,
+                });
+              }
             }
           }
 
@@ -681,52 +708,67 @@ export class EthereumTrigger implements INodeType {
           (workflowStaticData.processedTxHashes as string[]) || []
         );
 
-        // Fetch transactions from all new blocks
-        for (let blockNum = startBlock; blockNum <= currentBlock; blockNum++) {
-          const block = await publicClient.getBlock({
-            blockNumber: blockNum,
-            includeTransactions: true,
-          });
+        // Calculate block ranges to query (split into chunks if needed)
+        const blockRanges: Array<{ from: bigint; to: bigint }> = [];
+        let rangeStart = startBlock;
 
-          for (const tx of block.transactions as any[]) {
-            // Skip if already processed
-            if (processedTxHashes.has(tx.hash)) {
-              continue;
-            }
+        while (rangeStart <= currentBlock) {
+          const rangeEnd =
+            rangeStart + blockLimit - 1n > currentBlock
+              ? currentBlock
+              : rangeStart + blockLimit - 1n;
+          blockRanges.push({ from: rangeStart, to: rangeEnd });
+          rangeStart = rangeEnd + 1n;
+        }
 
-            const fromMatch = addresses.includes(tx.from.toLowerCase());
-            const toMatch = tx.to && addresses.includes(tx.to.toLowerCase());
+        // Fetch transactions from all new blocks in chunks
+        for (const range of blockRanges) {
+          for (let blockNum = range.from; blockNum <= range.to; blockNum++) {
+            const block = await publicClient.getBlock({
+              blockNumber: blockNum,
+              includeTransactions: true,
+            });
 
-            let shouldEmit = false;
-            if (direction === "all") shouldEmit = fromMatch || !!toMatch;
-            else if (direction === "from") shouldEmit = fromMatch;
-            else if (direction === "to") shouldEmit = !!toMatch;
-            else if (direction === "value")
-              shouldEmit = (fromMatch || !!toMatch) && tx.value > 0n;
+            for (const tx of block.transactions as any[]) {
+              // Skip if already processed
+              if (processedTxHashes.has(tx.hash)) {
+                continue;
+              }
 
-            if (shouldEmit) {
-              processedTxHashes.add(tx.hash);
+              const fromMatch = addresses.includes(tx.from.toLowerCase());
+              const toMatch = tx.to && addresses.includes(tx.to.toLowerCase());
 
-              items.push({
-                json: {
-                  hash: tx.hash,
-                  from: tx.from,
-                  to: tx.to,
-                  value: tx.value.toString(),
-                  valueEth: (Number(tx.value) / 1e18).toString(),
-                  blockNumber: tx.blockNumber.toString(),
-                  blockHash: tx.blockHash,
-                  transactionIndex: tx.transactionIndex,
-                  nonce: tx.nonce,
-                  gas: tx.gas.toString(),
-                  gasPrice: tx.gasPrice?.toString(),
-                  maxFeePerGas: tx.maxFeePerGas?.toString(),
-                  maxPriorityFeePerGas: tx.maxPriorityFeePerGas?.toString(),
-                  input: tx.input,
-                  type: tx.type,
-                  chainId: tx.chainId,
-                } as IDataObject,
-              });
+              let shouldEmit = false;
+              if (direction === "all") shouldEmit = fromMatch || !!toMatch;
+              else if (direction === "from") shouldEmit = fromMatch;
+              else if (direction === "to") shouldEmit = !!toMatch;
+              else if (direction === "value")
+                shouldEmit = (fromMatch || !!toMatch) && tx.value > 0n;
+
+              if (shouldEmit) {
+                processedTxHashes.add(tx.hash);
+
+                items.push({
+                  json: {
+                    hash: tx.hash,
+                    from: tx.from,
+                    to: tx.to,
+                    value: tx.value.toString(),
+                    valueEth: (Number(tx.value) / 1e18).toString(),
+                    blockNumber: tx.blockNumber.toString(),
+                    blockHash: tx.blockHash,
+                    transactionIndex: tx.transactionIndex,
+                    nonce: tx.nonce,
+                    gas: tx.gas.toString(),
+                    gasPrice: tx.gasPrice?.toString(),
+                    maxFeePerGas: tx.maxFeePerGas?.toString(),
+                    maxPriorityFeePerGas: tx.maxPriorityFeePerGas?.toString(),
+                    input: tx.input,
+                    type: tx.type,
+                    chainId: tx.chainId,
+                  } as IDataObject,
+                });
+              }
             }
           }
         }

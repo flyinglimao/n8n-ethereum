@@ -26,5 +26,14 @@ export class EthereumRpc implements ICredentialType {
       description:
         "Custom HTTP headers to include in requests (JSON format). Useful for API key authentication.",
     },
+    {
+      displayName: "Block Limit",
+      name: "blockLimit",
+      type: "number",
+      default: 1000,
+      placeholder: "1000",
+      description:
+        "Maximum number of blocks to query in a single request. Used to prevent timeouts when querying large block ranges.",
+    },
   ];
 }
