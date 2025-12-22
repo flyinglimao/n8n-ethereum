@@ -18,7 +18,6 @@ import { parseViemError } from "../../utils/errorHandling";
 // Helper function
 function createPublicClient(credentials: any) {
   const rpcUrl = credentials.rpcUrl as string;
-  const chainKey = credentials.chain as string;
 
   let headers: Record<string, string> = {};
   if (credentials.customHeaders) {
@@ -27,11 +26,6 @@ function createPublicClient(credentials: any) {
     } catch (error) {
       throw new Error("Invalid custom headers JSON");
     }
-  }
-
-  let chain;
-  if (chainKey && chainKey !== "custom") {
-    chain = getChain(chainKey);
   }
 
   const isWebSocket = rpcUrl.startsWith("ws://") || rpcUrl.startsWith("wss://");
@@ -45,7 +39,6 @@ function createPublicClient(credentials: any) {
       });
 
   return viemCreatePublicClient({
-    chain,
     transport,
   });
 }
@@ -111,7 +104,8 @@ export class EthereumTrigger implements INodeType {
         },
         default: "",
         placeholder: "0x..., 0x...",
-        description: "Contract addresses to monitor (comma-separated, leave empty for all)",
+        description:
+          "Contract addresses to monitor (comma-separated, leave empty for all)",
       },
       {
         displayName: "ABI Input Method",
@@ -340,7 +334,9 @@ export class EthereumTrigger implements INodeType {
               hash: block.hash,
               parentHash: block.parentHash,
               timestamp: block.timestamp.toString(),
-              timestampDate: new Date(Number(block.timestamp) * 1000).toISOString(),
+              timestampDate: new Date(
+                Number(block.timestamp) * 1000
+              ).toISOString(),
               transactionsCount: block.transactions.length,
               miner: block.miner,
               gasLimit: block.gasLimit.toString(),
@@ -363,7 +359,11 @@ export class EthereumTrigger implements INodeType {
         }
 
         // Fetch all blocks from lastBlock+1 to currentBlock
-        for (let blockNum = lastBlock + 1n; blockNum <= currentBlock; blockNum++) {
+        for (
+          let blockNum = lastBlock + 1n;
+          blockNum <= currentBlock;
+          blockNum++
+        ) {
           const block = await publicClient.getBlock({
             blockNumber: blockNum,
             includeTransactions: false,
@@ -375,7 +375,9 @@ export class EthereumTrigger implements INodeType {
               hash: block.hash,
               parentHash: block.parentHash,
               timestamp: block.timestamp.toString(),
-              timestampDate: new Date(Number(block.timestamp) * 1000).toISOString(),
+              timestampDate: new Date(
+                Number(block.timestamp) * 1000
+              ).toISOString(),
               transactionsCount: block.transactions.length,
               miner: block.miner,
               gasLimit: block.gasLimit.toString(),
@@ -497,7 +499,9 @@ export class EthereumTrigger implements INodeType {
           return items.length > 0 ? [items] : null;
         }
 
-        const lastEventBlock = BigInt(workflowStaticData.lastEventBlock as string);
+        const lastEventBlock = BigInt(
+          workflowStaticData.lastEventBlock as string
+        );
         const startBlock = lastEventBlock + 1n;
 
         // No new blocks

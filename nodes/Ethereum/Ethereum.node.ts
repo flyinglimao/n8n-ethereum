@@ -19,6 +19,7 @@ import {
   toHex,
   fromHex,
   parseAbi,
+  PublicClient,
 } from "viem";
 import { privateKeyToAccount, mnemonicToAccount } from "viem/accounts";
 import { getChain } from "../../utils/chainConfig";
@@ -28,7 +29,6 @@ import { parseViemError } from "../../utils/errorHandling";
 // Helper functions
 function createPublicClient(credentials: any) {
   const rpcUrl = credentials.rpcUrl as string;
-  const chainKey = credentials.chain as string;
 
   let headers: Record<string, string> = {};
   if (credentials.customHeaders) {
@@ -37,11 +37,6 @@ function createPublicClient(credentials: any) {
     } catch (error) {
       throw new Error("Invalid custom headers JSON");
     }
-  }
-
-  let chain;
-  if (chainKey && chainKey !== "custom") {
-    chain = getChain(chainKey);
   }
 
   const isWebSocket = rpcUrl.startsWith("ws://") || rpcUrl.startsWith("wss://");
@@ -55,16 +50,21 @@ function createPublicClient(credentials: any) {
       });
 
   return viemCreatePublicClient({
-    chain,
     transport,
   });
 }
 
-function createWalletClient(publicClient: any, rpcCredentials: any, accountCredentials: any) {
+function createWalletClient(
+  publicClient: PublicClient,
+  rpcCredentials: any,
+  accountCredentials: any
+) {
   const hasPrivateKey =
-    accountCredentials.privateKey && (accountCredentials.privateKey as string).trim() !== "";
+    accountCredentials.privateKey &&
+    (accountCredentials.privateKey as string).trim() !== "";
   const hasMnemonic =
-    accountCredentials.mnemonic && (accountCredentials.mnemonic as string).trim() !== "";
+    accountCredentials.mnemonic &&
+    (accountCredentials.mnemonic as string).trim() !== "";
 
   let account;
   if (hasPrivateKey) {
