@@ -8,6 +8,7 @@ export class EthereumRpc implements ICredentialType {
 	name = 'ethereumRpc';
 	displayName = 'Ethereum RPC';
 	documentationUrl = 'https://ethereum.org/en/developers/docs/apis/json-rpc/';
+	icon = 'file:ethereum-eth-logo.png' as const;
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Chain',

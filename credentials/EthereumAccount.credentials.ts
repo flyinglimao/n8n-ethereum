@@ -7,6 +7,7 @@ export class EthereumAccount implements ICredentialType {
 	name = 'ethereumAccount';
 	displayName = 'Ethereum Account';
 	documentationUrl = 'https://ethereum.org/en/developers/docs/accounts/';
+	icon = 'file:ethereum-eth-logo.png' as const;
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Private Key',
