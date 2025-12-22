@@ -60,35 +60,55 @@ function createPublicClient(credentials: any) {
   });
 }
 
-function createWalletClient(publicClient: any, credentials: any) {
+function createWalletClient(publicClient: any, rpcCredentials: any, accountCredentials: any) {
   const hasPrivateKey =
-    credentials.privateKey && (credentials.privateKey as string).trim() !== "";
+    accountCredentials.privateKey && (accountCredentials.privateKey as string).trim() !== "";
   const hasMnemonic =
-    credentials.mnemonic && (credentials.mnemonic as string).trim() !== "";
+    accountCredentials.mnemonic && (accountCredentials.mnemonic as string).trim() !== "";
 
   let account;
   if (hasPrivateKey) {
-    const privateKey = credentials.privateKey as string;
+    const privateKey = accountCredentials.privateKey as string;
     const formattedKey = privateKey.startsWith("0x")
       ? (privateKey as `0x${string}`)
       : (`0x${privateKey}` as `0x${string}`);
     account = privateKeyToAccount(formattedKey);
   } else if (hasMnemonic) {
-    const mnemonic = credentials.mnemonic as string;
-    const accountIndex = (credentials.accountIndex as number) || 0;
+    const mnemonic = accountCredentials.mnemonic as string;
+    const accountIndex = (accountCredentials.accountIndex as number) || 0;
     account = mnemonicToAccount(mnemonic, {
       accountIndex,
     });
   } else {
     throw new Error(
-      "Either privateKey or mnemonic must be provided in wallet credentials"
+      "Private Key or Mnemonic Phrase is required in the Ethereum Account credential for write operations"
     );
   }
+
+  // Recreate transport from RPC credentials
+  const rpcUrl = rpcCredentials.rpcUrl as string;
+  let headers: Record<string, string> = {};
+  if (rpcCredentials.customHeaders) {
+    try {
+      headers = JSON.parse(rpcCredentials.customHeaders as string);
+    } catch (error) {
+      throw new Error("Invalid custom headers JSON");
+    }
+  }
+
+  const isWebSocket = rpcUrl.startsWith("ws://") || rpcUrl.startsWith("wss://");
+  const transport = isWebSocket
+    ? webSocket(rpcUrl)
+    : http(rpcUrl, {
+        fetchOptions: {
+          headers,
+        },
+      });
 
   return viemCreateWalletClient({
     account,
     chain: publicClient.chain,
-    transport: publicClient.transport,
+    transport,
   });
 }
 
@@ -1891,6 +1911,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2028,6 +2049,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2087,6 +2109,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2206,6 +2229,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2242,6 +2266,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2277,6 +2302,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2365,6 +2391,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2397,6 +2424,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2429,6 +2457,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2456,6 +2485,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2564,6 +2594,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2600,6 +2631,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
@@ -2641,6 +2673,7 @@ export class Ethereum implements INodeType {
             }
             const walletClient = createWalletClient(
               publicClient,
+              rpcCredentials,
               walletCredentials
             );
 
