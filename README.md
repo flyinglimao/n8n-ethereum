@@ -1,6 +1,6 @@
 # n8n-nodes-ethereum
 
-[![npm version](https://badge.fury.io/js/%40flyinglimao%2Fn8n-nodes-ethereum.svg)](https://www.npmjs.com/package/@flyinglimao/n8n-nodes-ethereum)
+[![npm version](https://badge.fury.io/js/%40flyinglimao%2Fn8n-nodes-ethereum.svg)](https://www.npmjs.com/package/@0xlimao/n8n-nodes-ethereum)
 
 Comprehensive Ethereum blockchain integration for n8n with a unified node structure using viem. This community node package provides two powerful nodes: **Ethereum** (regular node) and **Ethereum Trigger** (trigger node) for interacting with Ethereum and EVM-compatible blockchains.
 
@@ -17,7 +17,7 @@ Comprehensive Ethereum blockchain integration for n8n with a unified node struct
 ## Installation
 
 ```bash
-npm install @flyinglimao/n8n-nodes-ethereum
+npm install @0xlimao/n8n-nodes-ethereum
 ```
 
 ## Credentials
@@ -27,6 +27,7 @@ npm install @flyinglimao/n8n-nodes-ethereum
 Connection details for the Ethereum node.
 
 **Fields:**
+
 - **Chain**: Select from supported chains (Ethereum, Polygon, BSC, etc.) or choose Custom
 - **RPC URL** (required): HTTP(S) or WebSocket endpoint (e.g., `https://mainnet.infura.io/v3/YOUR-API-KEY`)
 - **Custom Headers** (optional): JSON object for API authentication (e.g., `{"Authorization": "Bearer token"}`)
@@ -36,6 +37,7 @@ Connection details for the Ethereum node.
 Wallet credentials for signing transactions. **Optional** for read operations.
 
 **Fields:**
+
 - **Private Key** (optional): 64-character hex private key (with or without 0x prefix)
 - **Mnemonic Phrase** (optional): 12 or 24-word seed phrase
 - **Account Index**: Derivation index for mnemonic (default: 0)
@@ -45,20 +47,25 @@ Wallet credentials for signing transactions. **Optional** for read operations.
 ## Triggers
 
 ### Event Trigger
+
 Activates workflow when a smart contract emits specific events.
 
 **Features:**
+
 - Monitor all contracts (no address required)
 - Support multiple contract addresses
 - Support multiple event types
 
 ### Block Trigger
+
 Triggers when a new block is created on the blockchain.
 
 ### Transaction Trigger
+
 Triggers when transactions occur at specified addresses.
 
 **Features:**
+
 - Monitor specific addresses
 - Filter for incoming transactions only
 - Filter for outgoing transactions only
@@ -67,15 +74,18 @@ Triggers when transactions occur at specified addresses.
 ## Nodes
 
 ### Account Operations
+
 - **Get Balance**: Retrieve native token balance with formatting options (wei/gwei/ether)
 - **Get Transaction Count**: Get account nonce for transaction sequencing
 - **Get Code**: Check if address is a smart contract
 
 ### Block Operations
+
 - **Get Block**: Retrieve detailed block information with optional full transactions
 - **Get Block Number**: Get current blockchain height with caching support
 
 ### Transaction Operations
+
 - **Send Transaction**: Send native tokens with EIP-1559 gas support
 - **Get Transaction**: Retrieve transaction details by hash
 - **Get Transaction Receipt**: Get transaction receipt with event logs
@@ -83,6 +93,7 @@ Triggers when transactions occur at specified addresses.
 - **Estimate Gas**: Estimate gas requirements with buffer
 
 ### Contract Operations
+
 - **Read Contract**: Call view/pure functions with dynamic parameter inputs
 - **Write Contract**: Execute state-changing contract functions
 - **Deploy Contract**: Deploy smart contracts with constructor arguments
@@ -91,6 +102,7 @@ Triggers when transactions occur at specified addresses.
 - **Get Logs**: Query historical event logs with automatic decoding
 
 ### ERC20 Token Standard (9 nodes)
+
 - **Get Balance**: Token balance with automatic decimal formatting
 - **Transfer**: Send tokens with decimal conversion
 - **Approve**: Approve spending with unlimited option
@@ -102,6 +114,7 @@ Triggers when transactions occur at specified addresses.
 - **Get Symbol**: Get token symbol
 
 ### ERC721 NFT Standard (9 nodes)
+
 - **Get Balance**: NFT count for address
 - **Owner Of**: Get owner of specific token ID
 - **Transfer From**: Transfer NFT ownership
@@ -113,6 +126,7 @@ Triggers when transactions occur at specified addresses.
 - **Token URI**: Get token metadata URI
 
 ### ERC1155 Multi-Token Standard (7 nodes)
+
 - **Balance Of**: Get balance for specific token ID
 - **Balance Of Batch**: Batch balance queries
 - **Safe Transfer From**: Safe transfer single token type
@@ -122,11 +136,13 @@ Triggers when transactions occur at specified addresses.
 - **URI**: Get token metadata URI
 
 ### Gas Operations
+
 - **Get Gas Price**: Retrieve current gas price (legacy)
 - **Get Fee History**: Analyze historical fees for EIP-1559 optimization
 - **Estimate Max Priority Fee**: Estimate priority fee for transactions
 
 ### ENS Operations
+
 - **Get ENS Address**: Resolve ENS name to Ethereum address
 - **Get ENS Name**: Reverse resolve address to ENS name
 - **Get ENS Avatar**: Retrieve avatar URI for ENS name
@@ -134,6 +150,7 @@ Triggers when transactions occur at specified addresses.
 - **Get ENS Resolver**: Get resolver contract address
 
 ### Signature Operations
+
 - **Sign Message**: Personal message signing with wallet
 - **Sign Typed Data**: EIP-712 structured data signing
 - **Verify Message**: Verify personal message signatures
@@ -143,6 +160,7 @@ Triggers when transactions occur at specified addresses.
 - **Hash Typed Data**: Hash typed data for signing
 
 ### Utility Operations
+
 - **Format Units**: Convert wei to human-readable format
 - **Parse Units**: Convert human-readable to wei
 - **Get Chain ID**: Retrieve current chain identifier
@@ -154,6 +172,7 @@ Triggers when transactions occur at specified addresses.
 - **Get Contract Address**: Calculate CREATE/CREATE2 deployment addresses
 
 ### Advanced Operations
+
 - **Get Storage At**: Read raw storage slots from contracts
 - **Call**: Make raw contract calls with custom data
 - **Get Proof**: Generate Merkle proofs for account state and storage
@@ -183,12 +202,14 @@ Triggers when transactions occur at specified addresses.
 The package includes pre-configured support for 18 major Ethereum-compatible networks:
 
 **Ethereum:**
+
 - Mainnet
 - Sepolia (testnet)
 - Goerli (testnet)
 - Holesky (testnet)
 
 **Layer 2 & Scaling:**
+
 - Arbitrum One
 - Arbitrum Sepolia
 - Optimism
@@ -197,6 +218,7 @@ The package includes pre-configured support for 18 major Ethereum-compatible net
 - Base Sepolia
 
 **Sidechains & Alternative L1s:**
+
 - Polygon (Matic)
 - Polygon Amoy (testnet)
 - BNB Smart Chain (BSC)
@@ -205,6 +227,7 @@ The package includes pre-configured support for 18 major Ethereum-compatible net
 - Avalanche Fuji (testnet)
 
 **Additional Networks:**
+
 - Gnosis Chain
 - Celo
 
