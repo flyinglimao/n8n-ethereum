@@ -15,11 +15,14 @@ import {
   isAddress,
   encodeFunctionData,
   decodeFunctionData,
+  decodeEventLog,
   keccak256,
   toHex,
   fromHex,
   parseAbi,
   PublicClient,
+  recoverMessageAddress,
+  verifyMessage,
 } from "viem";
 import { privateKeyToAccount, mnemonicToAccount } from "viem/accounts";
 import { getChain } from "../../utils/chainConfig";
@@ -192,12 +195,12 @@ export class Ethereum implements INodeType {
             value: "erc1155",
           },
           {
-            name: "ENS",
-            value: "ens",
-          },
-          {
             name: "Gas",
             value: "gas",
+          },
+          {
+            name: "Signature",
+            value: "signature",
           },
           {
             name: "Utils",
@@ -238,6 +241,12 @@ export class Ethereum implements INodeType {
             value: "getCode",
             description: "Check if address is a contract",
             action: "Get code of an account",
+          },
+          {
+            name: "Get Current Address",
+            value: "getCurrentAddress",
+            description: "Get address of the current wallet credential",
+            action: "Get current wallet address",
           },
         ],
         default: "getBalance",
@@ -717,9 +726,24 @@ export class Ethereum implements INodeType {
 
       // Contract: Get Logs
       {
+        displayName: "ABI",
+        name: "logsAbi",
+        type: "json",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["contract"],
+            operation: ["getLogs"],
+          },
+        },
+        default: "[]",
+        description: "Contract ABI as JSON array",
+      },
+      {
         displayName: "Event Name",
         name: "eventName",
         type: "string",
+        required: true,
         displayOptions: {
           show: {
             resource: ["contract"],
@@ -727,7 +751,22 @@ export class Ethereum implements INodeType {
           },
         },
         default: "",
-        description: "Event name to filter (leave empty for all events)",
+        placeholder: "Transfer",
+        description: "Event name to filter",
+      },
+      {
+        displayName: "Event Arguments Filter",
+        name: "eventArgs",
+        type: "json",
+        displayOptions: {
+          show: {
+            resource: ["contract"],
+            operation: ["getLogs"],
+          },
+        },
+        default: "{}",
+        placeholder: '{"from": "0x...", "to": "0x..."}',
+        description: "Filter logs by indexed event arguments (optional)",
       },
       {
         displayName: "From Block",
@@ -1444,7 +1483,7 @@ export class Ethereum implements INodeType {
       },
 
       // ===========================================
-      //          ENS Resource
+      //          Signature Resource
       // ===========================================
       {
         displayName: "Operation",
@@ -1453,55 +1492,154 @@ export class Ethereum implements INodeType {
         noDataExpression: true,
         displayOptions: {
           show: {
-            resource: ["ens"],
+            resource: ["signature"],
           },
         },
         options: [
           {
-            name: "Resolve Name",
-            value: "resolveName",
-            description: "Get address from ENS name",
-            action: "Resolve ENS name",
+            name: "Sign Message",
+            value: "signMessage",
+            description: "Sign a raw message",
+            action: "Sign a message",
           },
           {
-            name: "Reverse Lookup",
-            value: "reverseLookup",
-            description: "Get ENS name from address",
-            action: "Reverse lookup ENS",
+            name: "Sign Typed Data",
+            value: "signTypedData",
+            description: "Sign EIP-712 typed data",
+            action: "Sign typed data",
           },
           {
-            name: "Get Avatar",
-            value: "getAvatar",
-            description: "Get avatar URL",
-            action: "Get ENS avatar",
+            name: "Sign SIWE Message",
+            value: "signSiwe",
+            description: "Sign-In with Ethereum (EIP-4361)",
+            action: "Sign SIWE message",
           },
           {
-            name: "Get Text Record",
-            value: "getTextRecord",
-            description: "Get text record by key",
-            action: "Get ENS text record",
+            name: "Recover Address",
+            value: "recoverAddress",
+            description: "Recover address from signature",
+            action: "Recover address from signature",
+          },
+          {
+            name: "Verify Message",
+            value: "verifyMessage",
+            description: "Verify a message signature",
+            action: "Verify message signature",
           },
         ],
-        default: "resolveName",
+        default: "signMessage",
       },
 
-      // ENS: Resolve Name / Get Avatar / Get Text Record
+      // Signature: Sign Message
       {
-        displayName: "ENS Name",
-        name: "ensName",
+        displayName: "Message",
+        name: "message",
         type: "string",
         required: true,
         displayOptions: {
           show: {
-            resource: ["ens"],
-            operation: ["resolveName", "getAvatar", "getTextRecord"],
+            resource: ["signature"],
+            operation: ["signMessage", "verifyMessage", "recoverAddress"],
           },
         },
         default: "",
-        placeholder: "vitalik.eth",
+        placeholder: "Hello, Ethereum!",
+        description: "The message to sign or verify",
       },
 
-      // ENS: Reverse Lookup
+      // Signature: Sign Typed Data
+      {
+        displayName: "Typed Data",
+        name: "typedData",
+        type: "json",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["signTypedData"],
+          },
+        },
+        default: "{}",
+        description: "EIP-712 typed data object",
+        placeholder: '{"domain": {...}, "types": {...}, "message": {...}}',
+      },
+
+      // Signature: Sign SIWE
+      {
+        displayName: "Domain",
+        name: "siweDomain",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["signSiwe"],
+          },
+        },
+        default: "",
+        placeholder: "example.com",
+        description: "The domain requesting the signature",
+      },
+      {
+        displayName: "Statement",
+        name: "siweStatement",
+        type: "string",
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["signSiwe"],
+          },
+        },
+        default: "",
+        placeholder: "Sign in to Example",
+        description: "Human-readable statement",
+      },
+      {
+        displayName: "URI",
+        name: "siweUri",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["signSiwe"],
+          },
+        },
+        default: "",
+        placeholder: "https://example.com",
+        description: "URI of the requesting application",
+      },
+      {
+        displayName: "Nonce",
+        name: "siweNonce",
+        type: "string",
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["signSiwe"],
+          },
+        },
+        default: "",
+        placeholder: "random-nonce",
+        description: "Random nonce for replay protection",
+      },
+
+      // Signature: Verify Message / Recover Address
+      {
+        displayName: "Signature",
+        name: "signature",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["signature"],
+            operation: ["verifyMessage", "recoverAddress"],
+          },
+        },
+        default: "",
+        placeholder: "0x...",
+        description: "The signature to verify",
+      },
       {
         displayName: "Address",
         name: "address",
@@ -1509,29 +1647,13 @@ export class Ethereum implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            resource: ["ens"],
-            operation: ["reverseLookup"],
+            resource: ["signature"],
+            operation: ["verifyMessage"],
           },
         },
         default: "",
         placeholder: "0x...",
-      },
-
-      // ENS: Get Text Record
-      {
-        displayName: "Key",
-        name: "key",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["ens"],
-            operation: ["getTextRecord"],
-          },
-        },
-        default: "",
-        placeholder: "url",
-        description: 'Text record key (e.g., "url", "email", "description")',
+        description: "The address that supposedly signed the message",
       },
 
       // ===========================================
@@ -1843,6 +1965,21 @@ export class Ethereum implements INodeType {
               code: code || "0x",
               isContract: code && code !== "0x",
             };
+          } else if (operation === "getCurrentAddress") {
+            if (!walletCredentials) {
+              throw new NodeOperationError(
+                this.getNode(),
+                "Ethereum Account credential is required to get current address"
+              );
+            }
+            const walletClient = createWalletClient(
+              publicClient,
+              rpcCredentials,
+              walletCredentials
+            );
+            responseData = {
+              address: walletClient.account!.address,
+            };
           }
         }
 
@@ -2139,33 +2276,80 @@ export class Ethereum implements INodeType {
               "contractAddress",
               i
             ) as string;
+            const abiStr = this.getNodeParameter("logsAbi", i) as string;
+            const abi = JSON.parse(abiStr);
+            const eventName = this.getNodeParameter("eventName", i) as string;
+            const eventArgsStr = this.getNodeParameter(
+              "eventArgs",
+              i,
+              "{}"
+            ) as string;
+            const eventArgs = JSON.parse(eventArgsStr);
             const fromBlockStr = this.getNodeParameter(
               "fromBlock",
               i
             ) as string;
             const toBlockStr = this.getNodeParameter("toBlock", i) as string;
-            const eventName = this.getNodeParameter(
-              "eventName",
-              i,
-              ""
-            ) as string;
 
             const fromBlock = parseBlockIdentifier(fromBlockStr);
             const toBlock = parseBlockIdentifier(toBlockStr);
 
+            // Find event in ABI
+            const eventAbi = abi.find(
+              (item: any) => item.type === "event" && item.name === eventName
+            );
+
+            if (!eventAbi) {
+              throw new NodeOperationError(
+                this.getNode(),
+                `Event "${eventName}" not found in ABI`
+              );
+            }
+
+            // Get logs with event filtering
             const logs = await publicClient.getLogs({
               address: contractAddress as `0x${string}`,
+              event: eventAbi,
+              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
               fromBlock,
               toBlock,
             });
 
+            // Decode logs
+            const decodedLogs = logs.map((log: any) => {
+              try {
+                const decoded: any = decodeEventLog({
+                  abi,
+                  data: log.data,
+                  topics: log.topics,
+                });
+
+                return {
+                  address: log.address,
+                  blockNumber: log.blockNumber.toString(),
+                  blockHash: log.blockHash,
+                  transactionHash: log.transactionHash,
+                  transactionIndex: log.transactionIndex,
+                  logIndex: log.logIndex,
+                  removed: log.removed,
+                  eventName: decoded.eventName,
+                  args: decoded.args,
+                };
+              } catch (error) {
+                return {
+                  address: log.address,
+                  blockNumber: log.blockNumber.toString(),
+                  blockHash: log.blockHash,
+                  transactionHash: log.transactionHash,
+                  data: log.data,
+                  topics: log.topics,
+                  error: "Failed to decode event",
+                };
+              }
+            });
+
             responseData = {
-              logs: logs.map((log: any) => ({
-                ...log,
-                blockNumber: log.blockNumber?.toString(),
-                transactionIndex: log.transactionIndex?.toString(),
-                logIndex: log.logIndex?.toString(),
-              })),
+              logs: decodedLogs,
             };
           }
         }
@@ -2722,47 +2906,151 @@ export class Ethereum implements INodeType {
         }
 
         // ===========================================
-        //          ENS Resource
+        //          Signature Resource
         // ===========================================
-        else if (resource === "ens") {
-          if (operation === "resolveName") {
-            const ensName = this.getNodeParameter("ensName", i) as string;
-            const address = await publicClient.getEnsAddress({
-              name: ensName,
+        else if (resource === "signature") {
+          if (operation === "signMessage") {
+            if (!walletCredentials) {
+              throw new NodeOperationError(
+                this.getNode(),
+                "Ethereum Account credential is required for signing"
+              );
+            }
+            const walletClient = createWalletClient(
+              publicClient,
+              rpcCredentials,
+              walletCredentials
+            );
+
+            const message = this.getNodeParameter("message", i) as string;
+            const signature = await walletClient.signMessage({
+              account: walletClient.account!,
+              message,
             });
+
             responseData = {
-              ensName,
-              address,
+              message,
+              signature,
+              address: walletClient.account!.address,
             };
-          } else if (operation === "reverseLookup") {
+          } else if (operation === "signTypedData") {
+            if (!walletCredentials) {
+              throw new NodeOperationError(
+                this.getNode(),
+                "Ethereum Account credential is required for signing"
+              );
+            }
+            const walletClient = createWalletClient(
+              publicClient,
+              rpcCredentials,
+              walletCredentials
+            );
+
+            const typedDataStr = this.getNodeParameter("typedData", i) as string;
+            const typedData = JSON.parse(typedDataStr);
+
+            const signature = await walletClient.signTypedData({
+              account: walletClient.account!,
+              domain: typedData.domain,
+              types: typedData.types,
+              primaryType: typedData.primaryType,
+              message: typedData.message,
+            });
+
+            responseData = {
+              typedData,
+              signature,
+              address: walletClient.account!.address,
+            };
+          } else if (operation === "signSiwe") {
+            if (!walletCredentials) {
+              throw new NodeOperationError(
+                this.getNode(),
+                "Ethereum Account credential is required for signing"
+              );
+            }
+            const walletClient = createWalletClient(
+              publicClient,
+              rpcCredentials,
+              walletCredentials
+            );
+
+            const domain = this.getNodeParameter("siweDomain", i) as string;
+            const statement = this.getNodeParameter(
+              "siweStatement",
+              i,
+              ""
+            ) as string;
+            const uri = this.getNodeParameter("siweUri", i) as string;
+            const nonce = this.getNodeParameter(
+              "siweNonce",
+              i,
+              Math.random().toString(36).substring(7)
+            ) as string;
+
+            // Build SIWE message
+            const address = walletClient.account!.address;
+            const chainId = await publicClient.getChainId();
+            const issuedAt = new Date().toISOString();
+
+            const siweMessage = [
+              `${domain} wants you to sign in with your Ethereum account:`,
+              address,
+              "",
+              statement || "Sign in with Ethereum",
+              "",
+              `URI: ${uri}`,
+              `Version: 1`,
+              `Chain ID: ${chainId}`,
+              `Nonce: ${nonce}`,
+              `Issued At: ${issuedAt}`,
+            ].join("\n");
+
+            const signature = await walletClient.signMessage({
+              account: walletClient.account!,
+              message: siweMessage,
+            });
+
+            responseData = {
+              message: siweMessage,
+              signature,
+              address,
+              domain,
+              uri,
+              nonce,
+              chainId,
+              issuedAt,
+            };
+          } else if (operation === "recoverAddress") {
+            const message = this.getNodeParameter("message", i) as string;
+            const signature = this.getNodeParameter("signature", i) as string;
+
+            const recoveredAddress = await recoverMessageAddress({
+              message,
+              signature: signature as `0x${string}`,
+            });
+
+            responseData = {
+              message,
+              signature,
+              recoveredAddress,
+            };
+          } else if (operation === "verifyMessage") {
+            const message = this.getNodeParameter("message", i) as string;
+            const signature = this.getNodeParameter("signature", i) as string;
             const address = this.getNodeParameter("address", i) as string;
-            const ensName = await publicClient.getEnsName({
+
+            const isValid = await verifyMessage({
               address: address as `0x${string}`,
+              message,
+              signature: signature as `0x${string}`,
             });
+
             responseData = {
+              message,
+              signature,
               address,
-              ensName,
-            };
-          } else if (operation === "getAvatar") {
-            const ensName = this.getNodeParameter("ensName", i) as string;
-            const avatar = await publicClient.getEnsAvatar({
-              name: ensName,
-            });
-            responseData = {
-              ensName,
-              avatar,
-            };
-          } else if (operation === "getTextRecord") {
-            const ensName = this.getNodeParameter("ensName", i) as string;
-            const key = this.getNodeParameter("key", i) as string;
-            const text = await publicClient.getEnsText({
-              name: ensName,
-              key,
-            });
-            responseData = {
-              ensName,
-              key,
-              text,
+              isValid,
             };
           }
         }

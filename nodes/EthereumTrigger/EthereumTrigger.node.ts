@@ -160,6 +160,20 @@ export class EthereumTrigger implements INodeType {
         description: "Name of the event to listen for",
       },
       {
+        displayName: "Event Arguments Filter",
+        name: "eventArgs",
+        type: "json",
+        displayOptions: {
+          show: {
+            event: ["contractEvent"],
+            abiInput: ["abiEvent"],
+          },
+        },
+        default: "{}",
+        placeholder: '{"from": "0x...", "to": "0x..."}',
+        description: "Filter events by indexed arguments (optional)",
+      },
+      {
         displayName: "Topics",
         name: "topics",
         type: "json",
@@ -423,6 +437,11 @@ export class EthereumTrigger implements INodeType {
             const abiStr = this.getNodeParameter("abi") as string;
             const abi = JSON.parse(abiStr);
             const eventName = this.getNodeParameter("eventName") as string;
+            const eventArgsStr = this.getNodeParameter(
+              "eventArgs",
+              "{}"
+            ) as string;
+            const eventArgs = JSON.parse(eventArgsStr);
 
             const eventAbi = abi.find(
               (item: any) => item.type === "event" && item.name === eventName
@@ -439,6 +458,7 @@ export class EthereumTrigger implements INodeType {
             logs = await publicClient.getLogs({
               address: addresses,
               event: eventAbi,
+              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
               fromBlock,
               toBlock: currentBlock,
             });
@@ -537,6 +557,11 @@ export class EthereumTrigger implements INodeType {
             const abiStr = this.getNodeParameter("abi") as string;
             const abi = JSON.parse(abiStr);
             const eventName = this.getNodeParameter("eventName") as string;
+            const eventArgsStr = this.getNodeParameter(
+              "eventArgs",
+              "{}"
+            ) as string;
+            const eventArgs = JSON.parse(eventArgsStr);
 
             const eventAbi = abi.find(
               (item: any) => item.type === "event" && item.name === eventName
@@ -552,6 +577,7 @@ export class EthereumTrigger implements INodeType {
             logs = await publicClient.getLogs({
               address: addresses,
               event: eventAbi,
+              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
               fromBlock: range.from,
               toBlock: range.to,
             });
