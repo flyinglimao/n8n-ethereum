@@ -27,9 +27,9 @@ sidebar_position: 1
 
 要开始使用 n8n-nodes-ethereum：
 
-1. 在您的 n8n 实例中[安装包](./installation.md)
-2. 为 RPC 和账户[配置凭证](./credentials.md)
-3. 探索[可用资源](./resources/overview.md)以与区块链交互
+1. 在您的 n8n 实例中[安装包](installation)
+2. 为 RPC 和账户[配置凭证](credentials)
+3. 探索[可用资源](resources/overview)以与区块链交互
 
 ## 使用场景
 

@@ -179,4 +179,4 @@ Ethereum Account 凭证包含您钱包的私钥或助记词。此凭证是**可�
 
 ## 下一步
 
-配置凭证后，探索[可用资源](./resources/overview.md)以开始构建工作流。
+配置凭证后，探索[可用资源](resources/overview)以开始构建工作流。
