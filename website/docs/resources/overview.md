@@ -10,23 +10,23 @@ The Ethereum node provides access to various blockchain resources. Each resource
 
 ### Core Blockchain Resources
 
-- **[Account](./account.md)**: Query account balances, transaction counts, and contract code
-- **[Block](./block.md)**: Retrieve block information and current blockchain height
-- **[Transaction](./transaction.md)**: Send transactions, check status, and estimate gas costs
-- **[Gas](./gas.md)**: Get gas prices and fee history for optimal transaction pricing
+- **[Account](account)**: Query account balances, transaction counts, and contract code
+- **[Block](block)**: Retrieve block information and current blockchain height
+- **[Transaction](transaction)**: Send transactions, check status, and estimate gas costs
+- **[Gas](gas)**: Get gas prices and fee history for optimal transaction pricing
 
 ### Smart Contract Resources
 
-- **[Contract](./contract.md)**: Read from and write to smart contracts, deploy new contracts, and query event logs
-- **[ERC20](./erc20.md)**: Interact with ERC20 token contracts (transfers, approvals, balances)
-- **[ERC721](./erc721.md)**: Manage ERC721 NFT operations (transfers, ownership, metadata)
-- **[ERC1155](./erc1155.md)**: Work with ERC1155 multi-token standard (batch operations, balances)
+- **[Contract](contract)**: Read from and write to smart contracts, deploy new contracts, and query event logs
+- **[ERC20](erc20)**: Interact with ERC20 token contracts (transfers, approvals, balances)
+- **[ERC721](erc721)**: Manage ERC721 NFT operations (transfers, ownership, metadata)
+- **[ERC1155](erc1155)**: Work with ERC1155 multi-token standard (batch operations, balances)
 
 ### Utility Resources
 
-- **[ENS](./ens.md)**: Resolve Ethereum Name Service domains and reverse lookups
-- **[Signature](./signature.md)**: Sign and verify messages and typed data (EIP-712)
-- **[Utils](./utils.md)**: Utility functions for formatting, encoding, and validation
+- **[ENS](ens)**: Resolve Ethereum Name Service domains and reverse lookups
+- **[Signature](signature)**: Sign and verify messages and typed data (EIP-712)
+- **[Utils](utils)**: Utility functions for formatting, encoding, and validation
 
 ## Resource Selection
 
@@ -99,7 +99,7 @@ These operations require both **Ethereum RPC** and **Ethereum Account** credenti
 
 Explore each resource in detail to learn about specific operations and parameters:
 
-- Start with [Account](./account.md) for basic blockchain queries
-- Learn about [Transactions](./transaction.md) for sending ETH
-- Dive into [Contract](./contract.md) for smart contract interactions
-- Explore token standards: [ERC20](./erc20.md), [ERC721](./erc721.md), [ERC1155](./erc1155.md)
+- Start with [Account](account) for basic blockchain queries
+- Learn about [Transactions](transaction) for sending ETH
+- Dive into [Contract](contract) for smart contract interactions
+- Explore token standards: [ERC20](erc20), [ERC721](erc721), [ERC1155](erc1155)

@@ -116,4 +116,4 @@ After installation, verify that the package is working:
 
 ## Next Steps
 
-After successful installation, proceed to [configure credentials](./credentials.md) to start using the Ethereum nodes.
+After successful installation, proceed to [configure credentials](credentials) to start using the Ethereum nodes.

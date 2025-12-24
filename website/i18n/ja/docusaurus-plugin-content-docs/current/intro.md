@@ -27,9 +27,9 @@ sidebar_position: 1
 
 n8n-nodes-ethereumを使い始めるには：
 
-1. n8nインスタンスに[パッケージをインストール](./installation.md)
-2. RPCとアカウントの[認証情報を設定](./credentials.md)
-3. ブロックチェーンと対話するための[利用可能なリソース](./resources/overview.md)を探索
+1. n8nインスタンスに[パッケージをインストール](installation)
+2. RPCとアカウントの[認証情報を設定](credentials)
+3. ブロックチェーンと対話するための[利用可能なリソース](resources/overview)を探索
 
 ## ユースケース
 

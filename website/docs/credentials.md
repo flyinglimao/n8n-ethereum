@@ -179,4 +179,4 @@ After configuring credentials, test them:
 
 ## Next Steps
 
-After configuring your credentials, explore the [available resources](./resources/overview.md) to start building workflows.
+After configuring your credentials, explore the [available resources](resources/overview) to start building workflows.

@@ -115,7 +115,7 @@ const config: Config = {
             },
             {
               label: 'Resources',
-              to: '/docs/resources',
+              to: '/docs/resources/overview',
             },
           ],
         },

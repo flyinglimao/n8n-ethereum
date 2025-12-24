@@ -10,23 +10,23 @@ sidebar_position: 1
 
 ### 核心区块链资源
 
-- **[Account](./account.md)**（账户）：查询账户余额、交易计数和合约代码
-- **[Block](./block.md)**（区块）：检索区块信息和当前区块链高度
-- **[Transaction](./transaction.md)**（交易）：发送交易、检查状态和估算 Gas 成本
-- **[Gas](./gas.md)**：获取 Gas 价格和费用历史以优化交易定价
+- **[Account](account)**（账户）：查询账户余额、交易计数和合约代码
+- **[Block](/docs/resources/block)**（区块）：检索区块信息和当前区块链高度
+- **[Transaction](/docs/resources/transaction)**（交易）：发送交易、检查状态和估算 Gas 成本
+- **[Gas](/docs/resources/gas)**：获取 Gas 价格和费用历史以优化交易定价
 
 ### 智能合约资源
 
-- **[Contract](./contract.md)**（合约）：读取和写入智能合约、部署新合约和查询事件日志
-- **[ERC20](./erc20.md)**：与 ERC20 代币合约交互（转账、授权、余额）
-- **[ERC721](./erc721.md)**：管理 ERC721 NFT 操作（转账、所有权、元数据）
-- **[ERC1155](./erc1155.md)**：使用 ERC1155 多代币标准（批量操作、余额）
+- **[Contract](/docs/resources/contract)**（合约）：读取和写入智能合约、部署新合约和查询事件日志
+- **[ERC20](erc20)**：与 ERC20 代币合约交互（转账、授权、余额）
+- **[ERC721](/docs/resources/erc721)**：管理 ERC721 NFT 操作（转账、所有权、元数据）
+- **[ERC1155](/docs/resources/erc1155)**：使用 ERC1155 多代币标准（批量操作、余额）
 
 ### 实用工具资源
 
-- **[ENS](./ens.md)**：解析以太坊名称服务域名和反向查找
-- **[Signature](./signature.md)**（签名）：签名和验证消息和类型化数据（EIP-712）
-- **[Utils](./utils.md)**（工具）：格式化、编码和验证的实用函数
+- **[ENS](/docs/resources/ens)**：解析以太坊名称服务域名和反向查找
+- **[Signature](/docs/resources/signature)**（签名）：签名和验证消息和类型化数据（EIP-712）
+- **[Utils](/docs/resources/utils)**（工具）：格式化、编码和验证的实用函数
 
 ## 资源选择
 
@@ -99,7 +99,7 @@ sidebar_position: 1
 
 详细探索每个资源以了解特定操作和参数：
 
-- 从 [Account](./account.md) 开始进行基本的区块链查询
-- 了解 [Transactions](./transaction.md) 以发送 ETH
-- 深入了解 [Contract](./contract.md) 进行智能合约交互
-- 探索代币标准：[ERC20](./erc20.md)、[ERC721](./erc721.md)、[ERC1155](./erc1155.md)
+- 从 [Account](account) 开始进行基本的区块链查询
+- 了解 [Transactions](/docs/resources/transaction) 以发送 ETH
+- 深入了解 [Contract](/docs/resources/contract) 进行智能合约交互
+- 探索代币标准：[ERC20](erc20)、[ERC721](/docs/resources/erc721)、[ERC1155](/docs/resources/erc1155)

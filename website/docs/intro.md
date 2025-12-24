@@ -27,9 +27,9 @@ This package includes two powerful nodes:
 
 To get started with n8n-nodes-ethereum:
 
-1. [Install the package](./installation.md) in your n8n instance
-2. [Configure credentials](./credentials.md) for RPC and Account
-3. Explore the [available resources](./resources/overview.md) to interact with the blockchain
+1. [Install the package](installation) in your n8n instance
+2. [Configure credentials](credentials) for RPC and Account
+3. Explore the [available resources](resources/overview) to interact with the blockchain
 
 ## Use Cases
 
