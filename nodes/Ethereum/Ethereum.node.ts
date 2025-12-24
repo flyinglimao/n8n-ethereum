@@ -257,7 +257,6 @@ export class Ethereum implements INodeType {
         displayName: "Address",
         name: "address",
         type: "string",
-        required: true,
         displayOptions: {
           show: {
             resource: ["account"],
@@ -266,7 +265,8 @@ export class Ethereum implements INodeType {
         },
         default: "",
         placeholder: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-        description: "The Ethereum address to query",
+        description:
+          "The Ethereum address to query (leave empty to use credential address)",
       },
       {
         displayName: "Block",
@@ -1924,48 +1924,7 @@ export class Ethereum implements INodeType {
         //          Account Resource
         // ===========================================
         if (resource === "account") {
-          const address = this.getNodeParameter("address", i) as string;
-          const blockTag = this.getNodeParameter("blockTag", i) as string;
-          let blockNumber: bigint | undefined;
-          if (blockTag === "custom") {
-            blockNumber = BigInt(
-              this.getNodeParameter("blockNumber", i) as number
-            );
-          }
-
-          if (operation === "getBalance") {
-            const balance = await publicClient.getBalance({
-              address: address as `0x${string}`,
-              blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
-              blockNumber: blockNumber,
-            });
-            responseData = {
-              address,
-              balance: balance.toString(),
-              balanceEth: formatUnits(balance, 18),
-            };
-          } else if (operation === "getTransactionCount") {
-            const count = await publicClient.getTransactionCount({
-              address: address as `0x${string}`,
-              blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
-              blockNumber: blockNumber,
-            });
-            responseData = {
-              address,
-              transactionCount: count,
-            };
-          } else if (operation === "getCode") {
-            const code = await publicClient.getCode({
-              address: address as `0x${string}`,
-              blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
-              blockNumber: blockNumber,
-            });
-            responseData = {
-              address,
-              code: code || "0x",
-              isContract: code && code !== "0x",
-            };
-          } else if (operation === "getCurrentAddress") {
+          if (operation === "getCurrentAddress") {
             if (!walletCredentials) {
               throw new NodeOperationError(
                 this.getNode(),
@@ -1980,6 +1939,65 @@ export class Ethereum implements INodeType {
             responseData = {
               address: walletClient.account!.address,
             };
+          } else {
+            // Get address from parameter or credential
+            let address = this.getNodeParameter("address", i, "") as string;
+            if (!address || address.trim() === "") {
+              if (!walletCredentials) {
+                throw new NodeOperationError(
+                  this.getNode(),
+                  "Either provide an address or configure Ethereum Account credential"
+                );
+              }
+              const walletClient = createWalletClient(
+                publicClient,
+                rpcCredentials,
+                walletCredentials
+              );
+              address = walletClient.account!.address;
+            }
+
+            const blockTag = this.getNodeParameter("blockTag", i) as string;
+            let blockNumber: bigint | undefined;
+            if (blockTag === "custom") {
+              blockNumber = BigInt(
+                this.getNodeParameter("blockNumber", i) as number
+              );
+            }
+
+            if (operation === "getBalance") {
+              const balance = await publicClient.getBalance({
+                address: address as `0x${string}`,
+                blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
+                blockNumber: blockNumber,
+              });
+              responseData = {
+                address,
+                balance: balance.toString(),
+                balanceEth: formatUnits(balance, 18),
+              };
+            } else if (operation === "getTransactionCount") {
+              const count = await publicClient.getTransactionCount({
+                address: address as `0x${string}`,
+                blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
+                blockNumber: blockNumber,
+              });
+              responseData = {
+                address,
+                transactionCount: count,
+              };
+            } else if (operation === "getCode") {
+              const code = await publicClient.getCode({
+                address: address as `0x${string}`,
+                blockTag: blockTag !== "custom" ? (blockTag as any) : undefined,
+                blockNumber: blockNumber,
+              });
+              responseData = {
+                address,
+                code: code || "0x",
+                isContract: code && code !== "0x",
+              };
+            }
           }
         }
 
