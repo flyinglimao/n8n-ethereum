@@ -415,7 +415,8 @@ export class EthereumTrigger implements INodeType {
 
         // Initialize on first run - fetch events from currentBlock - blockLimit to currentBlock
         if (!workflowStaticData.lastEventBlock) {
-          const fromBlock = currentBlock > blockLimit ? currentBlock - blockLimit : 0n;
+          const fromBlock =
+            currentBlock > blockLimit ? currentBlock - blockLimit + 1n : 0n;
 
           let logs;
           if (abiInput === "abiEvent") {
@@ -644,7 +645,8 @@ export class EthereumTrigger implements INodeType {
         // Initialize on first run - scan from currentBlock - blockLimit to currentBlock
         if (!workflowStaticData.lastTxBlock) {
           const processedTxHashes = new Set<string>();
-          const fromBlock = currentBlock > blockLimit ? currentBlock - blockLimit : 0n;
+          const fromBlock =
+            currentBlock > blockLimit ? currentBlock - blockLimit : 0n;
 
           // Scan blocks from fromBlock to currentBlock
           for (let blockNum = fromBlock; blockNum <= currentBlock; blockNum++) {
@@ -783,6 +785,7 @@ export class EthereumTrigger implements INodeType {
       return items.length > 0 ? [items] : null;
     } catch (error) {
       const errorMessage = parseViemError(error);
+      console.log(error, errorMessage);
       throw new NodeOperationError(this.getNode(), errorMessage);
     }
   }
