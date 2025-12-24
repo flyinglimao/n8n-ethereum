@@ -8,6 +8,26 @@ Account 资源提供查询以太坊账户（地址）信息的操作。
 
 ## 操作
 
+### Get Current Address（获取当前地址）
+
+从 Account 凭证获取当前连接的钱包地址。
+
+**所需凭证**：Ethereum RPC、Ethereum Account
+
+**参数**：无
+
+**使用场景**：
+- 识别正在使用的钱包地址
+- 显示当前账户信息
+- 验证连接的是哪个账户
+
+**示例输出**：
+```json
+{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Get Balance（获取余额）
 
 检索账户的原生代币余额（ETH）。

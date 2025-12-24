@@ -8,6 +8,26 @@ Account resource provides operations to query information about Ethereum account
 
 ## Operations
 
+### Get Current Address
+
+Get the address of the currently connected wallet from the Account credential.
+
+**Required Credentials**: Ethereum RPC, Ethereum Account
+
+**Parameters**: None
+
+**Use Cases**:
+- Identify the wallet address being used
+- Display current account information
+- Verify which account is connected
+
+**Example Output**:
+```json
+{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Get Balance
 
 Retrieve the native token balance (ETH) of an account.
