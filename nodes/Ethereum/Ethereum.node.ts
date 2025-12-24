@@ -206,6 +206,10 @@ export class Ethereum implements INodeType {
             name: "Utils",
             value: "utils",
           },
+          {
+            name: "Custom RPC",
+            value: "customRpc",
+          },
         ],
         default: "account",
       },
@@ -1894,6 +1898,61 @@ export class Ethereum implements INodeType {
         default: "",
         placeholder: "0x...",
       },
+
+      // ===========================================
+      //          Custom RPC Resource
+      // ===========================================
+      {
+        displayName: "Operation",
+        name: "operation",
+        type: "options",
+        noDataExpression: true,
+        displayOptions: {
+          show: {
+            resource: ["customRpc"],
+          },
+        },
+        options: [
+          {
+            name: "Request",
+            value: "request",
+            description: "Send a custom RPC request",
+            action: "Send custom RPC request",
+          },
+        ],
+        default: "request",
+      },
+
+      // Custom RPC: Request
+      {
+        displayName: "RPC Method",
+        name: "rpcMethod",
+        type: "string",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["customRpc"],
+            operation: ["request"],
+          },
+        },
+        default: "",
+        placeholder: "eth_getBalance",
+        description: "The RPC method to call (e.g., eth_getBalance, eth_call, debug_traceTransaction)",
+      },
+      {
+        displayName: "RPC Parameters",
+        name: "rpcParams",
+        type: "json",
+        displayOptions: {
+          show: {
+            resource: ["customRpc"],
+            operation: ["request"],
+          },
+        },
+        default: "[]",
+        placeholder: '["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "latest"]',
+        description: "The parameters for the RPC method as a JSON array",
+      },
     ],
   };
 
@@ -3186,6 +3245,33 @@ export class Ethereum implements INodeType {
             responseData = {
               data,
               hash,
+            };
+          }
+        }
+
+        // ===========================================
+        //          Custom RPC Resource
+        // ===========================================
+        else if (resource === "customRpc") {
+          if (operation === "request") {
+            const rpcMethod = this.getNodeParameter("rpcMethod", i) as string;
+            const rpcParamsStr = this.getNodeParameter(
+              "rpcParams",
+              i,
+              "[]"
+            ) as string;
+            const rpcParams = JSON.parse(rpcParamsStr);
+
+            // Make the raw RPC request using the public client's transport
+            const result = await publicClient.request({
+              method: rpcMethod as any,
+              params: rpcParams,
+            });
+
+            responseData = {
+              method: rpcMethod,
+              params: rpcParams,
+              result,
             };
           }
         }
