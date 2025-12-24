@@ -1,6 +1,6 @@
 # n8n-nodes-ethereum
 
-[![npm version](https://badge.fury.io/js/n8n-nodes-ethereum.svg)](https://www.npmjs.com/package/n8n-nodes-ethereum)
+[![npm version](https://badge.fury.io/js/%40flyinglimao%2Fn8n-nodes-ethereum.svg)](https://www.npmjs.com/package/@flyinglimao/n8n-nodes-ethereum)
 
 Comprehensive Ethereum blockchain integration for n8n with a unified node structure using viem. This community node package provides two powerful nodes: **Ethereum** (regular node) and **Ethereum Trigger** (trigger node) for interacting with Ethereum and EVM-compatible blockchains.
 
@@ -17,7 +17,7 @@ Comprehensive Ethereum blockchain integration for n8n with a unified node struct
 ## Installation
 
 ```bash
-npm install n8n-ethereum
+npm install @flyinglimao/n8n-nodes-ethereum
 ```
 
 ## Credentials
