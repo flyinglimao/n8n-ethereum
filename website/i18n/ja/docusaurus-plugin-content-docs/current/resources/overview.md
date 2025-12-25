@@ -27,6 +27,7 @@ Ethereumノードは、さまざまなブロックチェーンリソースへの
 - **[ENS](/docs/resources/ens)**：Ethereum Name Serviceドメインと逆引き参照の解決
 - **[Signature](/docs/resources/signature)**：メッセージと型付きデータの署名と検証（EIP-712）
 - **[Utils](/docs/resources/utils)**：フォーマット、エンコード、検証のためのユーティリティ関数
+- **[Custom RPC](custom-rpc)**：任意のメソッドとパラメータで生のRPCリクエストを送信
 
 ## リソース選択
 
@@ -55,6 +56,7 @@ Ethereumノードを使用する場合：
 | ENS | すべての操作 |
 | Gas | すべての操作 |
 | Utils | ほとんどの操作 |
+| Custom RPC | すべての操作 |
 
 ### 書き込み操作（RPC + Account）
 
