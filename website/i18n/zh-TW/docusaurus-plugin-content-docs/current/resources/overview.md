@@ -11,22 +11,22 @@ sidebar_position: 1
 ### 核心區塊鏈資源
 
 - **[Account](account)**（帳戶）：查詢帳戶餘額、交易計數和合約程式碼
-- **[Block](/docs/resources/block)**（區塊）：檢索區塊資訊和目前區塊鏈高度
-- **[Transaction](/docs/resources/transaction)**（交易）：傳送交易、檢查狀態和估算 Gas 成本
-- **[Gas](/docs/resources/gas)**：取得 Gas 價格和費用歷史以最佳化交易定價
+- **[Block](block)**（區塊）：檢索區塊資訊和目前區塊鏈高度
+- **[Transaction](transaction)**（交易）：傳送交易、檢查狀態和估算 Gas 成本
+- **[Gas](gas)**：取得 Gas 價格和費用歷史以最佳化交易定價
 
 ### 智慧合約資源
 
-- **[Contract](/docs/resources/contract)**（合約）：讀取和寫入智慧合約、部署新合約和查詢事件日誌
+- **[Contract](contract)**（合約）：讀取和寫入智慧合約、部署新合約和查詢事件日誌
 - **[ERC20](erc20)**：與 ERC20 代幣合約互動（轉帳、授權、餘額）
-- **[ERC721](/docs/resources/erc721)**：管理 ERC721 NFT 操作（轉帳、所有權、中繼資料）
-- **[ERC1155](/docs/resources/erc1155)**：使用 ERC1155 多代幣標準（批次操作、餘額）
+- **[ERC721](erc721)**：管理 ERC721 NFT 操作（轉帳、所有權、中繼資料）
+- **[ERC1155](erc1155)**：使用 ERC1155 多代幣標準（批次操作、餘額）
 
 ### 實用工具資源
 
-- **[ENS](/docs/resources/ens)**：解析以太坊名稱服務網域名稱和反向查詢
-- **[Signature](/docs/resources/signature)**（簽名）：簽名和驗證訊息和類型化資料（EIP-712）
-- **[Utils](/docs/resources/utils)**（工具）：格式化、編碼和驗證的實用函式
+- **[ENS](ens)**：解析以太坊名稱服務網域名稱和反向查詢
+- **[Signature](signature)**（簽名）：簽名和驗證訊息和類型化資料（EIP-712）
+- **[Utils](utils)**（工具）：格式化、編碼和驗證的實用函式
 - **[Custom RPC](custom-rpc)**（自訂 RPC）：使用任何方法和參數傳送原始 RPC 請求
 
 ## 資源選擇
@@ -102,6 +102,6 @@ sidebar_position: 1
 詳細探索每個資源以了解特定操作和參數：
 
 - 從 [Account](account) 開始進行基本的區塊鏈查詢
-- 了解 [Transactions](/docs/resources/transaction) 以傳送 ETH
-- 深入了解 [Contract](/docs/resources/contract) 進行智慧合約互動
-- 探索代幣標準：[ERC20](erc20)、[ERC721](/docs/resources/erc721)、[ERC1155](/docs/resources/erc1155)
+- 了解 [Transactions](transaction) 以傳送 ETH
+- 深入了解 [Contract](contract) 進行智慧合約互動
+- 探索代幣標準：[ERC20](erc20)、[ERC721](erc721)、[ERC1155](erc1155)

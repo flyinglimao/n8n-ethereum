@@ -11,22 +11,22 @@ Ethereumノードは、さまざまなブロックチェーンリソースへの
 ### コアブロックチェーンリソース
 
 - **[Account](account)**：アカウント残高、トランザクション数、コントラクトコードの照会
-- **[Block](/docs/resources/block)**：ブロック情報と現在のブロックチェーン高の取得
-- **[Transaction](/docs/resources/transaction)**：トランザクションの送信、ステータスの確認、ガスコストの見積もり
-- **[Gas](/docs/resources/gas)**：最適なトランザクション価格設定のためのガス価格と手数料履歴の取得
+- **[Block](block)**：ブロック情報と現在のブロックチェーン高の取得
+- **[Transaction](transaction)**：トランザクションの送信、ステータスの確認、ガスコストの見積もり
+- **[Gas](gas)**：最適なトランザクション価格設定のためのガス価格と手数料履歴の取得
 
 ### スマートコントラクトリソース
 
-- **[Contract](/docs/resources/contract)**：スマートコントラクトの読み取りと書き込み、新しいコントラクトのデプロイ、イベントログの照会
+- **[Contract](contract)**：スマートコントラクトの読み取りと書き込み、新しいコントラクトのデプロイ、イベントログの照会
 - **[ERC20](erc20)**：ERC20トークンコントラクトとのやり取り（転送、承認、残高）
-- **[ERC721](/docs/resources/erc721)**：ERC721 NFT操作の管理（転送、所有権、メタデータ）
-- **[ERC1155](/docs/resources/erc1155)**：ERC1155マルチトークン規格での作業（バッチ操作、残高）
+- **[ERC721](erc721)**：ERC721 NFT操作の管理（転送、所有権、メタデータ）
+- **[ERC1155](erc1155)**：ERC1155マルチトークン規格での作業（バッチ操作、残高）
 
 ### ユーティリティリソース
 
-- **[ENS](/docs/resources/ens)**：Ethereum Name Serviceドメインと逆引き参照の解決
-- **[Signature](/docs/resources/signature)**：メッセージと型付きデータの署名と検証（EIP-712）
-- **[Utils](/docs/resources/utils)**：フォーマット、エンコード、検証のためのユーティリティ関数
+- **[ENS](ens)**：Ethereum Name Serviceドメインと逆引き参照の解決
+- **[Signature](signature)**：メッセージと型付きデータの署名と検証（EIP-712）
+- **[Utils](utils)**：フォーマット、エンコード、検証のためのユーティリティ関数
 - **[Custom RPC](custom-rpc)**：任意のメソッドとパラメータで生のRPCリクエストを送信
 
 ## リソース選択
@@ -102,6 +102,6 @@ Ethereumノードを使用する場合：
 各リソースの詳細を調べて、特定の操作とパラメータについて学びます：
 
 - 基本的なブロックチェーン照会のために [Account](account) から始める
-- ETHの送信のために [Transactions](/docs/resources/transaction) について学ぶ
-- スマートコントラクトのやり取りのために [Contract](/docs/resources/contract) を深く掘り下げる
-- トークン規格を探索：[ERC20](erc20)、[ERC721](/docs/resources/erc721)、[ERC1155](/docs/resources/erc1155)
+- ETHの送信のために [Transactions](transaction) について学ぶ
+- スマートコントラクトのやり取りのために [Contract](contract) を深く掘り下げる
+- トークン規格を探索：[ERC20](erc20)、[ERC721](erc721)、[ERC1155](erc1155)
