@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Ethereum 觸發器
+# 觸發器
 
 Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件時自動觸發工作流程。此節點提供三種類型的觸發器以滿足不同的使用場景。
 
@@ -15,12 +15,14 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 **所需憑證**：Ethereum RPC
 
 **參數**：
+
 - **Contract Address**（合約地址）（可選）：要監控的一個或多個合約地址。留空則監控所有合約
 - **Event ABI**（事件 ABI）（必需）：要監控的事件 ABI 定義
 - **Event Name**（事件名稱）（可選）：要篩選的特定事件名稱
 - **Indexed Parameters**（索引參數）（可選）：按索引參數值篩選事件
 
 **功能特色**：
+
 - 監控所有合約或特定地址
 - 支援多個合約地址
 - 支援多種事件類型
@@ -28,12 +30,14 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 - 自動解碼事件日誌
 
 **使用場景**：
+
 - 監控代幣轉帳
 - 追蹤 NFT 鑄造/銷售
 - 監聽 DAO 投票
 - 檢測合約狀態變更
 
 **範例 - 監控 ERC20 轉帳**：
+
 ```json
 {
   "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -41,15 +45,16 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
     "name": "Transfer",
     "type": "event",
     "inputs": [
-      {"name": "from", "type": "address", "indexed": true},
-      {"name": "to", "type": "address", "indexed": true},
-      {"name": "value", "type": "uint256"}
+      { "name": "from", "type": "address", "indexed": true },
+      { "name": "to", "type": "address", "indexed": true },
+      { "name": "value", "type": "uint256" }
     ]
   }
 }
 ```
 
 **工作流程範例**：
+
 ```
 [Event Trigger: Transfer] → [檢查金額 > 1000] → [發送通知]
 ```
@@ -61,20 +66,24 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 **所需憑證**：Ethereum RPC
 
 **參數**：
+
 - **Polling Interval**（輪詢間隔）（可選）：檢查新區塊的頻率（秒）（預設：12）
 
 **功能特色**：
+
 - 即時區塊監控
 - 可設定輪詢間隔
 - 提供完整區塊資訊
 
 **使用場景**：
+
 - 監控區塊鏈進度
 - 計算出塊時間
 - 追蹤網路活動
 - 觸發基於時間的操作
 
 **輸出資料**：
+
 ```json
 {
   "number": "18500000",
@@ -89,6 +98,7 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 ```
 
 **工作流程範例**：
+
 ```
 [Block Trigger] → [取得區塊詳情] → [儲存到資料庫]
 ```
@@ -100,6 +110,7 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 **所需憑證**：Ethereum RPC
 
 **參數**：
+
 - **Address**（地址）（必需）：要監控的以太坊地址
 - **Direction**（方向）（可選）：篩選交易方向
   - `both`：監控進出交易（預設）
@@ -108,18 +119,21 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 - **Polling Interval**（輪詢間隔）（可選）：檢查頻率（秒）（預設：12）
 
 **功能特色**：
+
 - 監控特定地址
 - 按交易方向篩選
 - 支援多個地址
 - 自動檢測交易
 
 **使用場景**：
+
 - 監控錢包活動
 - 追蹤付款收據
 - 大額交易警報
 - 檢測可疑活動
 
 **輸出資料**：
+
 ```json
 {
   "hash": "0x...",
@@ -133,6 +147,7 @@ Ethereum Trigger 節點允許您監控區塊鏈事件，並在符合特定條件
 ```
 
 **工作流程範例**：
+
 ```
 [Transaction Trigger] → [檢查金額] → [更新會計系統]
 ```

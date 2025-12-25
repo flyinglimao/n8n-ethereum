@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Ethereum Triggers
+# Triggers
 
 The Ethereum Trigger node allows you to monitor blockchain events and automatically trigger workflows when specific conditions are met. This node provides three types of triggers for different use cases.
 
@@ -15,12 +15,14 @@ Monitor smart contract events and trigger workflows when contracts emit specific
 **Required Credentials**: Ethereum RPC
 
 **Parameters**:
+
 - **Contract Address** (optional): One or more contract addresses to monitor. Leave empty to monitor all contracts
 - **Event ABI** (required): The ABI definition of the event(s) to monitor
 - **Event Name** (optional): Specific event name to filter
 - **Indexed Parameters** (optional): Filter events by indexed parameter values
 
 **Features**:
+
 - Monitor all contracts or specific addresses
 - Support multiple contract addresses
 - Support multiple event types
@@ -28,12 +30,14 @@ Monitor smart contract events and trigger workflows when contracts emit specific
 - Automatic event log decoding
 
 **Use Cases**:
+
 - Monitor token transfers
 - Track NFT minting/sales
 - Listen for DAO votes
 - Detect contract state changes
 
 **Example - Monitor ERC20 Transfers**:
+
 ```json
 {
   "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -41,15 +45,16 @@ Monitor smart contract events and trigger workflows when contracts emit specific
     "name": "Transfer",
     "type": "event",
     "inputs": [
-      {"name": "from", "type": "address", "indexed": true},
-      {"name": "to", "type": "address", "indexed": true},
-      {"name": "value", "type": "uint256"}
+      { "name": "from", "type": "address", "indexed": true },
+      { "name": "to", "type": "address", "indexed": true },
+      { "name": "value", "type": "uint256" }
     ]
   }
 }
 ```
 
 **Workflow Example**:
+
 ```
 [Event Trigger: Transfer] → [Check if amount > 1000] → [Send Notification]
 ```
@@ -61,20 +66,24 @@ Trigger workflows when new blocks are created on the blockchain.
 **Required Credentials**: Ethereum RPC
 
 **Parameters**:
+
 - **Polling Interval** (optional): How often to check for new blocks in seconds (default: 12)
 
 **Features**:
+
 - Real-time block monitoring
 - Configurable polling interval
 - Provides complete block information
 
 **Use Cases**:
+
 - Monitor blockchain progress
 - Calculate block time
 - Track network activity
 - Trigger time-based operations
 
 **Output Data**:
+
 ```json
 {
   "number": "18500000",
@@ -89,6 +98,7 @@ Trigger workflows when new blocks are created on the blockchain.
 ```
 
 **Workflow Example**:
+
 ```
 [Block Trigger] → [Get Block Details] → [Store in Database]
 ```
@@ -100,6 +110,7 @@ Monitor transactions at specific addresses and trigger when transactions occur.
 **Required Credentials**: Ethereum RPC
 
 **Parameters**:
+
 - **Address** (required): The Ethereum address(es) to monitor
 - **Direction** (optional): Filter transaction direction
   - `both`: Monitor both incoming and outgoing (default)
@@ -108,18 +119,21 @@ Monitor transactions at specific addresses and trigger when transactions occur.
 - **Polling Interval** (optional): How often to check in seconds (default: 12)
 
 **Features**:
+
 - Monitor specific addresses
 - Filter by transaction direction
 - Support multiple addresses
 - Automatic transaction detection
 
 **Use Cases**:
+
 - Monitor wallet activity
 - Track payment receipts
 - Alert on large transactions
 - Detect suspicious activity
 
 **Output Data**:
+
 ```json
 {
   "hash": "0x...",
@@ -133,6 +147,7 @@ Monitor transactions at specific addresses and trigger when transactions occur.
 ```
 
 **Workflow Example**:
+
 ```
 [Transaction Trigger] → [Check Amount] → [Update Accounting System]
 ```
