@@ -1,10 +1,23 @@
 ---
 sidebar_position: 1
+slug: /
 ---
 
 # Introduction
 
 Welcome to **n8n-nodes-ethereum** documentation! This community node package provides comprehensive Ethereum blockchain integration for n8n with a unified node structure using viem.
+
+## ⚠️ Disclaimer
+
+> **WARNING**: This package is currently in early development and **has not been thoroughly tested or audited**. Please use at your own risk.
+>
+> - ❌ Not production-ready
+> - ⚠️ May contain bugs or security vulnerabilities
+> - 🔍 Always verify transaction details before execution
+> - 💰 Test with small amounts first
+> - 🛡️ Conduct your own security review
+>
+> **By using this package, you acknowledge these risks and agree that you are solely responsible for any losses or damages.**
 
 ## Features
 

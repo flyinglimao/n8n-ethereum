@@ -108,15 +108,15 @@ const config: Config = {
           items: [
             {
               label: 'Getting Started',
-              to: '/intro',
+              to: '/',
             },
             {
               label: 'Installation',
-              to: '/installation',
+              to: 'installation',
             },
             {
               label: 'Resources',
-              to: '/resources/overview',
+              to: 'resources/overview',
             },
           ],
         },
