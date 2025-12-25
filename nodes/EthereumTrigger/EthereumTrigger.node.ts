@@ -57,6 +57,7 @@ export class EthereumTrigger implements INodeType {
     },
     inputs: [],
     outputs: ["main"],
+    documentationUrl: "https://flyinglimao.github.io/n8n-ethereum/triggers",
     credentials: [
       {
         name: "ethereumRpc",
