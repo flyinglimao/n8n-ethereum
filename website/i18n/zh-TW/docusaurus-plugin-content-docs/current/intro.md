@@ -2,45 +2,45 @@
 sidebar_position: 1
 ---
 
-# 介绍
+# 介紹
 
-欢迎使用 **n8n-nodes-ethereum** 文档！这是一个为 n8n 提供全面以太坊区块链集成的社区节点包，采用 viem 构建的统一节点结构。
+歡迎使用 **n8n-nodes-ethereum** 文件！這是一個為 n8n 提供全面以太坊區塊鏈整合的社群節點套件，採用 viem 建置的統一節點結構。
 
 ## 功能特性
 
-- ✨ **统一节点结构**：使用资源/操作模式的单一以太坊节点，提供更清晰的用户体验
-- 🔐 **安全凭证**：独立的 RPC 和账户凭证，读取操作可选钱包
-- 🔄 **10 种资源类型**：账户、区块、交易、合约、ERC20、ERC721、ERC1155、ENS、Gas、工具
-- ⚡ **触发器支持**：实时监控新区块、合约事件和交易
-- 🌐 **多链支持**：支持以太坊、Polygon、BSC、Arbitrum、Optimism、Avalanche、Fantom、Base 和自定义网络
-- 🪙 **完整代币标准**：ERC20、ERC721、ERC1155，自动处理 ABI
-- 📦 **使用 viem 构建**：现代化、类型安全的以太坊交互 TypeScript 库
+- ✨ **統一節點結構**：使用資源/操作模式的單一以太坊節點，提供更清晰的使用者體驗
+- 🔐 **安全憑證**：獨立的 RPC 和帳戶憑證，讀取操作可選錢包
+- 🔄 **10 種資源類型**：帳戶、區塊、交易、合約、ERC20、ERC721、ERC1155、ENS、Gas、工具
+- ⚡ **觸發器支援**：即時監控新區塊、合約事件和交易
+- 🌐 **多鏈支援**：支援以太坊、Polygon、BSC、Arbitrum、Optimism、Avalanche、Fantom、Base 和自訂網路
+- 🪙 **完整代幣標準**：ERC20、ERC721、ERC1155，自動處理 ABI
+- 📦 **使用 viem 建置**：現代化、類型安全的以太坊互動 TypeScript 函式庫
 
-## 包含内容
+## 包含內容
 
-本包包含两个强大的节点：
+本套件包含兩個強大的節點：
 
-- **Ethereum 节点**：用于执行区块链操作的常规节点
-- **Ethereum Trigger 节点**：用于监控区块链事件的触发器节点
+- **Ethereum 節點**：用於執行區塊鏈操作的常規節點
+- **Ethereum Trigger 節點**：用於監控區塊鏈事件的觸發器節點
 
-## 快速开始
+## 快速開始
 
-要开始使用 n8n-nodes-ethereum：
+要開始使用 n8n-nodes-ethereum：
 
-1. 在您的 n8n 实例中[安装包](installation)
-2. 为 RPC 和账户[配置凭证](credentials)
-3. 探索[可用资源](resources/overview)以与区块链交互
+1. 在您的 n8n 實體中[安裝套件](installation)
+2. 為 RPC 和帳戶[設定憑證](credentials)
+3. 探索[可用資源](resources/overview)以與區塊鏈互動
 
-## 使用场景
+## 使用場景
 
-- 监控智能合约事件并发送通知
-- 执行自动化代币转账
-- 读取和写入智能合约数据
-- 实时追踪区块链交易
-- 集成 ENS 域名解析
-- 构建 DeFi 自动化工作流
+- 監控智慧合約事件並傳送通知
+- 執行自動化代幣轉帳
+- 讀取和寫入智慧合約資料
+- 即時追蹤區塊鏈交易
+- 整合 ENS 網域名稱解析
+- 建置 DeFi 自動化工作流程
 - 管理 NFT 操作
 
-## 支持
+## 支援
 
-如有问题、疑问或想要贡献，请访问我们的 [GitHub 仓库](https://github.com/flyinglimao/n8n-ethereum)。
+如有問題、疑問或想要貢獻，請造訪我們的 [GitHub 儲存庫](https://github.com/flyinglimao/n8n-ethereum)。

@@ -2,49 +2,49 @@
 sidebar_position: 1
 ---
 
-# 资源概览
+# 資源概覽
 
-以太坊节点提供对各种区块链资源的访问。每个资源包含用于与以太坊区块链不同方面交互的特定操作。
+以太坊節點提供對各種區塊鏈資源的存取。每個資源包含用於與以太坊區塊鏈不同層面互動的特定操作。
 
-## 可用资源
+## 可用資源
 
-### 核心区块链资源
+### 核心區塊鏈資源
 
-- **[Account](account)**（账户）：查询账户余额、交易计数和合约代码
-- **[Block](/docs/resources/block)**（区块）：检索区块信息和当前区块链高度
-- **[Transaction](/docs/resources/transaction)**（交易）：发送交易、检查状态和估算 Gas 成本
-- **[Gas](/docs/resources/gas)**：获取 Gas 价格和费用历史以优化交易定价
+- **[Account](account)**（帳戶）：查詢帳戶餘額、交易計數和合約程式碼
+- **[Block](/docs/resources/block)**（區塊）：檢索區塊資訊和目前區塊鏈高度
+- **[Transaction](/docs/resources/transaction)**（交易）：傳送交易、檢查狀態和估算 Gas 成本
+- **[Gas](/docs/resources/gas)**：取得 Gas 價格和費用歷史以最佳化交易定價
 
-### 智能合约资源
+### 智慧合約資源
 
-- **[Contract](/docs/resources/contract)**（合约）：读取和写入智能合约、部署新合约和查询事件日志
-- **[ERC20](erc20)**：与 ERC20 代币合约交互（转账、授权、余额）
-- **[ERC721](/docs/resources/erc721)**：管理 ERC721 NFT 操作（转账、所有权、元数据）
-- **[ERC1155](/docs/resources/erc1155)**：使用 ERC1155 多代币标准（批量操作、余额）
+- **[Contract](/docs/resources/contract)**（合約）：讀取和寫入智慧合約、部署新合約和查詢事件日誌
+- **[ERC20](erc20)**：與 ERC20 代幣合約互動（轉帳、授權、餘額）
+- **[ERC721](/docs/resources/erc721)**：管理 ERC721 NFT 操作（轉帳、所有權、中繼資料）
+- **[ERC1155](/docs/resources/erc1155)**：使用 ERC1155 多代幣標準（批次操作、餘額）
 
-### 实用工具资源
+### 實用工具資源
 
-- **[ENS](/docs/resources/ens)**：解析以太坊名称服务域名和反向查找
-- **[Signature](/docs/resources/signature)**（签名）：签名和验证消息和类型化数据（EIP-712）
-- **[Utils](/docs/resources/utils)**（工具）：格式化、编码和验证的实用函数
-- **[Custom RPC](custom-rpc)**（自定义 RPC）：使用任何方法和参数发送原始 RPC 请求
+- **[ENS](/docs/resources/ens)**：解析以太坊名稱服務網域名稱和反向查詢
+- **[Signature](/docs/resources/signature)**（簽名）：簽名和驗證訊息和類型化資料（EIP-712）
+- **[Utils](/docs/resources/utils)**（工具）：格式化、編碼和驗證的實用函式
+- **[Custom RPC](custom-rpc)**（自訂 RPC）：使用任何方法和參數傳送原始 RPC 請求
 
-## 资源选择
+## 資源選擇
 
-使用以太坊节点时：
+使用以太坊節點時：
 
-1. 从下拉菜单中选择 **Resource**（资源）
-2. 在该资源内选择 **Operation**（操作）
-3. 配置操作特定的参数
-4. 添加所需的凭证（所有操作需要 RPC，写入操作需要 Account）
+1. 從下拉選單中選擇 **Resource**（資源）
+2. 在該資源內選擇 **Operation**（操作）
+3. 設定操作特定的參數
+4. 新增所需的憑證（所有操作需要 RPC，寫入操作需要 Account）
 
-## 快速参考
+## 快速參考
 
-### 只读操作（仅需 RPC）
+### 唯讀操作（僅需 RPC）
 
-这些操作仅需要 **Ethereum RPC** 凭证：
+這些操作僅需要 **Ethereum RPC** 憑證：
 
-| 资源 | 操作 |
+| 資源 | 操作 |
 |------|------|
 | Account | Get Balance、Get Transaction Count、Get Code |
 | Block | Get Block、Get Block Number |
@@ -55,14 +55,14 @@ sidebar_position: 1
 | ERC1155 | Balance Of、Balance Of Batch、Is Approved For All、URI |
 | ENS | 所有操作 |
 | Gas | 所有操作 |
-| Utils | 大多数操作 |
+| Utils | 大多數操作 |
 | Custom RPC | 所有操作 |
 
-### 写入操作（RPC + Account）
+### 寫入操作（RPC + Account）
 
-这些操作需要 **Ethereum RPC** 和 **Ethereum Account** 凭证：
+這些操作需要 **Ethereum RPC** 和 **Ethereum Account** 憑證：
 
-| 资源 | 操作 |
+| 資源 | 操作 |
 |------|------|
 | Transaction | Send Transaction、Wait For Transaction |
 | Contract | Write Contract、Deploy Contract |
@@ -71,27 +71,27 @@ sidebar_position: 1
 | ERC1155 | Safe Transfer From、Safe Batch Transfer From、Set Approval For All |
 | Signature | Sign Message、Sign Typed Data |
 
-## 常见模式
+## 常見模式
 
-### 读取区块链数据
+### 讀取區塊鏈資料
 
 ```
 [Schedule Trigger] → [Ethereum: Contract - Read Contract] → [Process Data]
 ```
 
-### 执行交易
+### 執行交易
 
 ```
 [Trigger] → [Ethereum: Contract - Write Contract] → [Ethereum: Transaction - Wait For Transaction] → [Notification]
 ```
 
-### 代币操作
+### 代幣操作
 
 ```
 [Trigger] → [Ethereum: ERC20 - Transfer] → [Ethereum: Transaction - Wait For Transaction] → [Store Result]
 ```
 
-### 事件监控
+### 事件監控
 
 ```
 [Ethereum Trigger: Event] → [Process Event Data] → [Action]
@@ -99,9 +99,9 @@ sidebar_position: 1
 
 ## 下一步
 
-详细探索每个资源以了解特定操作和参数：
+詳細探索每個資源以了解特定操作和參數：
 
-- 从 [Account](account) 开始进行基本的区块链查询
-- 了解 [Transactions](/docs/resources/transaction) 以发送 ETH
-- 深入了解 [Contract](/docs/resources/contract) 进行智能合约交互
-- 探索代币标准：[ERC20](erc20)、[ERC721](/docs/resources/erc721)、[ERC1155](/docs/resources/erc1155)
+- 從 [Account](account) 開始進行基本的區塊鏈查詢
+- 了解 [Transactions](/docs/resources/transaction) 以傳送 ETH
+- 深入了解 [Contract](/docs/resources/contract) 進行智慧合約互動
+- 探索代幣標準：[ERC20](erc20)、[ERC721](/docs/resources/erc721)、[ERC1155](/docs/resources/erc1155)

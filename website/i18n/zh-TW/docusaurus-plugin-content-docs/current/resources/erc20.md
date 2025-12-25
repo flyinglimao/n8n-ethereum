@@ -4,33 +4,33 @@ sidebar_position: 5
 
 # ERC20
 
-ERC20 资源提供便捷的操作，无需手动指定 ABI 即可与 ERC20 代币合约交互。
+ERC20 資源提供便捷的操作，無需手動指定 ABI 即可與 ERC20 代幣合約互動。
 
 ## 概述
 
-ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI，使与任何 ERC20 代币的交互变得简单。
+ERC20 是以太坊上最常見的代幣標準。此資源自動處理 ERC20 ABI，使與任何 ERC20 代幣的互動變得簡單。
 
-**常见的 ERC20 代币**：
+**常見的 ERC20 代幣**：
 - USDT（Tether）
 - USDC（USD Coin）
 - DAI（Dai Stablecoin）
 - WETH（Wrapped Ether）
-- 以及数千种其他代币...
+- 以及數千種其他代幣...
 
 ## 操作
 
-### Get Balance（获取余额）
+### Get Balance（取得餘額）
 
-获取地址的代币余额。
+取得地址的代幣餘額。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
-- **Owner Address**（所有者地址）（必需）：要检查余额的地址
-- **Format Decimals**（格式化小数）（可选）：使用代币小数格式化输出（默认：true）
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
+- **Owner Address**（所有者地址）（必需）：要檢查餘額的地址
+- **Format Decimals**（格式化小數）（可選）：使用代幣小數格式化輸出（預設：true）
 
-**示例**：
+**範例**：
 ```json
 {
   "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -39,7 +39,7 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-**输出**：
+**輸出**：
 ```json
 {
   "balance": "1000.50",
@@ -48,18 +48,18 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-### Transfer（转账）
+### Transfer（轉帳）
 
-将代币转移到另一个地址。
+將代幣轉移到另一個地址。
 
-**所需凭证**：Ethereum RPC、Ethereum Account
+**所需憑證**：Ethereum RPC、Ethereum Account
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
 - **To**（接收者）（必需）：接收者地址
-- **Amount**（数量）（必需）：要转账的数量（以代币单位表示，将使用小数进行转换）
+- **Amount**（數量）（必需）：要轉帳的數量（以代幣單位表示，將使用小數進行轉換）
 
-**示例**：
+**範例**：
 ```json
 {
   "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -68,7 +68,7 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-**输出**：
+**輸出**：
 ```json
 {
   "hash": "0x1234567890abcdef...",
@@ -77,23 +77,23 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-### Approve（授权）
+### Approve（授權）
 
-授权另一个地址代表您花费代币。
+授權另一個地址代表您花費代幣。
 
-**所需凭证**：Ethereum RPC、Ethereum Account
+**所需憑證**：Ethereum RPC、Ethereum Account
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
-- **Spender**（花费者）（必需）：要授权的地址
-- **Amount**（数量）（必需）：要授权的数量（使用 "unlimited" 获得最大授权）
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
+- **Spender**（花費者）（必需）：要授權的地址
+- **Amount**（數量）（必需）：要授權的數量（使用 "unlimited" 取得最大授權）
 
-**使用场景**：
-- 授权 DEX 合约交换代币
-- 授权质押合约存入代币
-- 为合约设置支出限制
+**使用場景**：
+- 授權 DEX 合約交換代幣
+- 授權質押合約存入代幣
+- 為合約設定支出限制
 
-**示例**：
+**範例**：
 ```json
 {
   "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -102,36 +102,36 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-### Transfer From（从...转账）
+### Transfer From（從...轉帳）
 
-使用授权转移代币（需要事先授权）。
+使用授權轉移代幣（需要事先授權）。
 
-**所需凭证**：Ethereum RPC、Ethereum Account
+**所需憑證**：Ethereum RPC、Ethereum Account
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
-- **From**（来源）（必需）：转账来源地址
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
+- **From**（來源）（必需）：轉帳來源地址
 - **To**（接收者）（必需）：接收者地址
-- **Amount**（数量）（必需）：要转账的数量
+- **Amount**（數量）（必需）：要轉帳的數量
 
-**使用场景**：
+**使用場景**：
 - 拉取支付
-- 基于合约的代币转账
-- 自动支付系统
+- 基於合約的代幣轉帳
+- 自動支付系統
 
-### Get Allowance（获取授权额度）
+### Get Allowance（取得授權額度）
 
-检查花费者被允许代表所有者花费多少。
+檢查花費者被允許代表所有者花費多少。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
-- **Owner**（所有者）（必需）：代币所有者地址
-- **Spender**（花费者）（必需）：花费者地址
-- **Format Decimals**（格式化小数）（可选）：使用代币小数格式化输出
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
+- **Owner**（所有者）（必需）：代幣所有者地址
+- **Spender**（花費者）（必需）：花費者地址
+- **Format Decimals**（格式化小數）（可選）：使用代幣小數格式化輸出
 
-**示例**：
+**範例**：
 ```json
 {
   "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -140,93 +140,93 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
-### Get Total Supply（获取总供应量）
+### Get Total Supply（取得總供應量）
 
-获取代币的总供应量。
+取得代幣的總供應量。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
-- **Format Decimals**（格式化小数）（可选）：使用代币小数格式化输出
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
+- **Format Decimals**（格式化小數）（可選）：使用代幣小數格式化輸出
 
-### Get Decimals（获取小数位数）
+### Get Decimals（取得小數位數）
 
-获取代币使用的小数位数。
+取得代幣使用的小數位數。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
 
-**输出**：
+**輸出**：
 ```json
 {
   "decimals": 6
 }
 ```
 
-### Get Name（获取名称）
+### Get Name（取得名稱）
 
-获取代币名称。
+取得代幣名稱。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
 
-**输出**：
+**輸出**：
 ```json
 {
   "name": "USD Coin"
 }
 ```
 
-### Get Symbol（获取符号）
+### Get Symbol（取得符號）
 
-获取代币符号。
+取得代幣符號。
 
-**所需凭证**：Ethereum RPC
+**所需憑證**：Ethereum RPC
 
-**参数**：
-- **Token Address**（代币地址）（必需）：ERC20 代币合约地址
+**參數**：
+- **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
 
-**输出**：
+**輸出**：
 ```json
 {
   "symbol": "USDC"
 }
 ```
 
-## 常见使用场景
+## 常見使用場景
 
-### 监控代币余额
+### 監控代幣餘額
 
 ```
 [Schedule Trigger] → [ERC20: Get Balance] → [Check Threshold] → [Alert]
 ```
 
-### 自动代币转账
+### 自動代幣轉帳
 
 ```
 [Trigger] → [ERC20: Transfer] → [Wait For Transaction] → [Notification]
 ```
 
-### 授权并存入 DeFi
+### 授權並存入 DeFi
 
 ```
 [Trigger] → [ERC20: Approve] → [Wait] → [Contract: Write - Deposit] → [Wait]
 ```
 
-### 在 Transfer From 之前检查授权额度
+### 在 Transfer From 之前檢查授權額度
 
 ```
 [Trigger] → [ERC20: Get Allowance] → [Conditional] → [ERC20: Transfer From]
 ```
 
-## 常见代币地址
+## 常見代幣地址
 
-### 以太坊主网
+### 以太坊主網
 
 - **USDT**：`0xdAC17F958D2ee523a2206206994597C13D831ec7`
 - **USDC**：`0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48`
@@ -241,10 +241,10 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 
 ## 提示
 
-- **小数位数**：大多数代币使用 18 位小数，但有些（如 USDC、USDT）使用 6 位
-- **格式化小数**：启用此选项以获得人类可读的数量
-- **无限授权**：使用 "unlimited" 作为数量以授权最大 uint256
-- **检查余额**：在转账前始终检查余额
-- **Gas 成本**：代币转账比 ETH 转账消耗更多 Gas
-- **授权模式**：大多数 DeFi 交互需要 授权 → 交互 模式
-- **代币地址**：始终在 Etherscan 或官方来源验证代币地址
+- **小數位數**：大多數代幣使用 18 位小數，但有些（如 USDC、USDT）使用 6 位
+- **格式化小數**：啟用此選項以取得人類可讀的數量
+- **無限授權**：使用 "unlimited" 作為數量以授權最大 uint256
+- **檢查餘額**：在轉帳前始終檢查餘額
+- **Gas 成本**：代幣轉帳比 ETH 轉帳消耗更多 Gas
+- **授權模式**：大多數 DeFi 互動需要 授權 → 互動 模式
+- **代幣地址**：始終在 Etherscan 或官方來源驗證代幣地址
