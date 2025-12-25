@@ -15,25 +15,23 @@ The Ethereum RPC credential is used to connect to an Ethereum node. This credent
 1. **Navigate to Credentials**
    - In n8n, go to **Credentials** → **New** → Search for "Ethereum RPC"
 
-2. **Select Chain**
-   - Choose from pre-configured networks:
-     - **Ethereum**: Mainnet, Sepolia, Goerli, Holesky
-     - **Layer 2**: Arbitrum, Optimism, Base (and their testnets)
-     - **Sidechains**: Polygon, BSC, Avalanche, Gnosis, Celo (and their testnets)
-     - **Custom**: For any other EVM-compatible network
-
-3. **Enter RPC URL**
-   - Provide the HTTP(S) or WebSocket endpoint
+2. **Enter RPC URL** (Required)
+   - Provide the HTTP(S) or WebSocket endpoint for your Ethereum node
+   - You must explicitly provide an RPC endpoint URL
    - Examples:
      - Infura: `https://mainnet.infura.io/v3/YOUR-API-KEY`
      - Alchemy: `https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY`
      - QuickNode: `https://YOUR-ENDPOINT.quiknode.pro/YOUR-API-KEY/`
      - Public RPC: `https://eth.llamarpc.com` (not recommended for production)
 
-4. **Custom Headers** (Optional)
+3. **Custom Headers** (Optional)
    - Add authentication headers if required by your RPC provider
    - Format: JSON object
    - Example: `{"Authorization": "Bearer YOUR-TOKEN"}`
+
+4. **Block Limit** (Optional)
+   - Maximum number of blocks to query in a single request (default: 1000)
+   - Used to prevent timeouts when querying large block ranges
 
 ### Recommended RPC Providers:
 
@@ -49,9 +47,9 @@ The Ethereum RPC credential is used to connect to an Ethereum node. This credent
 
 ```json
 {
-  "chain": "Ethereum Mainnet",
   "rpcUrl": "https://mainnet.infura.io/v3/YOUR-API-KEY",
-  "customHeaders": {}
+  "customHeaders": {},
+  "blockLimit": 1000
 }
 ```
 
@@ -168,8 +166,8 @@ After configuring credentials, test them:
 
 - **Invalid RPC URL**: Verify the URL is correct and includes protocol (https://)
 - **Rate Limited**: You may have exceeded your provider's rate limit
-- **Network Mismatch**: Ensure the selected chain matches your RPC endpoint
 - **Firewall/Proxy**: Check if your network allows connections to the RPC endpoint
+- **Wrong Network**: Ensure your RPC endpoint points to the correct network (mainnet, testnet, etc.)
 
 ### Account Credential Issues
 

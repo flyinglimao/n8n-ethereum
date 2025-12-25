@@ -15,25 +15,23 @@ Ethereum RPC認証情報は、Ethereumノードに接続するために使用さ
 1. **認証情報に移動**
    - n8nで、**認証情報** → **新規** → 「Ethereum RPC」を検索
 
-2. **チェーンを選択**
-   - 事前設定されたネットワークから選択：
-     - **Ethereum**：メインネット、Sepolia、Goerli、Holesky
-     - **Layer 2**：Arbitrum、Optimism、Base（およびそのテストネット）
-     - **サイドチェーン**：Polygon、BSC、Avalanche、Gnosis、Celo（およびそのテストネット）
-     - **Custom**（カスタム）：その他のEVM互換ネットワーク
-
-3. **RPC URLを入力**
-   - HTTP(S)またはWebSocketエンドポイントを提供
+2. **RPC URLを入力**（必須）
+   - EthereumノードのHTTP(S)またはWebSocketエンドポイントを提供
+   - RPCエンドポイントURLを明示的に指定する必要があります
    - 例：
      - Infura: `https://mainnet.infura.io/v3/YOUR-API-KEY`
      - Alchemy: `https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY`
      - QuickNode: `https://YOUR-ENDPOINT.quiknode.pro/YOUR-API-KEY/`
      - パブリックRPC: `https://eth.llamarpc.com`（本番環境には推奨されません）
 
-4. **カスタムヘッダー**（オプション）
+3. **カスタムヘッダー**（オプション）
    - RPCプロバイダーが必要とする場合、認証ヘッダーを追加
    - 形式：JSONオブジェクト
    - 例：`{"Authorization": "Bearer YOUR-TOKEN"}`
+
+4. **ブロック制限**（オプション）
+   - 単一リクエストでクエリする最大ブロック数（デフォルト：1000）
+   - 大きなブロック範囲をクエリする際のタイムアウトを防ぐために使用
 
 ### 推奨RPCプロバイダー：
 
@@ -49,9 +47,9 @@ Ethereum RPC認証情報は、Ethereumノードに接続するために使用さ
 
 ```json
 {
-  "chain": "Ethereum Mainnet",
   "rpcUrl": "https://mainnet.infura.io/v3/YOUR-API-KEY",
-  "customHeaders": {}
+  "customHeaders": {},
+  "blockLimit": 1000
 }
 ```
 
@@ -168,8 +166,8 @@ Ethereum Account認証情報には、ウォレットの秘密鍵またはニー�
 
 - **無効なRPC URL**：URLが正しく、プロトコル（https://）を含んでいることを確認
 - **レート制限**：プロバイダーのレート制限を超えた可能性があります
-- **ネットワークの不一致**：選択したチェーンがRPCエンドポイントと一致していることを確認
 - **ファイアウォール/プロキシ**：ネットワークがRPCエンドポイントへの接続を許可しているか確認
+- **間違ったネットワーク**：RPCエンドポイントが正しいネットワーク（メインネット、テストネットなど）を指していることを確認
 
 ### アカウント認証情報の問題
 

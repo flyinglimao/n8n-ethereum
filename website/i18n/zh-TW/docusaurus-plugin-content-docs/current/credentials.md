@@ -15,25 +15,23 @@ Ethereum RPC 憑證用於連接至以太坊節點。此憑證對於所有操作�
 1. **導覽至憑證**
    - 在 n8n 中，進入 **憑證** → **新建** → 搜尋 "Ethereum RPC"
 
-2. **選擇鏈**
-   - 從預設網路中選擇：
-     - **Ethereum**：主網、Sepolia、Goerli、Holesky
-     - **Layer 2**：Arbitrum、Optimism、Base（及其測試網）
-     - **側鏈**：Polygon、BSC、Avalanche、Gnosis、Celo（及其測試網）
-     - **Custom**（自訂）：用於任何其他 EVM 相容網路
-
-3. **輸入 RPC URL**
-   - 提供 HTTP(S) 或 WebSocket 端點
+2. **輸入 RPC URL**（必填）
+   - 提供您以太坊節點的 HTTP(S) 或 WebSocket 端點
+   - 您必須明確提供 RPC 端點 URL
    - 範例：
      - Infura: `https://mainnet.infura.io/v3/YOUR-API-KEY`
      - Alchemy: `https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY`
      - QuickNode: `https://YOUR-ENDPOINT.quiknode.pro/YOUR-API-KEY/`
      - 公共 RPC: `https://eth.llamarpc.com`（不建議用於生產環境）
 
-4. **自訂請求標頭**（可選）
+3. **自訂請求標頭**（可選）
    - 如果您的 RPC 提供商需要，新增身份驗證標頭
    - 格式：JSON 物件
    - 範例：`{"Authorization": "Bearer YOUR-TOKEN"}`
+
+4. **區塊限制**（可選）
+   - 單次請求中查詢的最大區塊數（預設：1000）
+   - 用於防止查詢大範圍區塊時逾時
 
 ### 推薦的 RPC 提供商：
 
@@ -49,9 +47,9 @@ Ethereum RPC 憑證用於連接至以太坊節點。此憑證對於所有操作�
 
 ```json
 {
-  "chain": "Ethereum Mainnet",
   "rpcUrl": "https://mainnet.infura.io/v3/YOUR-API-KEY",
-  "customHeaders": {}
+  "customHeaders": {},
+  "blockLimit": 1000
 }
 ```
 
@@ -168,8 +166,8 @@ Ethereum Account 憑證包含您錢包的私鑰或助記詞。此憑證是**可�
 
 - **無效的 RPC URL**：驗證 URL 是否正確並包含協定（https://）
 - **速率限制**：您可能已超過提供商的速率限制
-- **網路不符**：確保所選鏈與您的 RPC 端點相符
 - **防火牆/代理**：檢查您的網路是否允許連接至 RPC 端點
+- **錯誤的網路**：確保您的 RPC 端點指向正確的網路（主網、測試網等）
 
 ### 帳戶憑證問題
 
