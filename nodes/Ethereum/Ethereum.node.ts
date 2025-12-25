@@ -149,6 +149,7 @@ export class Ethereum implements INodeType {
     },
     inputs: ["main"],
     outputs: ["main"],
+    documentationUrl: "https://flyinglimao.github.io/n8n-ethereum/",
     credentials: [
       {
         name: "ethereumRpc",
