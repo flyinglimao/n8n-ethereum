@@ -27,6 +27,7 @@ sidebar_position: 1
 - **[ENS](/docs/resources/ens)**：解析以太坊名称服务域名和反向查找
 - **[Signature](/docs/resources/signature)**（签名）：签名和验证消息和类型化数据（EIP-712）
 - **[Utils](/docs/resources/utils)**（工具）：格式化、编码和验证的实用函数
+- **[Custom RPC](custom-rpc)**（自定义 RPC）：使用任何方法和参数发送原始 RPC 请求
 
 ## 资源选择
 
@@ -55,6 +56,7 @@ sidebar_position: 1
 | ENS | 所有操作 |
 | Gas | 所有操作 |
 | Utils | 大多数操作 |
+| Custom RPC | 所有操作 |
 
 ### 写入操作（RPC + Account）
 

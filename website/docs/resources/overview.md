@@ -27,6 +27,7 @@ The Ethereum node provides access to various blockchain resources. Each resource
 - **[ENS](ens)**: Resolve Ethereum Name Service domains and reverse lookups
 - **[Signature](signature)**: Sign and verify messages and typed data (EIP-712)
 - **[Utils](utils)**: Utility functions for formatting, encoding, and validation
+- **[Custom RPC](custom-rpc)**: Send raw RPC requests with any method and parameters
 
 ## Resource Selection
 
@@ -55,6 +56,7 @@ These operations only require the **Ethereum RPC** credential:
 | ENS | All operations |
 | Gas | All operations |
 | Utils | Most operations |
+| Custom RPC | All operations |
 
 ### Write Operations (RPC + Account)
 
