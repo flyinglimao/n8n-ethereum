@@ -2,50 +2,50 @@
 sidebar_position: 3
 ---
 
-# 凭证
+# 憑證
 
-要使用以太坊节点，您需要配置两种类型的凭证：**Ethereum RPC**（必需）和 **Ethereum Account**（可选，仅用于写入操作）。
+要使用以太坊節點，您需要設定兩種類型的憑證：**Ethereum RPC**（必需）和 **Ethereum Account**（可選，僅用於寫入操作）。
 
-## Ethereum RPC 凭证
+## Ethereum RPC 憑證
 
-Ethereum RPC 凭证用于连接到以太坊节点。此凭证对于所有操作都是**必需的**。
+Ethereum RPC 憑證用於連接至以太坊節點。此憑證對於所有操作都是**必需的**。
 
-### 配置步骤：
+### 設定步驟：
 
-1. **导航到凭证**
-   - 在 n8n 中，进入 **凭证** → **新建** → 搜索 "Ethereum RPC"
+1. **導覽至憑證**
+   - 在 n8n 中，進入 **憑證** → **新建** → 搜尋 "Ethereum RPC"
 
-2. **选择链**
-   - 从预配置网络中选择：
-     - **Ethereum**：主网、Sepolia、Goerli、Holesky
-     - **Layer 2**：Arbitrum、Optimism、Base（及其测试网）
-     - **侧链**：Polygon、BSC、Avalanche、Gnosis、Celo（及其测试网）
-     - **Custom**（自定义）：用于任何其他 EVM 兼容网络
+2. **選擇鏈**
+   - 從預設網路中選擇：
+     - **Ethereum**：主網、Sepolia、Goerli、Holesky
+     - **Layer 2**：Arbitrum、Optimism、Base（及其測試網）
+     - **側鏈**：Polygon、BSC、Avalanche、Gnosis、Celo（及其測試網）
+     - **Custom**（自訂）：用於任何其他 EVM 相容網路
 
-3. **输入 RPC URL**
-   - 提供 HTTP(S) 或 WebSocket 端点
-   - 示例：
+3. **輸入 RPC URL**
+   - 提供 HTTP(S) 或 WebSocket 端點
+   - 範例：
      - Infura: `https://mainnet.infura.io/v3/YOUR-API-KEY`
      - Alchemy: `https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY`
      - QuickNode: `https://YOUR-ENDPOINT.quiknode.pro/YOUR-API-KEY/`
-     - 公共 RPC: `https://eth.llamarpc.com`（不建议用于生产环境）
+     - 公共 RPC: `https://eth.llamarpc.com`（不建議用於生產環境）
 
-4. **自定义请求头**（可选）
-   - 如果您的 RPC 提供商需要，添加身份验证头
-   - 格式：JSON 对象
-   - 示例：`{"Authorization": "Bearer YOUR-TOKEN"}`
+4. **自訂請求標頭**（可選）
+   - 如果您的 RPC 提供商需要，新增身份驗證標頭
+   - 格式：JSON 物件
+   - 範例：`{"Authorization": "Bearer YOUR-TOKEN"}`
 
-### 推荐的 RPC 提供商：
+### 推薦的 RPC 提供商：
 
-| 提供商 | 免费额度 | 备注 |
+| 提供商 | 免費額度 | 備註 |
 |--------|----------|------|
-| [Infura](https://infura.io/) | 每天 100,000 次请求 | 可靠，广泛使用 |
-| [Alchemy](https://www.alchemy.com/) | 每月 3 亿计算单位 | 高级功能，文档完善 |
-| [QuickNode](https://www.quicknode.com/) | 有限免费试用 | 快速，支持多链 |
-| [Ankr](https://www.ankr.com/) | 公共端点 | 免费但有速率限制 |
-| [LlamaNodes](https://llamanodes.com/) | 公共端点 | 社区运行 |
+| [Infura](https://infura.io/) | 每天 100,000 次請求 | 可靠，廣泛使用 |
+| [Alchemy](https://www.alchemy.com/) | 每月 3 億計算單位 | 進階功能，文件完善 |
+| [QuickNode](https://www.quicknode.com/) | 有限免費試用 | 快速，支援多鏈 |
+| [Ankr](https://www.ankr.com/) | 公共端點 | 免費但有速率限制 |
+| [LlamaNodes](https://llamanodes.com/) | 公共端點 | 社群運行 |
 
-### 配置示例：
+### 設定範例：
 
 ```json
 {
@@ -55,67 +55,67 @@ Ethereum RPC 凭证用于连接到以太坊节点。此凭证对于所有操作�
 }
 ```
 
-## Ethereum Account 凭证
+## Ethereum Account 憑證
 
-Ethereum Account 凭证包含您钱包的私钥或助记词。此凭证是**可选的**，仅在以下情况下需要：
+Ethereum Account 憑證包含您錢包的私鑰或助記詞。此憑證是**可選的**，僅在以下情況下需要：
 
-- 发送交易
-- 写入智能合约
-- 签名消息
-- 任何需要钱包签名的操作
+- 傳送交易
+- 寫入智慧合約
+- 簽名訊息
+- 任何需要錢包簽名的操作
 
 :::caution 安全警告
-切勿分享您的私钥或助记词。请将这些凭证安全地存储在 n8n 的凭证系统中。在生产环境中，建议使用资金有限的专用钱包。
+切勿分享您的私鑰或助記詞。請將這些憑證安全地儲存在 n8n 的憑證系統中。在生產環境中，建議使用資金有限的專用錢包。
 :::
 
-### 配置步骤：
+### 設定步驟：
 
-1. **导航到凭证**
-   - 在 n8n 中，进入 **凭证** → **新建** → 搜索 "Ethereum Account"
+1. **導覽至憑證**
+   - 在 n8n 中，進入 **憑證** → **新建** → 搜尋 "Ethereum Account"
 
-2. **选择身份验证方法**
-   - 您可以使用 **Private Key**（私钥）或 **Mnemonic Phrase**（助记词）（二选一）
+2. **選擇身份驗證方法**
+   - 您可以使用 **Private Key**（私鑰）或 **Mnemonic Phrase**（助記詞）（二選一）
 
-3. **选项 A：私钥**
-   - 输入您钱包的私钥（64 个十六进制字符）
-   - 可以以 `0x` 开头或不以 `0x` 开头
-   - 示例：`0x1234567890abcdef...`
+3. **選項 A：私鑰**
+   - 輸入您錢包的私鑰（64 個十六進位字元）
+   - 可以以 `0x` 開頭或不以 `0x` 開頭
+   - 範例：`0x1234567890abcdef...`
 
-4. **选项 B：助记词**
-   - 输入您的 12 或 24 个单词的助记词
-   - 示例：`word1 word2 word3 ... word12`
-   - 设置 **Account Index**（账户索引）（默认：0）以从同一助记词派生不同账户
+4. **選項 B：助記詞**
+   - 輸入您的 12 或 24 個單詞的助記詞
+   - 範例：`word1 word2 word3 ... word12`
+   - 設定 **Account Index**（帳戶索引）（預設：0）以從同一助記詞衍生不同帳戶
 
-### 安全最佳实践：
+### 安全最佳實務：
 
-1. **使用专用钱包**
-   - 专门为 n8n 自动化创建一个独立的钱包
-   - 只为操作所需的金额充值
+1. **使用專用錢包**
+   - 專門為 n8n 自動化建立一個獨立的錢包
+   - 只為操作所需的金額充值
 
-2. **先在测试网测试**
-   - 在使用主网之前，始终在测试网（Sepolia、Goerli）上测试您的工作流
-   - 测试网 ETH 可从水龙头免费获取
+2. **先在測試網測試**
+   - 在使用主網之前，始終在測試網（Sepolia、Goerli）上測試您的工作流程
+   - 測試網 ETH 可從水龍頭免費取得
 
-3. **监控活动**
-   - 定期检查钱包交易
-   - 为意外活动设置警报
+3. **監控活動**
+   - 定期檢查錢包交易
+   - 為意外活動設定警報
 
-4. **限制权限**
-   - 只为需要的用户提供 n8n 凭证访问权限
-   - 谨慎使用 n8n 的凭证共享功能
+4. **限制權限**
+   - 只為需要的使用者提供 n8n 憑證存取權限
+   - 謹慎使用 n8n 的憑證共用功能
 
-### 何时需要此凭证？
+### 何時需要此憑證？
 
-**需要用于：**
-- Transaction → Send Transaction（发送交易）
-- Contract → Write Contract（写入合约）
-- Contract → Deploy Contract（部署合约）
+**需要用於：**
+- Transaction → Send Transaction（傳送交易）
+- Contract → Write Contract（寫入合約）
+- Contract → Deploy Contract（部署合約）
 - ERC20 → Transfer、Approve、Transfer From
 - ERC721 → Transfer From、Safe Transfer From、Approve、Set Approval For All
 - ERC1155 → Safe Transfer From、Safe Batch Transfer From、Set Approval For All
 - Signature → Sign Message、Sign Typed Data
 
-**不需要用于：**
+**不需要用於：**
 - Account → Get Balance、Get Transaction Count、Get Code
 - Block → Get Block、Get Block Number
 - Transaction → Get Transaction、Get Transaction Receipt、Estimate Gas
@@ -127,16 +127,16 @@ Ethereum Account 凭证包含您钱包的私钥或助记词。此凭证是**可�
 - Gas → 所有操作
 - Utils → 所有操作
 
-### 配置示例：
+### 設定範例：
 
-**使用私钥：**
+**使用私鑰：**
 ```json
 {
   "privateKey": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
 }
 ```
 
-**使用助记词：**
+**使用助記詞：**
 ```json
 {
   "mnemonic": "test test test test test test test test test test test junk",
@@ -144,39 +144,39 @@ Ethereum Account 凭证包含您钱包的私钥或助记词。此凭证是**可�
 }
 ```
 
-## 测试您的凭证
+## 測試您的憑證
 
-配置凭证后，测试它们：
+設定憑證後，測試它們：
 
-1. **测试 RPC 连接**
-   - 创建一个包含以太坊节点的工作流
-   - 选择资源：**Block** → 操作：**Get Block Number**
-   - 选择您的 RPC 凭证
-   - 执行节点
-   - 您应该获得当前区块号
+1. **測試 RPC 連接**
+   - 建立一個包含以太坊節點的工作流程
+   - 選擇資源：**Block** → 操作：**Get Block Number**
+   - 選擇您的 RPC 憑證
+   - 執行節點
+   - 您應該取得目前區塊號
 
-2. **测试账户凭证**（如果已配置）
-   - 选择资源：**Account** → 操作：**Get Balance**
-   - 将地址留空（使用凭证的钱包地址）
-   - 选择 RPC 和 Account 凭证
-   - 执行节点
-   - 您应该看到您钱包的余额
+2. **測試帳戶憑證**（如果已設定）
+   - 選擇資源：**Account** → 操作：**Get Balance**
+   - 將地址留空（使用憑證的錢包地址）
+   - 選擇 RPC 和 Account 憑證
+   - 執行節點
+   - 您應該看到您錢包的餘額
 
-## 故障排除
+## 疑難排解
 
-### RPC 连接问题
+### RPC 連接問題
 
-- **无效的 RPC URL**：验证 URL 是否正确并包含协议（https://）
-- **速率限制**：您可能已超过提供商的速率限制
-- **网络不匹配**：确保所选链与您的 RPC 端点匹配
-- **防火墙/代理**：检查您的网络是否允许连接到 RPC 端点
+- **無效的 RPC URL**：驗證 URL 是否正確並包含協定（https://）
+- **速率限制**：您可能已超過提供商的速率限制
+- **網路不符**：確保所選鏈與您的 RPC 端點相符
+- **防火牆/代理**：檢查您的網路是否允許連接至 RPC 端點
 
-### 账户凭证问题
+### 帳戶憑證問題
 
-- **无效的私钥**：确保它是 64 个十六进制字符（有或没有 0x）
-- **无效的助记词**：验证所有单词拼写正确且顺序正确
-- **错误的账户**：如果使用助记词，尝试不同的账户索引
+- **無效的私鑰**：確保它是 64 個十六進位字元（有或沒有 0x）
+- **無效的助記詞**：驗證所有單詞拼寫正確且順序正確
+- **錯誤的帳戶**：如果使用助記詞，嘗試不同的帳戶索引
 
 ## 下一步
 
-配置凭证后，探索[可用资源](resources/overview)以开始构建工作流。
+設定憑證後，探索[可用資源](resources/overview)以開始建置工作流程。

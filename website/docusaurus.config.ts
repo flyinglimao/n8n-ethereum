@@ -40,7 +40,7 @@ const config: Config = {
         htmlLang: 'en-US',
       },
       'zh-TW': {
-        label: '繁體中文',
+        label: '正體中文',
         direction: 'ltr',
         htmlLang: 'zh-TW',
       },
