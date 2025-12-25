@@ -57,6 +57,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          routeBasePath: '/', // Make docs the homepage
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/flyinglimao/n8n-ethereum/tree/main/website/',
@@ -107,15 +108,15 @@ const config: Config = {
           items: [
             {
               label: 'Getting Started',
-              to: '/docs/intro',
+              to: '/intro',
             },
             {
               label: 'Installation',
-              to: '/docs/installation',
+              to: '/installation',
             },
             {
               label: 'Resources',
-              to: '/docs/resources/overview',
+              to: '/resources/overview',
             },
           ],
         },
