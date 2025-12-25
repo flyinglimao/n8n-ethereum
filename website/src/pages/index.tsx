@@ -30,24 +30,20 @@ function HomepageHeader() {
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
         }}>
           <h3 style={{margin: '0 0 1rem 0', fontSize: '1.3rem'}}>
-            ⚠️ Warning / 警告
+            ⚠️ Warning
           </h3>
           <p style={{margin: '0.5rem 0', fontSize: '0.95rem'}}>
             <strong>This package is in early development and has NOT been thoroughly tested or audited.</strong>
           </p>
-          <p style={{margin: '0.5rem 0', fontSize: '0.95rem'}}>
-            <strong>此套件處於早期開發階段，尚未經過完整測試或審核。</strong>
-          </p>
           <ul style={{margin: '1rem 0 0.5rem 1.5rem', fontSize: '0.9rem'}}>
-            <li>Not production-ready / 尚未準備好用於生產環境</li>
-            <li>May contain bugs or security vulnerabilities / 可能包含錯誤或安全漏洞</li>
-            <li>Always verify transactions before execution / 執行前請務必仔細檢查交易</li>
-            <li>Test with small amounts first / 建議先使用小額測試</li>
+            <li>Not production-ready</li>
+            <li>May contain bugs or security vulnerabilities</li>
+            <li>Always verify transaction details before execution</li>
+            <li>Test with small amounts first</li>
+            <li>Conduct your own security review</li>
           </ul>
           <p style={{margin: '1rem 0 0 0', fontSize: '0.85rem', fontStyle: 'italic'}}>
             Use at your own risk. You are solely responsible for any losses or damages.
-            <br />
-            請自行承擔使用風險及所有損失或損害的責任。
           </p>
         </div>
 

@@ -4,21 +4,17 @@
 
 Comprehensive Ethereum blockchain integration for n8n with a unified node structure using viem. This community node package provides two powerful nodes: **Ethereum** (regular node) and **Ethereum Trigger** (trigger node) for interacting with Ethereum and EVM-compatible blockchains.
 
-## ⚠️ Disclaimer / 免責聲明
+## ⚠️ Disclaimer
 
-> **WARNING / 警告**: This package is currently in early development and **has not been thoroughly tested or audited**. Please use at your own risk.
+> **WARNING**: This package is currently in early development and **has not been thoroughly tested or audited**. Please use at your own risk.
 >
-> **警告**：此套件目前處於早期開發階段，**尚未經過完整測試或審核**。請自行承擔使用風險。
->
-> - ❌ Not production-ready / 尚未準備好用於生產環境
-> - ⚠️ May contain bugs or security vulnerabilities / 可能包含錯誤或安全漏洞
-> - 🔍 Always verify transaction details before execution / 執行前請務必仔細檢查交易細節
-> - 💰 Test with small amounts first / 建議先使用小額進行測試
-> - 🛡️ Conduct your own security review / 請自行進行安全檢查
+> - ❌ Not production-ready
+> - ⚠️ May contain bugs or security vulnerabilities
+> - 🔍 Always verify transaction details before execution
+> - 💰 Test with small amounts first
+> - 🛡️ Conduct your own security review
 >
 > **By using this package, you acknowledge these risks and agree that you are solely responsible for any losses or damages.**
->
-> **使用此套件即表示您了解這些風險，並同意自行承擔所有損失或損害的責任。**
 
 ## Features
 
