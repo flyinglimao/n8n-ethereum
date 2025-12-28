@@ -1,0 +1,174 @@
+name: Test n8n-ethereum Nodes
+
+on:
+  push:
+    branches: [ main, develop, 'claude/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test-nodes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 📦 Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: 🔧 Verify test structure
+        run: |
+          echo "📁 Test directory structure:"
+          tree -L 3 test/ || ls -R test/
+
+      - name: 🧪 Run test suite
+        id: test
+        run: |
+          cd test
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh
+        continue-on-error: true
+
+      - name: 📊 Display test results
+        if: always()
+        run: |
+          if [ -f /tmp/test-report.json ]; then
+            echo "## 📋 Test Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            TOTAL=$(jq -r '.total' /tmp/test-report.json)
+            PASSED=$(jq -r '.passed' /tmp/test-report.json)
+            FAILED=$(jq -r '.failed' /tmp/test-report.json)
+            TIMESTAMP=$(jq -r '.timestamp' /tmp/test-report.json)
+
+            echo "**Test Run:** $TIMESTAMP" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| 📦 Total Workflows | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$PASSED" -gt 0 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### ✅ Passed Workflows" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              jq -r '.passedWorkflows[]' /tmp/test-report.json | while read workflow; do
+                echo "- ✓ $workflow" >> $GITHUB_STEP_SUMMARY
+              done
+            fi
+
+            if [ "$FAILED" -gt 0 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### ❌ Failed Workflows" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              jq -r '.failedWorkflows[]' /tmp/test-report.json | while read workflow; do
+                echo "- ✗ $workflow" >> $GITHUB_STEP_SUMMARY
+              done
+            fi
+
+            # Print to console as well
+            cat /tmp/test-report.json | jq .
+          else
+            echo "⚠️ Test report not found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📤 Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: /tmp/test-report.json
+          if-no-files-found: warn
+
+      - name: 📤 Upload Docker logs
+        if: failure()
+        run: |
+          cd test
+          docker-compose logs > /tmp/docker-logs.txt 2>&1 || echo "Failed to get docker logs"
+        continue-on-error: true
+
+      - name: 📤 Upload logs artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-logs
+          path: /tmp/docker-logs.txt
+          if-no-files-found: warn
+
+      - name: ✅ Check test results
+        if: always()
+        run: |
+          if [ -f /tmp/test-report.json ]; then
+            FAILED=$(jq -r '.failed' /tmp/test-report.json)
+            if [ "$FAILED" -gt 0 ]; then
+              echo "❌ Tests failed: $FAILED workflow(s) failed"
+              exit 1
+            else
+              echo "✅ All tests passed!"
+              exit 0
+            fi
+          else
+            echo "❌ Test report not found"
+            exit 1
+          fi
+
+      - name: 💬 Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = '/tmp/test-report.json';
+
+            if (!fs.existsSync(reportPath)) {
+              console.log('Test report not found');
+              return;
+            }
+
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+
+            let comment = '## 🧪 n8n-ethereum Test Results\n\n';
+            comment += `**Timestamp:** ${report.timestamp}\n\n`;
+            comment += '| Metric | Count |\n';
+            comment += '|--------|-------|\n';
+            comment += `| 📦 Total Workflows | ${report.total} |\n`;
+            comment += `| ✅ Passed | ${report.passed} |\n`;
+            comment += `| ❌ Failed | ${report.failed} |\n\n`;
+
+            if (report.passed > 0) {
+              comment += '### ✅ Passed Workflows\n\n';
+              report.passedWorkflows.forEach(w => {
+                comment += `- ✓ ${w}\n`;
+              });
+              comment += '\n';
+            }
+
+            if (report.failed > 0) {
+              comment += '### ❌ Failed Workflows\n\n';
+              report.failedWorkflows.forEach(w => {
+                comment += `- ✗ ${w}\n`;
+              });
+              comment += '\n';
+            }
+
+            if (report.failed === 0) {
+              comment += '### 🎉 All tests passed!\n';
+            } else {
+              comment += '### ⚠️ Some tests failed. Please check the logs for details.\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

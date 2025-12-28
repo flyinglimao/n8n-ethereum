@@ -1,0 +1,214 @@
+{
+  "name": "01 - Contract Deploy, Read & Write",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Workflow Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "id": "trigger"
+    },
+    {
+      "parameters": {
+        "resource": "contract",
+        "operation": "deploy",
+        "bytecode": "={{ $json.bytecode }}",
+        "abi": "={{ $json.abi }}",
+        "constructorArgs": "[42, \"Hello from n8n!\"]"
+      },
+      "name": "Deploy TestContract",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 300],
+      "id": "deploy",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contract",
+        "operation": "read",
+        "contractAddress": "={{ $json.contractAddress }}",
+        "method": "abi",
+        "abi": "={{ $('Get Contract ABI').item.json.abi }}",
+        "functionName": "getValue"
+      },
+      "name": "Read Initial Value",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 300],
+      "id": "read1",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contract",
+        "operation": "write",
+        "contractAddress": "={{ $('Deploy TestContract').item.json.contractAddress }}",
+        "method": "abi",
+        "abi": "={{ $('Get Contract ABI').item.json.abi }}",
+        "functionName": "setValue",
+        "functionArgs": "[999]"
+      },
+      "name": "Write New Value",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 300],
+      "id": "write",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contract",
+        "operation": "read",
+        "contractAddress": "={{ $('Deploy TestContract').item.json.contractAddress }}",
+        "method": "abi",
+        "abi": "={{ $('Get Contract ABI').item.json.abi }}",
+        "functionName": "getValue"
+      },
+      "name": "Read Updated Value",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1320, 300],
+      "id": "read2",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contract",
+        "operation": "getLogs",
+        "contractAddress": "={{ $('Deploy TestContract').item.json.contractAddress }}",
+        "method": "abi",
+        "abi": "={{ $('Get Contract ABI').item.json.abi }}",
+        "eventName": "ValueChanged",
+        "fromBlock": "earliest",
+        "toBlock": "latest"
+      },
+      "name": "Get Event Logs",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1540, 300],
+      "id": "logs",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst artifacts = JSON.parse(fs.readFileSync('/app/artifacts/contracts/TestContract.sol/TestContract.json', 'utf8'));\nreturn { bytecode: artifacts.bytecode, abi: JSON.stringify(artifacts.abi) };"
+      },
+      "name": "Get Contract ABI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "id": "getAbi"
+    }
+  ],
+  "connections": {
+    "Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Contract ABI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contract ABI": {
+      "main": [
+        [
+          {
+            "node": "Deploy TestContract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deploy TestContract": {
+      "main": [
+        [
+          {
+            "node": "Read Initial Value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Initial Value": {
+      "main": [
+        [
+          {
+            "node": "Write New Value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write New Value": {
+      "main": [
+        [
+          {
+            "node": "Read Updated Value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Updated Value": {
+      "main": [
+        [
+          {
+            "node": "Get Event Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

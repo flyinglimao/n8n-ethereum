@@ -1,0 +1,339 @@
+{
+  "name": "02 - Basic Operations (Account, Block, Transaction, Gas, Utils)",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Workflow Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "id": "trigger"
+    },
+    {
+      "parameters": {
+        "resource": "account",
+        "operation": "getCurrentAddress"
+      },
+      "name": "Get Current Address",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [440, 200],
+      "id": "getCurrentAddress",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "account",
+        "operation": "getBalance",
+        "address": "={{ $json.address }}",
+        "format": "ether"
+      },
+      "name": "Get Balance",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 200],
+      "id": "getBalance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "account",
+        "operation": "getTransactionCount",
+        "address": "={{ $('Get Current Address').item.json.address }}"
+      },
+      "name": "Get Transaction Count",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 200],
+      "id": "getTxCount",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getBlockNumber"
+      },
+      "name": "Get Block Number",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [440, 400],
+      "id": "getBlockNumber",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getBlock",
+        "blockIdentifier": "number",
+        "blockNumber": "={{ $json.blockNumber }}",
+        "includeTransactions": true
+      },
+      "name": "Get Block Details",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 400],
+      "id": "getBlock",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "gas",
+        "operation": "getGasPrice"
+      },
+      "name": "Get Gas Price",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [440, 600],
+      "id": "getGasPrice",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "transaction",
+        "operation": "sendTransaction",
+        "to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "value": "1",
+        "valueUnit": "ether"
+      },
+      "name": "Send Transaction",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 400],
+      "id": "sendTx",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "transaction",
+        "operation": "getTransactionReceipt",
+        "transactionHash": "={{ $json.hash }}"
+      },
+      "name": "Get Transaction Receipt",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 400],
+      "id": "getTxReceipt",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "utils",
+        "operation": "getChainId"
+      },
+      "name": "Get Chain ID",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 600],
+      "id": "getChainId",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "utils",
+        "operation": "validateAddress",
+        "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      },
+      "name": "Validate Address",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 600],
+      "id": "validateAddress",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "utils",
+        "operation": "keccak256",
+        "data": "Hello n8n-ethereum!"
+      },
+      "name": "Keccak256 Hash",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 600],
+      "id": "keccak",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Current Address",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Block Number",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Gas Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Address": {
+      "main": [
+        [
+          {
+            "node": "Get Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Balance": {
+      "main": [
+        [
+          {
+            "node": "Get Transaction Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Block Number": {
+      "main": [
+        [
+          {
+            "node": "Get Block Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Block Details": {
+      "main": [
+        [
+          {
+            "node": "Send Transaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Transaction": {
+      "main": [
+        [
+          {
+            "node": "Get Transaction Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Gas Price": {
+      "main": [
+        [
+          {
+            "node": "Get Chain ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chain ID": {
+      "main": [
+        [
+          {
+            "node": "Validate Address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Address": {
+      "main": [
+        [
+          {
+            "node": "Keccak256 Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

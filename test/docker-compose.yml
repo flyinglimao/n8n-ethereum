@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  hardhat:
+    image: node:18-alpine
+    container_name: hardhat-node
+    working_dir: /app
+    volumes:
+      - ./hardhat:/app
+      - ./contracts:/app/contracts
+    ports:
+      - "8545:8545"
+    command: sh -c "npm install && npx hardhat node --hostname 0.0.0.0"
+    networks:
+      - n8n-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8545"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-test
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_LOG_LEVEL=debug
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/workflows
+      - ../:/n8n-ethereum
+    networks:
+      - n8n-network
+    depends_on:
+      hardhat:
+        condition: service_healthy
+    command: >
+      sh -c "
+        cd /n8n-ethereum &&
+        npm install &&
+        npm run build &&
+        npm link &&
+        cd /home/node/.n8n &&
+        npm link n8n-nodes-ethereum &&
+        n8n start
+      "
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5678/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+networks:
+  n8n-network:
+    driver: bridge
+
+volumes:
+  n8n_data:

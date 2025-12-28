@@ -1,0 +1,183 @@
+{
+  "name": "06 - Signature Operations",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Workflow Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 400],
+      "id": "trigger"
+    },
+    {
+      "parameters": {
+        "resource": "signature",
+        "operation": "signMessage",
+        "message": "Hello from n8n-ethereum! This is a test message."
+      },
+      "name": "Sign Message",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [440, 400],
+      "id": "signMessage",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "signature",
+        "operation": "recoverAddress",
+        "message": "Hello from n8n-ethereum! This is a test message.",
+        "signature": "={{ $json.signature }}"
+      },
+      "name": "Recover Address",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 400],
+      "id": "recoverAddress",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "signature",
+        "operation": "verifyMessage",
+        "message": "Hello from n8n-ethereum! This is a test message.",
+        "signature": "={{ $('Sign Message').item.json.signature }}",
+        "address": "={{ $json.address }}"
+      },
+      "name": "Verify Message",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 400],
+      "id": "verifyMessage",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "signature",
+        "operation": "signTypedData",
+        "domain": "{\"name\": \"n8n-ethereum Test\", \"version\": \"1\", \"chainId\": 31337}",
+        "types": "{\"Message\": [{\"name\": \"content\", \"type\": \"string\"}, {\"name\": \"timestamp\", \"type\": \"uint256\"}]}",
+        "primaryType": "Message",
+        "message": "{\"content\": \"Test typed data\", \"timestamp\": 1234567890}"
+      },
+      "name": "Sign Typed Data",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [440, 600],
+      "id": "signTypedData",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "signature",
+        "operation": "signSiwe",
+        "domain": "example.com",
+        "uri": "https://example.com/login",
+        "nonce": "random-nonce-12345",
+        "statement": "Sign in to n8n-ethereum test app"
+      },
+      "name": "Sign SIWE Message",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 600],
+      "id": "signSiwe",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sign Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sign Typed Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign Message": {
+      "main": [
+        [
+          {
+            "node": "Recover Address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recover Address": {
+      "main": [
+        [
+          {
+            "node": "Verify Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign Typed Data": {
+      "main": [
+        [
+          {
+            "node": "Sign SIWE Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,295 @@
+{
+  "name": "05 - ERC1155 Multi-Token Operations",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Workflow Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 400],
+      "id": "trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst deployed = JSON.parse(fs.readFileSync('/app/deployed-contracts.json', 'utf8'));\nreturn { contractAddress: deployed.contracts.TestERC1155 };"
+      },
+      "name": "Get Contract Address",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 400],
+      "id": "getAddress"
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "balanceOf",
+        "contractAddress": "={{ $json.contractAddress }}",
+        "account": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "tokenId": "1"
+      },
+      "name": "Get Balance Of Token 1",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 300],
+      "id": "balanceOf",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "balanceOfBatch",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "accounts": "[\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\", \"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\", \"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\"]",
+        "tokenIds": "[1, 2, 3]"
+      },
+      "name": "Get Batch Balances",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 300],
+      "id": "balanceOfBatch",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "uri",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "tokenId": "1"
+      },
+      "name": "Get Token URI",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 300],
+      "id": "uri",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "safeTransferFrom",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "tokenId": "1",
+        "amount": "10"
+      },
+      "name": "Transfer Token 1",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 500],
+      "id": "safeTransferFrom",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "balanceOf",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "account": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "tokenId": "1"
+      },
+      "name": "Verify Recipient Balance",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 500],
+      "id": "verifyBalance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "safeBatchTransferFrom",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "tokenIds": "[2, 3]",
+        "amounts": "[5, 3]"
+      },
+      "name": "Batch Transfer",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 500],
+      "id": "safeBatchTransferFrom",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "setApprovalForAll",
+        "contractAddress": "={{ $('Get Contract Address').item.json.contractAddress }}",
+        "operator": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "approved": true
+      },
+      "name": "Set Approval For All",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 700],
+      "id": "setApprovalForAll",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "isApprovedForAll",
+        "contractAddress": "="{{ $('Get Contract Address').item.json.contractAddress }}",
+        "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "operator": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+      },
+      "name": "Check Approval Status",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 700],
+      "id": "isApprovedForAll",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Contract Address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contract Address": {
+      "main": [
+        [
+          {
+            "node": "Get Balance Of Token 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transfer Token 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Approval For All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Balance Of Token 1": {
+      "main": [
+        [
+          {
+            "node": "Get Batch Balances",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Batch Balances": {
+      "main": [
+        [
+          {
+            "node": "Get Token URI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transfer Token 1": {
+      "main": [
+        [
+          {
+            "node": "Verify Recipient Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Recipient Balance": {
+      "main": [
+        [
+          {
+            "node": "Batch Transfer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Approval For All": {
+      "main": [
+        [
+          {
+            "node": "Check Approval Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,230 @@
+{
+  "name": "03 - ERC20 Token Operations",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Workflow Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 400],
+      "id": "trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst deployed = JSON.parse(fs.readFileSync('/app/deployed-contracts.json', 'utf8'));\nreturn { tokenAddress: deployed.contracts.TestERC20 };"
+      },
+      "name": "Get Token Address",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 400],
+      "id": "getAddress"
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "getTokenInfo",
+        "tokenAddress": "={{ $json.tokenAddress }}"
+      },
+      "name": "Get Token Info",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 300],
+      "id": "getTokenInfo",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "getBalance",
+        "tokenAddress": "={{ $('Get Token Address').item.json.tokenAddress }}",
+        "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      },
+      "name": "Get Owner Balance",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 300],
+      "id": "getBalance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "transfer",
+        "tokenAddress": "={{ $('Get Token Address').item.json.tokenAddress }}",
+        "to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "amount": "100",
+        "decimals": 18
+      },
+      "name": "Transfer Tokens",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [660, 500],
+      "id": "transfer",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "getBalance",
+        "tokenAddress": "={{ $('Get Token Address').item.json.tokenAddress }}",
+        "address": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+      },
+      "name": "Get Recipient Balance",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [880, 500],
+      "id": "getRecipientBalance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "approve",
+        "tokenAddress": "={{ $('Get Token Address').item.json.tokenAddress }}",
+        "spender": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "amount": "50",
+        "decimals": 18
+      },
+      "name": "Approve Spender",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1100, 500],
+      "id": "approve",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        },
+        "ethereumAccount": {
+          "id": "1",
+          "name": "Test Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "getAllowance",
+        "tokenAddress": "={{ $('Get Token Address').item.json.tokenAddress }}",
+        "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "spender": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+      },
+      "name": "Get Allowance",
+      "type": "n8n-nodes-ethereum.ethereum",
+      "typeVersion": 1,
+      "position": [1320, 500],
+      "id": "getAllowance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "1",
+          "name": "Local Hardhat"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Token Address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Token Address": {
+      "main": [
+        [
+          {
+            "node": "Get Token Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transfer Tokens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Token Info": {
+      "main": [
+        [
+          {
+            "node": "Get Owner Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transfer Tokens": {
+      "main": [
+        [
+          {
+            "node": "Get Recipient Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recipient Balance": {
+      "main": [
+        [
+          {
+            "node": "Approve Spender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Spender": {
+      "main": [
+        [
+          {
+            "node": "Get Allowance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+hardhat/node_modules/
+
+# Hardhat files
+hardhat/cache/
+hardhat/artifacts/
+hardhat/.openzeppelin/
+hardhat/deployed-contracts.json
+
+# n8n data
+.n8n/
+
+# Test reports
+*.log
+test-report.json
+
+# Docker volumes
+volumes/
