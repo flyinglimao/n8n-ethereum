@@ -15,6 +15,16 @@ HARDHAT_URL="http://localhost:8545"
 TEST_ACCOUNT="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 TEST_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
+# Detect docker compose command
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
+    echo "Error: Neither 'docker-compose' nor 'docker compose' is available"
+    exit 1
+fi
+
 # Result tracking
 declare -a PASSED_WORKFLOWS=()
 declare -a FAILED_WORKFLOWS=()
@@ -24,6 +34,37 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║         n8n-ethereum Automated Test Suite                     ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
+
+# Error handler to ensure report is generated even on failure
+cleanup_and_report() {
+    local exit_code=$?
+    if [ ! -f /tmp/test-report.json ]; then
+        # Generate a basic error report if main report wasn't created
+        cat > /tmp/test-report.json <<EOF
+{
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "total": 0,
+  "passed": 0,
+  "failed": 0,
+  "passedWorkflows": [],
+  "failedWorkflows": [],
+  "error": "Test suite failed before completion"
+}
+EOF
+        echo -e "${RED}⚠️  Test suite failed before completion. Basic report generated.${NC}"
+    fi
+
+    # Cleanup docker if running
+    if [ -n "$DOCKER_COMPOSE" ]; then
+        cd "$(dirname "$0")/.." 2>/dev/null
+        echo -e "${YELLOW}🧹 Cleaning up Docker services...${NC}"
+        $DOCKER_COMPOSE down -v 2>/dev/null || true
+    fi
+
+    exit $exit_code
+}
+
+trap cleanup_and_report EXIT ERR
 
 # Function to print section header
 print_header() {
@@ -218,14 +259,25 @@ generate_report() {
     echo ""
 
     # Save report to file
+    local passed_json="[]"
+    local failed_json="[]"
+
+    if [ $pass_count -gt 0 ]; then
+        passed_json=$(printf '%s\n' "${PASSED_WORKFLOWS[@]}" | jq -R . | jq -s .)
+    fi
+
+    if [ $fail_count -gt 0 ]; then
+        failed_json=$(printf '%s\n' "${FAILED_WORKFLOWS[@]}" | jq -R . | jq -s .)
+    fi
+
     cat > /tmp/test-report.json <<EOF
 {
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "total": $total_count,
   "passed": $pass_count,
   "failed": $fail_count,
-  "passedWorkflows": $(printf '%s\n' "${PASSED_WORKFLOWS[@]}" | jq -R . | jq -s .),
-  "failedWorkflows": $(printf '%s\n' "${FAILED_WORKFLOWS[@]}" | jq -R . | jq -s .)
+  "passedWorkflows": $passed_json,
+  "failedWorkflows": $failed_json
 }
 EOF
 
@@ -245,8 +297,8 @@ main() {
     cd "$(dirname "$0")/.."
 
     print_header "Step 1: Starting Docker Services"
-    echo -e "${YELLOW}🐳 Starting Docker Compose...${NC}"
-    docker-compose up -d
+    echo -e "${YELLOW}🐳 Starting Docker Compose (using: $DOCKER_COMPOSE)...${NC}"
+    $DOCKER_COMPOSE up -d
 
     print_header "Step 2: Waiting for Services"
     wait_for_service "$HARDHAT_URL" "Hardhat" || exit 1
@@ -254,11 +306,11 @@ main() {
 
     print_header "Step 3: Deploying Contracts"
     echo -e "${YELLOW}📦 Compiling and deploying contracts...${NC}"
-    docker-compose exec -T hardhat sh -c "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost"
+    $DOCKER_COMPOSE exec -T hardhat sh -c "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost"
 
     print_header "Step 4: Funding Test Account"
     echo -e "${YELLOW}💰 Funding test account with ETH...${NC}"
-    docker-compose exec -T hardhat npx hardhat run scripts/fund-account.js --network localhost
+    $DOCKER_COMPOSE exec -T hardhat npx hardhat run scripts/fund-account.js --network localhost
 
     print_header "Step 5: Setting up n8n Credentials"
     sleep 5
@@ -285,9 +337,12 @@ main() {
 
     local exit_code=$?
 
+    # Disable trap before manual cleanup
+    trap - EXIT ERR
+
     print_header "Step 9: Cleanup"
     echo -e "${YELLOW}🧹 Stopping Docker services...${NC}"
-    docker-compose down -v
+    $DOCKER_COMPOSE down -v
 
     exit $exit_code
 }
