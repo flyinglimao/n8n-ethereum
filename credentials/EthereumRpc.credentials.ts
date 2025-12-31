@@ -1,4 +1,8 @@
-import { ICredentialType, INodeProperties } from "n8n-workflow";
+import {
+  ICredentialType,
+  INodeProperties,
+  ICredentialTestRequest,
+} from "n8n-workflow";
 import { chainOptions } from "../utils/chainConfig";
 
 export class EthereumRpc implements ICredentialType {
@@ -36,4 +40,31 @@ export class EthereumRpc implements ICredentialType {
         "Maximum number of blocks to query in a single request. Used to prevent timeouts when querying large block ranges.",
     },
   ];
+
+  test: ICredentialTestRequest = {
+    request: {
+      baseURL: "={{$credentials.rpcUrl}}",
+      url: "",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        jsonrpc: "2.0",
+        method: "eth_blockNumber",
+        params: [],
+        id: 1,
+      },
+    },
+    rules: [
+      {
+        type: "responseSuccessBody",
+        properties: {
+          key: "result",
+          value: "/.+/",
+          message: "RPC connection successful: received valid block number",
+        },
+      },
+    ],
+  };
 }
