@@ -75,13 +75,38 @@ function createWalletClient(
     const formattedKey = privateKey.startsWith("0x")
       ? (privateKey as `0x${string}`)
       : (`0x${privateKey}` as `0x${string}`);
-    account = privateKeyToAccount(formattedKey);
+    
+    // Validate private key format
+    const keyWithoutPrefix = formattedKey.slice(2);
+    if (keyWithoutPrefix.length !== 64 || !/^[0-9a-fA-F]+$/.test(keyWithoutPrefix)) {
+      throw new Error('Invalid private key format. Must be 64 hexadecimal characters.');
+    }
+    
+    try {
+      account = privateKeyToAccount(formattedKey);
+    } catch (error: any) {
+      throw new Error(`Invalid private key: ${error.message}`);
+    }
   } else if (hasMnemonic) {
     const mnemonic = accountCredentials.mnemonic as string;
-    const accountIndex = (accountCredentials.accountIndex as number) || 0;
-    account = mnemonicToAccount(mnemonic, {
-      accountIndex,
-    });
+    
+    // Validate mnemonic format (12 or 24 words)
+    const words = mnemonic.trim().split(/\s+/);
+    if (words.length !== 12 && words.length !== 24) {
+      throw new Error('Invalid mnemonic: must be either 12 or 24 words');
+    }
+    
+    const path = (accountCredentials.path as string) || "m/44'/60'/0'/0/0";
+    const passphrase = (accountCredentials.passphrase as string) || '';
+    
+    try {
+      account = mnemonicToAccount(mnemonic, {
+        path: path as any,
+        ...(passphrase && { passphrase }),
+      });
+    } catch (error: any) {
+      throw new Error(`Invalid mnemonic or derivation path: ${error.message}`);
+    }
   } else {
     throw new Error(
       "Private Key or Mnemonic Phrase is required in the Ethereum Account credential for write operations"

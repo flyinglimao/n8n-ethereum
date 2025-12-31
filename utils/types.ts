@@ -9,6 +9,8 @@ export interface RpcNodeCredentials {
 export interface WalletCredentials {
 	privateKey?: string;
 	mnemonic?: string;
+	path?: string;
+	passphrase?: string;
 }
 
 export interface AbiCredentials {
