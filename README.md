@@ -52,7 +52,8 @@ Wallet credentials for signing transactions. **Optional** for read operations.
 
 - **Private Key** (optional): 64-character hex private key (with or without 0x prefix)
 - **Mnemonic Phrase** (optional): 12 or 24-word seed phrase
-- **Account Index**: Derivation index for mnemonic (default: 0)
+- **Derivation Path**: BIP-44 path for deriving account from mnemonic (default: `m/44'/60'/0'/0/0`)
+- **Passphrase**: Optional passphrase for BIP-39 mnemonic
 
 **Note**: At least one of Private Key or Mnemonic is required for write operations. Read operations don't need this credential.
 
