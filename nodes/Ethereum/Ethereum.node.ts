@@ -2017,17 +2017,16 @@ export class Ethereum implements INodeType {
           }
 
           const operation = this.getCurrentNodeParameter("operation") as string;
-          const isRead = operation === "read";
+          const isWrite = operation === "write";
 
           const options: INodePropertyOptions[] = [];
           for (const item of abi) {
             if (item.type !== "function") continue;
 
-            // Filter by state mutability for read vs write
+            // For write operations, filter out view/pure functions
             const isViewOrPure =
               item.stateMutability === "view" || item.stateMutability === "pure";
-            if (isRead && !isViewOrPure) continue;
-            if (!isRead && isViewOrPure) continue;
+            if (isWrite && isViewOrPure) continue;
 
             // Build function signature for display
             const inputs =
@@ -2049,9 +2048,9 @@ export class Ethereum implements INodeType {
           }
 
           if (options.length === 0) {
-            const message = isRead
-              ? "(No view/pure functions found)"
-              : "(No state-changing functions found)";
+            const message = isWrite
+              ? "(No state-changing functions found)"
+              : "(No functions found)";
             return [{ name: message, value: "" }];
           }
 
