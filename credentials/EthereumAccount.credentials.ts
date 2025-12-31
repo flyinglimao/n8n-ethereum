@@ -1,9 +1,6 @@
 import {
 	ICredentialType,
 	INodeProperties,
-	ICredentialTestRequest,
-	IAuthenticateGeneric,
-	ICredentialDataDecryptedObject,
 } from 'n8n-workflow';
 
 export class EthereumAccount implements ICredentialType {
@@ -54,18 +51,4 @@ export class EthereumAccount implements ICredentialType {
 			description: 'Optional passphrase for BIP-39 mnemonic. Only used when mnemonic is provided.',
 		},
 	];
-
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '',
-			url: '',
-			method: 'POST',
-			body: {
-				jsonrpc: '2.0',
-				method: 'web3_clientVersion',
-				params: [],
-				id: 1,
-			},
-		},
-	};
 }
