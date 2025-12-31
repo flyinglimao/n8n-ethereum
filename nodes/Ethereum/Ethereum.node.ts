@@ -99,9 +99,16 @@ function createWalletClient(
     const path = (accountCredentials.path as string) || "m/44'/60'/0'/0/0";
     const passphrase = (accountCredentials.passphrase as string) || '';
     
+    // Validate path format (must start with m/44'/60'/)
+    if (!path.startsWith("m/44'/60'/")) {
+      throw new Error(`Invalid derivation path: must start with m/44'/60'/`);
+    }
+    
     try {
+      // Type assertion is necessary here as the path string format cannot be 
+      // statically verified to match viem's template literal type at compile time
       account = mnemonicToAccount(mnemonic, {
-        path: path as any,
+        path: path as `m/44'/60'/${string}`,
         ...(passphrase && { passphrase }),
       });
     } catch (error: any) {
