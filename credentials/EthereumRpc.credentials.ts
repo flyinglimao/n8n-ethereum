@@ -48,7 +48,12 @@ export class EthereumRpc implements ICredentialType {
     requestOptions: IHttpRequestOptions
   ): Promise<IHttpRequestOptions> {
     // Parse and merge custom headers if provided
-    if (credentials.customHeaders) {
+    if (
+      credentials.customHeaders &&
+      typeof credentials.customHeaders === "string" &&
+      credentials.customHeaders.trim() !== "" &&
+      credentials.customHeaders.trim() !== "{}"
+    ) {
       try {
         const customHeaders = JSON.parse(
           credentials.customHeaders as string
@@ -58,7 +63,9 @@ export class EthereumRpc implements ICredentialType {
           ...customHeaders,
         };
       } catch (error) {
-        throw new Error(`Invalid custom headers JSON: ${error}`);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new Error(`Invalid custom headers JSON: ${errorMessage}`);
       }
     }
     return requestOptions;
@@ -84,7 +91,7 @@ export class EthereumRpc implements ICredentialType {
         type: "responseSuccessBody",
         properties: {
           key: "result",
-          value: "/.+/",
+          value: "/^0x[0-9a-fA-F]+$/",
           message: "RPC connection successful: received valid block number",
         },
       },
