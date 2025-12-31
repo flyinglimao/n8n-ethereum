@@ -2,6 +2,8 @@ import {
   ICredentialType,
   INodeProperties,
   ICredentialTestRequest,
+  ICredentialDataDecryptedObject,
+  IHttpRequestOptions,
 } from "n8n-workflow";
 import { chainOptions } from "../utils/chainConfig";
 
@@ -40,6 +42,27 @@ export class EthereumRpc implements ICredentialType {
         "Maximum number of blocks to query in a single request. Used to prevent timeouts when querying large block ranges.",
     },
   ];
+
+  async authenticate(
+    credentials: ICredentialDataDecryptedObject,
+    requestOptions: IHttpRequestOptions
+  ): Promise<IHttpRequestOptions> {
+    // Parse and merge custom headers if provided
+    if (credentials.customHeaders) {
+      try {
+        const customHeaders = JSON.parse(
+          credentials.customHeaders as string
+        );
+        requestOptions.headers = {
+          ...requestOptions.headers,
+          ...customHeaders,
+        };
+      } catch (error) {
+        throw new Error(`Invalid custom headers JSON: ${error}`);
+      }
+    }
+    return requestOptions;
+  }
 
   test: ICredentialTestRequest = {
     request: {
