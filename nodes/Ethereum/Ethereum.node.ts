@@ -716,7 +716,7 @@ export class Ethereum implements INodeType {
             operation: ["deploy"],
           },
         },
-        default: true,
+        default: false,
         description:
           "Whether to deploy using raw bytecode directly. When enabled, only bytecode is needed (constructor args should already be encoded in bytecode). When disabled, provide ABI and constructor args separately.",
       },
@@ -784,7 +784,10 @@ export class Ethereum implements INodeType {
       {
         displayName: "Event Name",
         name: "eventName",
-        type: "string",
+        type: "options",
+        typeOptions: {
+          loadOptionsMethod: "getEvents",
+        },
         required: true,
         displayOptions: {
           show: {
@@ -793,8 +796,7 @@ export class Ethereum implements INodeType {
           },
         },
         default: "",
-        placeholder: "Transfer",
-        description: "Event name to filter",
+        description: "Select the event to filter from the ABI",
       },
       {
         displayName: "Event Arguments Filter",
@@ -1900,7 +1902,10 @@ export class Ethereum implements INodeType {
       {
         displayName: "Function Name",
         name: "functionName",
-        type: "string",
+        type: "options",
+        typeOptions: {
+          loadOptionsMethod: "getUtilsFunctions",
+        },
         required: true,
         displayOptions: {
           show: {
@@ -1909,6 +1914,7 @@ export class Ethereum implements INodeType {
           },
         },
         default: "",
+        description: "Select the function to encode from the ABI",
       },
       {
         displayName: "Arguments",
@@ -2047,6 +2053,98 @@ export class Ethereum implements INodeType {
               ? "(No view/pure functions found)"
               : "(No state-changing functions found)";
             return [{ name: message, value: "" }];
+          }
+
+          return options;
+        } catch (error) {
+          return [{ name: "(Invalid ABI JSON)", value: "" }];
+        }
+      },
+
+      async getEvents(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        const abiStr = this.getCurrentNodeParameter("logsAbi") as string;
+        if (!abiStr || abiStr === "[]") {
+          return [{ name: "(Enter ABI first)", value: "" }];
+        }
+
+        try {
+          const abi = JSON.parse(abiStr);
+          if (!Array.isArray(abi)) {
+            return [{ name: "(Invalid ABI format)", value: "" }];
+          }
+
+          const options: INodePropertyOptions[] = [];
+          for (const item of abi) {
+            if (item.type !== "event") continue;
+
+            // Build event signature for display
+            const inputs =
+              item.inputs
+                ?.map((input: { type: string; name?: string; indexed?: boolean }) => {
+                  const indexed = input.indexed ? " indexed" : "";
+                  const name = input.name || "";
+                  return name ? `${input.type}${indexed} ${name}` : `${input.type}${indexed}`;
+                })
+                .join(", ") || "";
+
+            const signature = `${item.name}(${inputs})`;
+            options.push({
+              name: signature,
+              value: item.name,
+            });
+          }
+
+          if (options.length === 0) {
+            return [{ name: "(No events found in ABI)", value: "" }];
+          }
+
+          return options;
+        } catch (error) {
+          return [{ name: "(Invalid ABI JSON)", value: "" }];
+        }
+      },
+
+      async getUtilsFunctions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        const abiStr = this.getCurrentNodeParameter("abi") as string;
+        if (!abiStr || abiStr === "[]") {
+          return [{ name: "(Enter ABI first)", value: "" }];
+        }
+
+        try {
+          const abi = JSON.parse(abiStr);
+          if (!Array.isArray(abi)) {
+            return [{ name: "(Invalid ABI format)", value: "" }];
+          }
+
+          const options: INodePropertyOptions[] = [];
+          for (const item of abi) {
+            if (item.type !== "function") continue;
+
+            // Build function signature for display
+            const inputs =
+              item.inputs
+                ?.map((input: { type: string; name?: string }) => {
+                  const name = input.name || "";
+                  return name ? `${input.type} ${name}` : input.type;
+                })
+                .join(", ") || "";
+
+            const signature = `${item.name}(${inputs})`;
+            options.push({
+              name: signature,
+              value: item.name,
+              description: item.stateMutability
+                ? `(${item.stateMutability})`
+                : undefined,
+            });
+          }
+
+          if (options.length === 0) {
+            return [{ name: "(No functions found in ABI)", value: "" }];
           }
 
           return options;
