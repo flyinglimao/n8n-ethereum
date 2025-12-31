@@ -1,6 +1,8 @@
 import {
   IExecuteFunctions,
+  ILoadOptionsFunctions,
   INodeExecutionData,
+  INodePropertyOptions,
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
@@ -633,7 +635,8 @@ export class Ethereum implements INodeType {
         displayOptions: {
           show: {
             resource: ["contract"],
-            operation: ["read", "write", "deploy"],
+            operation: ["read", "write"],
+            useRawCalldata: [false],
           },
         },
         default: "[]",
@@ -656,7 +659,10 @@ export class Ethereum implements INodeType {
       {
         displayName: "Function Name",
         name: "functionName",
-        type: "string",
+        type: "options",
+        typeOptions: {
+          loadOptionsMethod: "getFunctions",
+        },
         required: true,
         displayOptions: {
           show: {
@@ -666,7 +672,7 @@ export class Ethereum implements INodeType {
           },
         },
         default: "",
-        description: "Name of the function to call",
+        description: "Select the function to call from the ABI",
       },
       {
         displayName: "Parameters",
@@ -701,6 +707,20 @@ export class Ethereum implements INodeType {
 
       // Contract: Deploy
       {
+        displayName: "Use Raw Bytecode",
+        name: "useRawBytecode",
+        type: "boolean",
+        displayOptions: {
+          show: {
+            resource: ["contract"],
+            operation: ["deploy"],
+          },
+        },
+        default: true,
+        description:
+          "Whether to deploy using raw bytecode directly. When enabled, only bytecode is needed (constructor args should already be encoded in bytecode). When disabled, provide ABI and constructor args separately.",
+      },
+      {
         displayName: "Bytecode",
         name: "bytecode",
         type: "string",
@@ -713,7 +733,23 @@ export class Ethereum implements INodeType {
         },
         default: "",
         placeholder: "0x...",
-        description: "Contract bytecode",
+        description:
+          "Contract bytecode. If using raw bytecode mode, this should include encoded constructor arguments.",
+      },
+      {
+        displayName: "ABI",
+        name: "deployAbi",
+        type: "json",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["contract"],
+            operation: ["deploy"],
+            useRawBytecode: [false],
+          },
+        },
+        default: "[]",
+        description: "Contract ABI as JSON array (required for encoding constructor arguments)",
       },
       {
         displayName: "Constructor Arguments",
@@ -723,6 +759,7 @@ export class Ethereum implements INodeType {
           show: {
             resource: ["contract"],
             operation: ["deploy"],
+            useRawBytecode: [false],
           },
         },
         default: "[]",
@@ -1957,6 +1994,69 @@ export class Ethereum implements INodeType {
     ],
   };
 
+  methods = {
+    loadOptions: {
+      async getFunctions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        const abiStr = this.getCurrentNodeParameter("abi") as string;
+        if (!abiStr || abiStr === "[]") {
+          return [{ name: "(Enter ABI first)", value: "" }];
+        }
+
+        try {
+          const abi = JSON.parse(abiStr);
+          if (!Array.isArray(abi)) {
+            return [{ name: "(Invalid ABI format)", value: "" }];
+          }
+
+          const operation = this.getCurrentNodeParameter("operation") as string;
+          const isRead = operation === "read";
+
+          const options: INodePropertyOptions[] = [];
+          for (const item of abi) {
+            if (item.type !== "function") continue;
+
+            // Filter by state mutability for read vs write
+            const isViewOrPure =
+              item.stateMutability === "view" || item.stateMutability === "pure";
+            if (isRead && !isViewOrPure) continue;
+            if (!isRead && isViewOrPure) continue;
+
+            // Build function signature for display
+            const inputs =
+              item.inputs
+                ?.map((input: { type: string; name?: string }) => {
+                  const name = input.name || "";
+                  return name ? `${input.type} ${name}` : input.type;
+                })
+                .join(", ") || "";
+
+            const signature = `${item.name}(${inputs})`;
+            options.push({
+              name: signature,
+              value: item.name,
+              description: item.stateMutability
+                ? `(${item.stateMutability})`
+                : undefined,
+            });
+          }
+
+          if (options.length === 0) {
+            const message = isRead
+              ? "(No view/pure functions found)"
+              : "(No state-changing functions found)";
+            return [{ name: message, value: "" }];
+          }
+
+          return options;
+        } catch (error) {
+          return [{ name: "(Invalid ABI JSON)", value: "" }];
+        }
+      },
+    },
+  };
+
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
     const returnData: INodeExecutionData[] = [];
@@ -2216,8 +2316,6 @@ export class Ethereum implements INodeType {
               "contractAddress",
               i
             ) as string;
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
             const useRawCalldata = this.getNodeParameter(
               "useRawCalldata",
               i
@@ -2233,6 +2331,8 @@ export class Ethereum implements INodeType {
                 data: result.data,
               };
             } else {
+              const abiStr = this.getNodeParameter("abi", i) as string;
+              const abi = JSON.parse(abiStr);
               const functionName = this.getNodeParameter(
                 "functionName",
                 i
@@ -2272,8 +2372,6 @@ export class Ethereum implements INodeType {
               "contractAddress",
               i
             ) as string;
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
             const useRawCalldata = this.getNodeParameter(
               "useRawCalldata",
               i
@@ -2291,6 +2389,8 @@ export class Ethereum implements INodeType {
                 transactionHash: hash,
               };
             } else {
+              const abiStr = this.getNodeParameter("abi", i) as string;
+              const abi = JSON.parse(abiStr);
               const functionName = this.getNodeParameter(
                 "functionName",
                 i
@@ -2328,23 +2428,39 @@ export class Ethereum implements INodeType {
               walletCredentials
             );
 
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
             const bytecode = this.getNodeParameter("bytecode", i) as string;
-            const constructorArgsStr = this.getNodeParameter(
-              "constructorArgs",
-              i,
-              "[]"
-            ) as string;
-            const constructorArgs = JSON.parse(constructorArgsStr);
+            const useRawBytecode = this.getNodeParameter(
+              "useRawBytecode",
+              i
+            ) as boolean;
 
-            const hash = await walletClient.deployContract({
-              abi,
-              bytecode: bytecode as `0x${string}`,
-              args: constructorArgs,
-              account: walletClient.account!,
-              chain: undefined,
-            });
+            let hash: string;
+            if (useRawBytecode) {
+              // Deploy using raw bytecode directly (constructor args already encoded)
+              hash = await walletClient.sendTransaction({
+                account: walletClient.account!,
+                data: bytecode as `0x${string}`,
+                chain: undefined,
+              });
+            } else {
+              // Deploy using ABI and constructor args (viem encodes them)
+              const abiStr = this.getNodeParameter("deployAbi", i) as string;
+              const abi = JSON.parse(abiStr);
+              const constructorArgsStr = this.getNodeParameter(
+                "constructorArgs",
+                i,
+                "[]"
+              ) as string;
+              const constructorArgs = JSON.parse(constructorArgsStr);
+
+              hash = await walletClient.deployContract({
+                abi,
+                bytecode: bytecode as `0x${string}`,
+                args: constructorArgs,
+                account: walletClient.account!,
+                chain: undefined,
+              });
+            }
 
             responseData = {
               transactionHash: hash,
