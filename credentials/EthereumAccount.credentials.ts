@@ -1,6 +1,9 @@
 import {
 	ICredentialType,
 	INodeProperties,
+	ICredentialTestRequest,
+	IAuthenticateGeneric,
+	ICredentialDataDecryptedObject,
 } from 'n8n-workflow';
 
 export class EthereumAccount implements ICredentialType {
@@ -32,11 +35,37 @@ export class EthereumAccount implements ICredentialType {
 			description: 'The 12 or 24 word mnemonic phrase (seed phrase) of your wallet. Leave empty if using private key.',
 		},
 		{
-			displayName: 'Account Index',
-			name: 'accountIndex',
-			type: 'number',
-			default: 0,
-			description: 'The account index to derive from the mnemonic (default: 0). Only used when mnemonic is provided.',
+			displayName: 'Derivation Path',
+			name: 'path',
+			type: 'string',
+			default: "m/44'/60'/0'/0/0",
+			placeholder: "m/44'/60'/0'/0/0",
+			description: 'The BIP-44 derivation path to use when deriving account from mnemonic. Default is the standard Ethereum path. Only used when mnemonic is provided.',
+		},
+		{
+			displayName: 'Passphrase',
+			name: 'passphrase',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			placeholder: 'Optional passphrase',
+			description: 'Optional passphrase for BIP-39 mnemonic. Only used when mnemonic is provided.',
 		},
 	];
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '',
+			url: '',
+			method: 'POST',
+			body: {
+				jsonrpc: '2.0',
+				method: 'web3_clientVersion',
+				params: [],
+				id: 1,
+			},
+		},
+	};
 }
