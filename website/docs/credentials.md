@@ -82,7 +82,8 @@ Never share your private key or mnemonic phrase. Store these credentials securel
 4. **Option B: Mnemonic Phrase**
    - Enter your 12 or 24-word seed phrase
    - Example: `word1 word2 word3 ... word12`
-   - Set **Account Index** (default: 0) to derive different accounts from the same mnemonic
+   - Set **Derivation Path** (default: `m/44'/60'/0'/0/0`) to derive different accounts
+   - Optionally set **Passphrase** for additional BIP-39 security
 
 ### Security Best Practices:
 
@@ -138,7 +139,16 @@ Never share your private key or mnemonic phrase. Store these credentials securel
 ```json
 {
   "mnemonic": "test test test test test test test test test test test junk",
-  "accountIndex": 0
+  "path": "m/44'/60'/0'/0/0",
+  "passphrase": ""
+}
+```
+
+**Using Mnemonic with Custom Path:**
+```json
+{
+  "mnemonic": "test test test test test test test test test test test junk",
+  "path": "m/44'/60'/1'/0/0"
 }
 ```
 
