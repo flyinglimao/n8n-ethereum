@@ -28,6 +28,23 @@ import { privateKeyToAccount, mnemonicToAccount } from "viem/accounts";
 import { getChain } from "../../utils/chainConfig";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "../../utils/constants";
 import { parseViemError } from "../../utils/errorHandling";
+import {
+  transactionProperties,
+  executeTransaction,
+  contractProperties,
+  executeContract,
+  erc721Properties,
+  executeErc721,
+  erc1155Properties,
+  executeErc1155,
+  signatureProperties,
+  executeSignature,
+  utilsOperations,
+  utilsProperties,
+  executeUtils,
+  customRpcProperties,
+  executeCustomRpc,
+} from "./resources";
 
 // Helper functions
 function createPublicClient(credentials: any) {
@@ -47,10 +64,10 @@ function createPublicClient(credentials: any) {
   const transport = isWebSocket
     ? webSocket(rpcUrl)
     : http(rpcUrl, {
-        fetchOptions: {
-          headers,
-        },
-      });
+      fetchOptions: {
+        headers,
+      },
+    });
 
   return viemCreatePublicClient({
     transport,
@@ -75,13 +92,13 @@ function createWalletClient(
     const formattedKey = privateKey.startsWith("0x")
       ? (privateKey as `0x${string}`)
       : (`0x${privateKey}` as `0x${string}`);
-    
+
     // Validate private key format
     const keyWithoutPrefix = formattedKey.slice(2);
     if (keyWithoutPrefix.length !== 64 || !/^[0-9a-fA-F]+$/.test(keyWithoutPrefix)) {
       throw new Error('Invalid private key format. Must be 64 hexadecimal characters.');
     }
-    
+
     try {
       account = privateKeyToAccount(formattedKey);
     } catch (error: any) {
@@ -89,21 +106,21 @@ function createWalletClient(
     }
   } else if (hasMnemonic) {
     const mnemonic = accountCredentials.mnemonic as string;
-    
+
     // Validate mnemonic format (12 or 24 words)
     const words = mnemonic.trim().split(/\s+/);
     if (words.length !== 12 && words.length !== 24) {
       throw new Error('Invalid mnemonic: must be either 12 or 24 words');
     }
-    
+
     const path = (accountCredentials.path as string) || "m/44'/60'/0'/0/0";
     const passphrase = (accountCredentials.passphrase as string) || '';
-    
+
     // Validate path format (must start with m/44'/60'/)
     if (!path.startsWith("m/44'/60'/")) {
       throw new Error(`Invalid derivation path: must start with m/44'/60'/`);
     }
-    
+
     try {
       // Type assertion is necessary here as the path string format cannot be 
       // statically verified to match viem's template literal type at compile time
@@ -135,10 +152,10 @@ function createWalletClient(
   const transport = isWebSocket
     ? webSocket(rpcUrl)
     : http(rpcUrl, {
-        fetchOptions: {
-          headers,
-        },
-      });
+      fetchOptions: {
+        headers,
+      },
+    });
 
   return viemCreateWalletClient({
     account,
@@ -479,126 +496,7 @@ export class Ethereum implements INodeType {
       // ===========================================
       //          Transaction Resource
       // ===========================================
-      {
-        displayName: "Operation",
-        name: "operation",
-        type: "options",
-        noDataExpression: true,
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-          },
-        },
-        options: [
-          {
-            name: "Send Transaction",
-            value: "sendTransaction",
-            description: "Send ETH with optional data",
-            action: "Send a transaction",
-          },
-          {
-            name: "Get Transaction",
-            value: "getTransaction",
-            description: "Get transaction by hash",
-            action: "Get a transaction",
-          },
-          {
-            name: "Get Transaction Receipt",
-            value: "getTransactionReceipt",
-            description: "Get transaction receipt",
-            action: "Get transaction receipt",
-          },
-          {
-            name: "Wait For Transaction",
-            value: "waitForTransaction",
-            description: "Wait for transaction confirmation",
-            action: "Wait for transaction",
-          },
-          {
-            name: "Estimate Gas",
-            value: "estimateGas",
-            description: "Estimate gas for a transaction",
-            action: "Estimate gas",
-          },
-        ],
-        default: "sendTransaction",
-      },
-
-      // Transaction: Send Transaction
-      {
-        displayName: "To Address",
-        name: "to",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-            operation: ["sendTransaction", "estimateGas"],
-          },
-        },
-        default: "",
-        placeholder: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-      },
-      {
-        displayName: "Value (ETH)",
-        name: "value",
-        type: "string",
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-            operation: ["sendTransaction", "estimateGas"],
-          },
-        },
-        default: "0",
-        description: 'Amount of ETH to send (e.g., "0.1" for 0.1 ETH)',
-      },
-      {
-        displayName: "Data",
-        name: "data",
-        type: "string",
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-            operation: ["sendTransaction", "estimateGas"],
-          },
-        },
-        default: "",
-        placeholder: "0x...",
-        description: "Transaction data (optional)",
-      },
-
-      // Transaction: Get Transaction / Get Receipt / Wait
-      {
-        displayName: "Transaction Hash",
-        name: "transactionHash",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-            operation: [
-              "getTransaction",
-              "getTransactionReceipt",
-              "waitForTransaction",
-            ],
-          },
-        },
-        default: "",
-        placeholder: "0x...",
-      },
-      {
-        displayName: "Confirmations",
-        name: "confirmations",
-        type: "number",
-        displayOptions: {
-          show: {
-            resource: ["transaction"],
-            operation: ["waitForTransaction"],
-          },
-        },
-        default: 1,
-        description: "Number of confirmations to wait for",
-      },
+      ...transactionProperties,
 
       // ===========================================
       //          Contract Resource
