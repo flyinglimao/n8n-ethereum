@@ -1,0 +1,90 @@
+{
+  "name": "ERC20 Get Balance",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "erc20-balance",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-erc20-balance-001",
+      "name": "Webhook",
+      "webhookId": "webhook-erc20-balance-001"
+    },
+    {
+      "parameters": {
+        "resource": "erc20",
+        "operation": "getBalance",
+        "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-erc20-balance-001",
+      "name": "ERC20 Get Balance",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-erc20-balance-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "ERC20 Get Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ERC20 Get Balance": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "erc20-balance-001",
+  "id": "ERC20Balance001",
+  "tags": []
+}

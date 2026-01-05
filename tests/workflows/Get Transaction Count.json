@@ -1,0 +1,89 @@
+{
+  "name": "Get Transaction Count",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get-transaction-count",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-tx-count-001",
+      "name": "Webhook",
+      "webhookId": "webhook-tx-count-001"
+    },
+    {
+      "parameters": {
+        "resource": "account",
+        "operation": "getTransactionCount",
+        "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-tx-count-001",
+      "name": "Get Transaction Count",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-tx-count-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Transaction Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Transaction Count": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "tx-count-001",
+  "id": "GetTransactionCount001",
+  "tags": []
+}

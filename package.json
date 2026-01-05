@@ -7,6 +7,10 @@
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "test": "vitest",
+    "test:n8n": "N8N_USER_FOLDER=/tmp/.test-n8n n8n",
+    "test:node": "node tests/scripts/start-hardhat-network.mjs",
+    "test:setup": "node tests/scripts/setup.mjs",
+    "test:deploy": "node tests/scripts/deploy-contracts.mjs",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\""
   },
@@ -39,6 +43,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-viem": "^3.0.1",
+    "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "^22.13.14",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
@@ -52,5 +57,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/flyinglimao/n8n-ethereum.git"
-  }
+  },
+  "type": "module"
 }

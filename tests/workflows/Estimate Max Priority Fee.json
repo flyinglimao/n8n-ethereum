@@ -1,0 +1,88 @@
+{
+  "name": "Estimate Max Priority Fee",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "estimate-priority-fee",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-priority-fee-001",
+      "name": "Webhook",
+      "webhookId": "webhook-priority-fee-001"
+    },
+    {
+      "parameters": {
+        "resource": "gas",
+        "operation": "estimateMaxPriorityFee"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-priority-fee-001",
+      "name": "Estimate Max Priority Fee",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-priority-fee-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Estimate Max Priority Fee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estimate Max Priority Fee": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "priority-fee-001",
+  "id": "EstimateMaxPriorityFee001",
+  "tags": []
+}

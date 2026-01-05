@@ -1,0 +1,90 @@
+{
+  "name": "Get Block",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get-block",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-get-block-001",
+      "name": "Webhook",
+      "webhookId": "webhook-get-block-001"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getBlock",
+        "blockIdentifierType": "tag",
+        "blockTag": "latest"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-get-block-001",
+      "name": "Get Block",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-get-block-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Block": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "get-block-001",
+  "id": "GetBlock001",
+  "tags": []
+}

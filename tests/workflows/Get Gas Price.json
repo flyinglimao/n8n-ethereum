@@ -1,0 +1,88 @@
+{
+  "name": "Get Gas Price",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get-gas-price",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-gas-price-001",
+      "name": "Webhook",
+      "webhookId": "webhook-gas-price-001"
+    },
+    {
+      "parameters": {
+        "resource": "gas",
+        "operation": "getGasPrice"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-gas-price-001",
+      "name": "Get Gas Price",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-gas-price-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Gas Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Gas Price": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "gas-price-001",
+  "id": "GetGasPrice001",
+  "tags": []
+}

@@ -1,0 +1,90 @@
+{
+  "name": "ERC1155 URI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "erc1155-uri",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-erc1155-uri-001",
+      "name": "Webhook",
+      "webhookId": "webhook-erc1155-uri-001"
+    },
+    {
+      "parameters": {
+        "resource": "erc1155",
+        "operation": "uri",
+        "contractAddress": "0x76BE3b62873462d2142405439777e971754E8E77",
+        "id": "1"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-erc1155-uri-001",
+      "name": "ERC1155 URI",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-erc1155-uri-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "ERC1155 URI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ERC1155 URI": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "erc1155-uri-001",
+  "id": "ERC1155URI001",
+  "tags": []
+}

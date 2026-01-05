@@ -1,0 +1,4 @@
+.test-n8n
+node_modules
+.git
+tests

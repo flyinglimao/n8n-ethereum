@@ -11,3 +11,9 @@ dist/
 *~
 coverage/
 .nyc_output/
+.test-n8n/
+artifacts/
+cache/
+typechain-types/
+tests/fixtures/contracts.json
+hardhat.config.js

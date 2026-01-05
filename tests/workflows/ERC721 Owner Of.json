@@ -1,0 +1,90 @@
+{
+  "name": "ERC721 Owner Of",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "erc721-owner-of",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-erc721-owner-001",
+      "name": "Webhook",
+      "webhookId": "webhook-erc721-owner-001"
+    },
+    {
+      "parameters": {
+        "resource": "erc721",
+        "operation": "ownerOf",
+        "contractAddress": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        "tokenId": "1"
+      },
+      "type": "CUSTOM.ethereum",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "node-erc721-owner-001",
+      "name": "ERC721 Owner Of",
+      "credentials": {
+        "ethereumRpc": {
+          "id": "ethereum-rpc",
+          "name": "Ethereum RPC account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "respond-erc721-owner-001",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "ERC721 Owner Of",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ERC721 Owner Of": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "erc721-owner-001",
+  "id": "ERC721OwnerOf001",
+  "tags": []
+}
