@@ -154,25 +154,29 @@ export interface TransactionExecuteParams {
 /**
  * Execute transaction resource operations
  */
+import { NodeOperationError } from "n8n-workflow";
+import type { IExecuteFunctions } from "n8n-workflow";
+
 export async function executeTransaction(
+    this: IExecuteFunctions,
     publicClient: PublicClient,
     walletClient: WalletClient | null,
-    params: TransactionExecuteParams
+    operation: string,
+    i: number
 ): Promise<Record<string, unknown>> {
-    const { operation } = params;
-
     if (operation === "sendTransaction") {
         if (!walletClient || !walletClient.account) {
-            throw new Error(
+            throw new NodeOperationError(
+                this.getNode(),
                 "Ethereum Account credential is required for transaction operations"
             );
         }
 
-        const to = params.to!;
-        const valueStr = params.value || "0";
-        const data = params.data || "0x";
+        const to = this.getNodeParameter("to", i) as string;
+        const valueStr = this.getNodeParameter("value", i) as string;
+        const data = this.getNodeParameter("data", i, "0x") as string;
 
-        const value = parseUnits(valueStr, 18);
+        const value = parseUnits(valueStr || "0", 18);
 
         const hash = await walletClient.sendTransaction({
             account: walletClient.account,
@@ -188,7 +192,7 @@ export async function executeTransaction(
     }
 
     if (operation === "getTransaction") {
-        const hash = params.transactionHash!;
+        const hash = this.getNodeParameter("transactionHash", i) as string;
         const tx = await publicClient.getTransaction({
             hash: hash as `0x${string}`,
         });
@@ -203,7 +207,7 @@ export async function executeTransaction(
     }
 
     if (operation === "getTransactionReceipt") {
-        const hash = params.transactionHash!;
+        const hash = this.getNodeParameter("transactionHash", i) as string;
         const receipt = await publicClient.getTransactionReceipt({
             hash: hash as `0x${string}`,
         });
@@ -217,11 +221,12 @@ export async function executeTransaction(
     }
 
     if (operation === "waitForTransaction") {
-        const hash = params.transactionHash!;
-        const confirmations = params.confirmations || 1;
+        const hash = this.getNodeParameter("transactionHash", i) as string;
+        const confirmations = this.getNodeParameter("confirmations", i) as number;
+
         const receipt = await publicClient.waitForTransactionReceipt({
             hash: hash as `0x${string}`,
-            confirmations,
+            confirmations: confirmations || 1,
         });
         return {
             ...receipt,
@@ -232,11 +237,11 @@ export async function executeTransaction(
     }
 
     if (operation === "estimateGas") {
-        const to = params.to!;
-        const valueStr = params.value || "0";
-        const data = params.data || "0x";
+        const to = this.getNodeParameter("to", i) as string;
+        const valueStr = this.getNodeParameter("value", i) as string;
+        const data = this.getNodeParameter("data", i, "0x") as string;
 
-        const value = parseUnits(valueStr, 18);
+        const value = parseUnits(valueStr || "0", 18);
 
         const gas = await publicClient.estimateGas({
             to: to as `0x${string}`,
@@ -250,5 +255,8 @@ export async function executeTransaction(
         };
     }
 
-    throw new Error(`Unknown transaction operation: ${operation}`);
+    throw new NodeOperationError(
+        this.getNode(),
+        `Unknown transaction operation: ${operation}`
+    );
 }

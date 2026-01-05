@@ -14,6 +14,7 @@
 import { readdir, readFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { deployContracts } from "./deploy-contracts.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -145,14 +146,21 @@ function updateWorkflowCredentials(workflow) {
 /**
  * Import all workflows from JSON files
  */
-async function importWorkflows() {
+async function importWorkflows(deployedAddresses) {
     console.log("\nImporting workflows...");
 
     const files = await readdir(WORKFLOWS_DIR);
     const jsonFiles = files.filter((f) => f.endsWith(".json"));
 
     for (const file of jsonFiles) {
-        const content = await readFile(join(WORKFLOWS_DIR, file), "utf-8");
+        let content = await readFile(join(WORKFLOWS_DIR, file), "utf-8");
+
+        // Replace hardcoded addresses with deployed ones
+        if (deployedAddresses && deployedAddresses.TestERC20) {
+            // USDC Mainnet: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+            content = content.replace(/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/g, deployedAddresses.TestERC20);
+        }
+
         let workflow = JSON.parse(content);
 
         // Update credential references
@@ -218,7 +226,8 @@ export async function setup() {
 
         // Create fresh credentials and workflows
         await createCredentials();
-        await importWorkflows();
+        const deployedAddresses = await deployContracts();
+        await importWorkflows(deployedAddresses);
         await activateAllWorkflows();
 
         console.log("\n" + "=".repeat(60));

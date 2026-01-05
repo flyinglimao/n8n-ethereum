@@ -1215,270 +1215,67 @@ export class Ethereum implements INodeType {
         //          Transaction Resource
         // ===========================================
         else if (resource === "transaction") {
-    const operation = this.getNodeParameter("operation", i) as string;
-    const to = this.getNodeParameter("to", i, "") as string;
-    const value = this.getNodeParameter("value", i, "0") as string;
-    const data = this.getNodeParameter("data", i, "0x") as string;
-    const transactionHash = this.getNodeParameter(
-        "transactionHash",
-        i,
-        ""
-    ) as string;
-    const confirmations = this.getNodeParameter(
-        "confirmations",
-        i,
-        1
-    ) as number;
+          const operation = this.getNodeParameter("operation", i) as string;
+          const to = this.getNodeParameter("to", i, "") as string;
+          const value = this.getNodeParameter("value", i, "0") as string;
+          const data = this.getNodeParameter("data", i, "0x") as string;
+          const transactionHash = this.getNodeParameter(
+            "transactionHash",
+            i,
+            ""
+          ) as string;
+          const confirmations = this.getNodeParameter(
+            "confirmations",
+            i,
+            1
+          ) as number;
 
-    let walletClient = null;
-    if (walletCredentials) {
-        walletClient = createWalletClient(
-            publicClient,
-            rpcCredentials,
-            walletCredentials
-        );
-    }
+          let walletClient = null;
+          if (walletCredentials) {
+            walletClient = createWalletClient(
+              publicClient,
+              rpcCredentials,
+              walletCredentials
+            );
+          }
 
-    responseData = await executeTransaction(publicClient, walletClient, {
-        operation,
-        to,
-        value,
-        data,
-        transactionHash,
-        confirmations,
-    });
-}
+          responseData = await executeTransaction(publicClient, walletClient, {
+            operation,
+            to,
+            value,
+            data,
+            transactionHash,
+            confirmations,
+          });
+        }
 
         // ===========================================
         //          Contract Resource
         // ===========================================
         else if (resource === "contract") {
-          if (operation === "read") {
-            const contractAddress = this.getNodeParameter(
-              "contractAddress",
-              i
-            ) as string;
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
-            const useRawCalldata = this.getNodeParameter(
-              "useRawCalldata",
-              i
-            ) as boolean;
-
-            if (useRawCalldata) {
-              const calldata = this.getNodeParameter("calldata", i) as string;
-              const result = await publicClient.call({
-                to: contractAddress as `0x${string}`,
-                data: calldata as `0x${string}`,
-              });
-              responseData = {
-                data: result.data,
-              };
-            } else {
-              const functionName = this.getNodeParameter(
-                "functionName",
-                i
-              ) as string;
-              const parametersStr = this.getNodeParameter(
-                "parameters",
-                i,
-                "[]"
-              ) as string;
-              const parameters = JSON.parse(parametersStr);
-
-              const result = await publicClient.readContract({
-                address: contractAddress as `0x${string}`,
-                abi,
-                functionName,
-                args: parameters,
-              });
-
-              responseData = {
-                result,
-              };
-            }
-          } else if (operation === "write") {
-            if (!walletCredentials) {
-              throw new NodeOperationError(
-                this.getNode(),
-                "Ethereum Account credential is required for write operations"
-              );
-            }
-            const walletClient = createWalletClient(
+          let walletClient;
+          if (walletCredentials) {
+            walletClient = createWalletClient(
               publicClient,
               rpcCredentials,
               walletCredentials
             );
-
-            const contractAddress = this.getNodeParameter(
-              "contractAddress",
-              i
-            ) as string;
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
-            const useRawCalldata = this.getNodeParameter(
-              "useRawCalldata",
-              i
-            ) as boolean;
-
-            if (useRawCalldata) {
-              const calldata = this.getNodeParameter("calldata", i) as string;
-              const hash = await walletClient.sendTransaction({
-                account: walletClient.account!,
-                to: contractAddress as `0x${string}`,
-                data: calldata as `0x${string}`,
-                chain: undefined,
-              });
-              responseData = {
-                transactionHash: hash,
-              };
-            } else {
-              const functionName = this.getNodeParameter(
-                "functionName",
-                i
-              ) as string;
-              const parametersStr = this.getNodeParameter(
-                "parameters",
-                i,
-                "[]"
-              ) as string;
-              const parameters = JSON.parse(parametersStr);
-
-              const hash = await walletClient.writeContract({
-                address: contractAddress as `0x${string}`,
-                abi,
-                functionName,
-                args: parameters,
-                account: walletClient.account!,
-                chain: undefined,
-              });
-
-              responseData = {
-                transactionHash: hash,
-              };
-            }
-          } else if (operation === "deploy") {
-            if (!walletCredentials) {
-              throw new NodeOperationError(
-                this.getNode(),
-                "Ethereum Account credential is required for deployment"
-              );
-            }
-            const walletClient = createWalletClient(
-              publicClient,
-              rpcCredentials,
-              walletCredentials
-            );
-
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
-            const bytecode = this.getNodeParameter("bytecode", i) as string;
-            const constructorArgsStr = this.getNodeParameter(
-              "constructorArgs",
-              i,
-              "[]"
-            ) as string;
-            const constructorArgs = JSON.parse(constructorArgsStr);
-
-            const hash = await walletClient.deployContract({
-              abi,
-              bytecode: bytecode as `0x${string}`,
-              args: constructorArgs,
-              account: walletClient.account!,
-              chain: undefined,
-            });
-
-            responseData = {
-              transactionHash: hash,
-            };
-          } else if (operation === "getLogs") {
-            const contractAddress = this.getNodeParameter(
-              "contractAddress",
-              i
-            ) as string;
-            const abiStr = this.getNodeParameter("logsAbi", i) as string;
-            const abi = JSON.parse(abiStr);
-            const eventName = this.getNodeParameter("eventName", i) as string;
-            const eventArgsStr = this.getNodeParameter(
-              "eventArgs",
-              i,
-              "{}"
-            ) as string;
-            const eventArgs = JSON.parse(eventArgsStr);
-            const fromBlockStr = this.getNodeParameter(
-              "fromBlock",
-              i
-            ) as string;
-            const toBlockStr = this.getNodeParameter("toBlock", i) as string;
-
-            const fromBlock = parseBlockIdentifier(fromBlockStr);
-            const toBlock = parseBlockIdentifier(toBlockStr);
-
-            // Find event in ABI
-            const eventAbi = abi.find(
-              (item: any) => item.type === "event" && item.name === eventName
-            );
-
-            if (!eventAbi) {
-              throw new NodeOperationError(
-                this.getNode(),
-                `Event "${eventName}" not found in ABI`
-              );
-            }
-
-            // Get logs with event filtering
-            const logs = await publicClient.getLogs({
-              address: contractAddress as `0x${string}`,
-              event: eventAbi,
-              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
-              fromBlock,
-              toBlock,
-            });
-
-            // Decode logs
-            const decodedLogs = logs.map((log: any) => {
-              try {
-                const decoded: any = decodeEventLog({
-                  abi,
-                  data: log.data,
-                  topics: log.topics,
-                });
-
-                return {
-                  address: log.address,
-                  blockNumber: log.blockNumber.toString(),
-                  blockHash: log.blockHash,
-                  transactionHash: log.transactionHash,
-                  transactionIndex: log.transactionIndex,
-                  logIndex: log.logIndex,
-                  removed: log.removed,
-                  eventName: decoded.eventName,
-                  args: decoded.args,
-                };
-              } catch (error) {
-                return {
-                  address: log.address,
-                  blockNumber: log.blockNumber.toString(),
-                  blockHash: log.blockHash,
-                  transactionHash: log.transactionHash,
-                  data: log.data,
-                  topics: log.topics,
-                  error: "Failed to decode event",
-                };
-              }
-            });
-
-            responseData = {
-              logs: decodedLogs,
-            };
           }
+          const executionData = await executeContract.call(
+            this,
+            publicClient,
+            walletClient,
+            operation,
+            i
+          );
+          responseData = executionData.json;
         }
 
         // ===========================================
         //          ERC20 Resource
         // ===========================================
         else if (resource === "erc20") {
-          const executionData = await executeErc20.call(
+          responseData = await executeErc20.call(
             this,
             publicClient,
             walletCredentials
@@ -1487,7 +1284,6 @@ export class Ethereum implements INodeType {
             operation,
             i
           );
-          responseData = executionData.json;
         }
 
         // ===========================================
@@ -1753,7 +1549,7 @@ export class Ethereum implements INodeType {
             const valid = isAddress(address);
             responseData = {
               address,
-              valid,
+              isValid: valid,
             };
           } else if (operation === "getChainId") {
             const chainId = await publicClient.getChainId();

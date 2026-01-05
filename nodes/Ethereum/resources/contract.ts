@@ -196,7 +196,7 @@ function parseBlockIdentifier(blockStr: string): any {
 }
 
 export async function executeContract(
-    context: IExecuteFunctions,
+    this: IExecuteFunctions,
     publicClient: PublicClient,
     walletClient: WalletClient | undefined | null,
     operation: string,
@@ -205,13 +205,13 @@ export async function executeContract(
     const returnData: Record<string, unknown> = {};
 
     if (operation === "read") {
-        const contractAddress = context.getNodeParameter("contractAddress", i) as string;
-        const abiStr = context.getNodeParameter("abi", i) as string;
+        const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+        const abiStr = this.getNodeParameter("abi", i) as string;
         const abi = JSON.parse(abiStr);
-        const useRawCalldata = context.getNodeParameter("useRawCalldata", i) as boolean;
+        const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
 
         if (useRawCalldata) {
-            const calldata = context.getNodeParameter("calldata", i) as string;
+            const calldata = this.getNodeParameter("calldata", i) as string;
             const result = await publicClient.call({
                 to: contractAddress as `0x${string}`,
                 data: calldata as `0x${string}`,
@@ -220,8 +220,8 @@ export async function executeContract(
                 data: result.data,
             };
         } else {
-            const functionName = context.getNodeParameter("functionName", i) as string;
-            const parametersStr = context.getNodeParameter("parameters", i, "[]") as string;
+            const functionName = this.getNodeParameter("functionName", i) as string;
+            const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
             const parameters = JSON.parse(parametersStr);
 
             const result = await publicClient.readContract({
@@ -238,18 +238,18 @@ export async function executeContract(
     } else if (operation === "write") {
         if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
-                context.getNode(),
+                this.getNode(),
                 "Ethereum Account credential is required for write operations"
             );
         }
 
-        const contractAddress = context.getNodeParameter("contractAddress", i) as string;
-        const abiStr = context.getNodeParameter("abi", i) as string;
+        const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+        const abiStr = this.getNodeParameter("abi", i) as string;
         const abi = JSON.parse(abiStr);
-        const useRawCalldata = context.getNodeParameter("useRawCalldata", i) as boolean;
+        const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
 
         if (useRawCalldata) {
-            const calldata = context.getNodeParameter("calldata", i) as string;
+            const calldata = this.getNodeParameter("calldata", i) as string;
             const hash = await walletClient.sendTransaction({
                 account: walletClient.account,
                 to: contractAddress as `0x${string}`,
@@ -260,8 +260,8 @@ export async function executeContract(
                 transactionHash: hash,
             };
         } else {
-            const functionName = context.getNodeParameter("functionName", i) as string;
-            const parametersStr = context.getNodeParameter("parameters", i, "[]") as string;
+            const functionName = this.getNodeParameter("functionName", i) as string;
+            const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
             const parameters = JSON.parse(parametersStr);
 
             const hash = await walletClient.writeContract({
@@ -280,15 +280,15 @@ export async function executeContract(
     } else if (operation === "deploy") {
         if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
-                context.getNode(),
+                this.getNode(),
                 "Ethereum Account credential is required for deployment"
             );
         }
 
-        const abiStr = context.getNodeParameter("abi", i) as string;
+        const abiStr = this.getNodeParameter("abi", i) as string;
         const abi = JSON.parse(abiStr);
-        const bytecode = context.getNodeParameter("bytecode", i) as string;
-        const constructorArgsStr = context.getNodeParameter("constructorArgs", i, "[]") as string;
+        const bytecode = this.getNodeParameter("bytecode", i) as string;
+        const constructorArgsStr = this.getNodeParameter("constructorArgs", i, "[]") as string;
         const constructorArgs = JSON.parse(constructorArgsStr);
 
         const hash = await walletClient.deployContract({
@@ -303,14 +303,14 @@ export async function executeContract(
             transactionHash: hash,
         };
     } else if (operation === "getLogs") {
-        const contractAddress = context.getNodeParameter("contractAddress", i) as string;
-        const abiStr = context.getNodeParameter("logsAbi", i) as string;
+        const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+        const abiStr = this.getNodeParameter("logsAbi", i) as string;
         const abi = JSON.parse(abiStr);
-        const eventName = context.getNodeParameter("eventName", i) as string;
-        const eventArgsStr = context.getNodeParameter("eventArgs", i, "{}") as string;
+        const eventName = this.getNodeParameter("eventName", i) as string;
+        const eventArgsStr = this.getNodeParameter("eventArgs", i, "{}") as string;
         const eventArgs = JSON.parse(eventArgsStr);
-        const fromBlockStr = context.getNodeParameter("fromBlock", i) as string;
-        const toBlockStr = context.getNodeParameter("toBlock", i) as string;
+        const fromBlockStr = this.getNodeParameter("fromBlock", i) as string;
+        const toBlockStr = this.getNodeParameter("toBlock", i) as string;
 
         const fromBlock = parseBlockIdentifier(fromBlockStr);
         const toBlock = parseBlockIdentifier(toBlockStr);
@@ -321,7 +321,7 @@ export async function executeContract(
 
         if (!eventAbi) {
             throw new NodeOperationError(
-                context.getNode(),
+                this.getNode(),
                 `Event "${eventName}" not found in ABI`
             );
         }

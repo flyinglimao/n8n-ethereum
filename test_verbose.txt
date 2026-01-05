@@ -1,0 +1,344 @@
+
+> @0xlimao/n8n-nodes-ethereum@0.2.0 test
+> vitest --reporter=verbose tests/n8n.test.ts
+
+
+[1m[44m DEV [49m[22m [34mv4.0.16 [39m[90m/Users/flyinglimao/Code/n8n-ethereum[39m
+
+
+
+============================================================
+Running Vitest Global Setup
+============================================================
+✓ n8n is running
+✓ Hardhat node is running
+============================================================
+n8n Test Environment Setup
+============================================================
+Deleting existing workflows...
+  Deleted workflow: Parse Units
+  Deleted workflow: Custom RPC Request
+  Deleted workflow: Get Balance
+  Deleted workflow: ERC721 Owner Of
+  Deleted workflow: Format Units
+  Deleted workflow: Contract Read
+  Deleted workflow: Contract Get Logs
+  Deleted workflow: Transaction Trigger
+  Deleted workflow: Get Fee History
+  Deleted workflow: ERC20 Get Token Info
+  Deleted workflow: ERC20 Get Allowance
+  Deleted workflow: Get Code
+  Deleted workflow: Get Block Number
+  Deleted workflow: Validate Address
+  Deleted workflow: Get Block
+  Deleted workflow: Estimate Max Priority Fee
+  Deleted workflow: Keccak256
+  Deleted workflow: ERC721 Token URI
+  Deleted workflow: Get Transaction Receipt
+  Deleted workflow: Estimate Gas
+  Deleted workflow: ERC721 Get Balance
+  Deleted workflow: Get Transaction
+  Deleted workflow: Get Chain ID
+  Deleted workflow: ERC1155 Balance Of
+  Deleted workflow: Get Current Address
+  Deleted workflow: Block Trigger
+  Deleted workflow: ERC20 Get Balance
+  Deleted workflow: Get Transaction Count
+  Deleted workflow: ERC1155 URI
+  Deleted workflow: Contract Event Trigger
+  Deleted workflow: Get Gas Price
+Skipping credential deletion (n8n Community Edition limitation)...
+  Note: Credentials will be created fresh. Duplicates may be rejected.
+
+Creating credentials...
+  Created credential: Ethereum Account (ethereum-account -> rsp193S4OSM3Wb3D)
+  Created credential: Ethereum RPC (ethereum-rpc -> eIlPLaVp8zzgOKfU)
+
+Importing workflows...
+  Imported workflow: Block Trigger (id: fQRm1j7YllJT4030)
+  Imported workflow: Contract Event Trigger (id: jGo62YxfPR3ZBsxe)
+  Imported workflow: Contract Get Logs (id: vBOeOvNYCYThGsv4)
+  Imported workflow: Contract Read (id: clJMT5PVzl7ATMqN)
+  Imported workflow: Custom RPC Request (id: 4clULMOXFfFDiA5z)
+  Imported workflow: ERC1155 Balance Of (id: ULTTw6DUMfLU6L5W)
+  Imported workflow: ERC1155 URI (id: pk5zIWqQxLL2vC7I)
+  Imported workflow: ERC20 Get Allowance (id: mOumUfuEtqipjxfA)
+  Imported workflow: ERC20 Get Balance (id: K7ij1yPIZY7J0DiZ)
+  Imported workflow: ERC20 Get Token Info (id: iMO6gYZ40FeOHNoe)
+  Imported workflow: ERC721 Get Balance (id: g6myt8erWeuBxcts)
+  Imported workflow: ERC721 Owner Of (id: 3QLFrots4eO5dZYg)
+  Imported workflow: ERC721 Token URI (id: iUteeGujpOLHUCqn)
+  Imported workflow: Estimate Gas (id: RSzHooLT66I3Hh49)
+  Imported workflow: Estimate Max Priority Fee (id: VDz6CVMrTwFSsPFP)
+  Imported workflow: Format Units (id: Hk7Yzo63ekEp9gB5)
+  Imported workflow: Get Balance (id: dHqbFwAv53YKRqzt)
+  Imported workflow: Get Block Number (id: jX0Utmc8JtX17lLS)
+  Imported workflow: Get Block (id: hAXUlZYtlr6ZFM9L)
+  Imported workflow: Get Chain ID (id: SAISKu0fbYxm50qV)
+  Imported workflow: Get Code (id: 3onGMyDRXkPFsIvv)
+  Imported workflow: Get Current Address (id: sqd5p8rLliUo33LR)
+  Imported workflow: Get Fee History (id: j886eTNyvH6FMUrW)
+  Imported workflow: Get Gas Price (id: nMLD1P5KmPp5ROQP)
+  Imported workflow: Get Transaction Count (id: EDOibVDS1Ppt0P5O)
+  Imported workflow: Get Transaction Receipt (id: JQaAkofK3MtbHdud)
+  Imported workflow: Get Transaction (id: YvknXX9xEiRS9gNU)
+  Imported workflow: Keccak256 (id: R4mzyC7dbfntTUh2)
+  Imported workflow: Parse Units (id: cBRmPLLlLWahRkGQ)
+  Imported workflow: Transaction Trigger (id: 4Qgk1wbTAo4dXhTp)
+  Imported workflow: Validate Address (id: y8dvtU5sXQ7Ryb3t)
+
+Activating all workflows...
+  Activated: Block Trigger
+  Activated: Contract Event Trigger
+  Activated: Contract Get Logs
+  Activated: Contract Read
+  Activated: Custom RPC Request
+  Activated: ERC1155 Balance Of
+  Activated: ERC1155 URI
+  Activated: ERC20 Get Allowance
+  Activated: ERC20 Get Balance
+  Activated: ERC20 Get Token Info
+  Activated: ERC721 Get Balance
+  Activated: ERC721 Owner Of
+  Activated: ERC721 Token URI
+  Activated: Estimate Gas
+  Activated: Estimate Max Priority Fee
+  Activated: Format Units
+  Activated: Get Balance
+  Activated: Get Block Number
+  Activated: Get Block
+  Activated: Get Chain ID
+  Activated: Get Code
+  Activated: Get Current Address
+  Activated: Get Fee History
+  Activated: Get Gas Price
+  Activated: Get Transaction Count
+  Activated: Get Transaction Receipt
+  Activated: Get Transaction
+  Activated: Keccak256
+  Activated: Parse Units
+  Activated: Transaction Trigger
+  Activated: Validate Address
+
+============================================================
+Setup completed successfully!
+============================================================
+
+Credential ID mappings:
+  ethereum-account -> rsp193S4OSM3Wb3D
+  ethereum-rpc -> eIlPLaVp8zzgOKfU
+
+Workflow ID mappings:
+  Block Trigger: fQRm1j7YllJT4030
+  Contract Event Trigger: jGo62YxfPR3ZBsxe
+  Contract Get Logs: vBOeOvNYCYThGsv4
+  Contract Read: clJMT5PVzl7ATMqN
+  Custom RPC Request: 4clULMOXFfFDiA5z
+  ERC1155 Balance Of: ULTTw6DUMfLU6L5W
+  ERC1155 URI: pk5zIWqQxLL2vC7I
+  ERC20 Get Allowance: mOumUfuEtqipjxfA
+  ERC20 Get Balance: K7ij1yPIZY7J0DiZ
+  ERC20 Get Token Info: iMO6gYZ40FeOHNoe
+  ERC721 Get Balance: g6myt8erWeuBxcts
+  ERC721 Owner Of: 3QLFrots4eO5dZYg
+  ERC721 Token URI: iUteeGujpOLHUCqn
+  Estimate Gas: RSzHooLT66I3Hh49
+  Estimate Max Priority Fee: VDz6CVMrTwFSsPFP
+  Format Units: Hk7Yzo63ekEp9gB5
+  Get Balance: dHqbFwAv53YKRqzt
+  Get Block Number: jX0Utmc8JtX17lLS
+  Get Block: hAXUlZYtlr6ZFM9L
+  Get Chain ID: SAISKu0fbYxm50qV
+  Get Code: 3onGMyDRXkPFsIvv
+  Get Current Address: sqd5p8rLliUo33LR
+  Get Fee History: j886eTNyvH6FMUrW
+  Get Gas Price: nMLD1P5KmPp5ROQP
+  Get Transaction Count: EDOibVDS1Ppt0P5O
+  Get Transaction Receipt: JQaAkofK3MtbHdud
+  Get Transaction: YvknXX9xEiRS9gNU
+  Keccak256: R4mzyC7dbfntTUh2
+  Parse Units: cBRmPLLlLWahRkGQ
+  Transaction Trigger: 4Qgk1wbTAo4dXhTp
+  Validate Address: y8dvtU5sXQ7Ryb3t
+ [31m×[39m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Balance[2m > [22mshould return the balance of an address[32m 32[2mms[22m[39m
+[31m   → expected { …(3) } to have property "balanceInEth"[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Transaction Count[2m > [22mshould return the nonce of an address[32m 10[2mms[22m[39m
+[31m   → expected 'number' to be 'string' // Object.is equality[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Code[2m > [22mshould return bytecode for contract address[32m 20[2mms[22m[39m
+[31m   → expected { …(2) } to have property "isContract"[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Current Address[2m > [22mshould return the current wallet address[32m 20[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mBlock Resource[2m > [22mGet Block[2m > [22mshould return block data[32m 9[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mBlock Resource[2m > [22mGet Block Number[2m > [22mshould return the latest block number[32m 6[2mms[22m[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction[2m > [22mshould return transaction data[32m 10[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction Receipt[2m > [22mshould return transaction receipt[32m 7[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mEstimate Gas[2m > [22mshould estimate gas for a transaction[32m 7[2mms[22m[39m
+[31m   → expected { gas: '21001' } to have property "estimatedGas"[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mContract Resource[2m > [22mContract Read[2m > [22mshould read data from a contract[32m 9[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mContract Resource[2m > [22mContract Get Logs[2m > [22mshould get logs from a contract[32m 7[2mms[22m[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Balance[2m > [22mshould return ERC20 token balance[32m 8[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Token Info[2m > [22mshould return ERC20 token information[32m 11[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Allowance[2m > [22mshould return ERC20 allowance[32m 8[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mGet Balance[2m > [22mshould return ERC721 NFT balance[32m 11[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mOwner Of[2m > [22mshould return owner of NFT token[32m 7[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mToken URI[2m > [22mshould return NFT token URI[32m 8[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mBalance Of[2m > [22mshould return ERC1155 token balance[32m 10[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mURI[2m > [22mshould return ERC1155 token URI[32m 8[2mms[22m[39m
+[31m   → Unexpected end of JSON input[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mGas Resource[2m > [22mGet Gas Price[2m > [22mshould return current gas price[32m 7[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mGas Resource[2m > [22mGet Fee History[2m > [22mshould return fee history[32m 6[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mGas Resource[2m > [22mEstimate Max Priority Fee[2m > [22mshould estimate max priority fee[32m 7[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mFormat Units[2m > [22mshould format wei to decimal[32m 7[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mParse Units[2m > [22mshould parse decimal to wei[32m 6[2mms[22m[39m
+ [31m×[39m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mValidate Address[2m > [22mshould validate Ethereum address[32m 5[2mms[22m[39m
+[31m   → expected { …(2) } to have property "isValid"[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mGet Chain ID[2m > [22mshould return chain ID[32m 6[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mKeccak256[2m > [22mshould hash data with keccak256[32m 5[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mCustom RPC Resource[2m > [22mRequest[2m > [22mshould execute custom RPC request[32m 6[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/n8n.test.ts[2m > [22mTrigger Nodes[2m > [22mBlock Trigger[2m > [22mshould receive new block events
+ [2m[90m↓[39m[22m tests/n8n.test.ts[2m > [22mTrigger Nodes[2m > [22mContract Event Trigger[2m > [22mshould receive contract events when triggered
+ [2m[90m↓[39m[22m tests/n8n.test.ts[2m > [22mTrigger Nodes[2m > [22mTransaction Trigger[2m > [22mshould receive transaction events
+ [32m✓[39m tests/n8n.test.ts[2m > [22mWorkflow File Validation[2m > [22mshould have valid JSON workflow files[32m 9[2mms[22m[39m
+ [32m✓[39m tests/n8n.test.ts[2m > [22mWorkflow File Validation[2m > [22mshould have all required workflow files[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTrigger Nodes
+[31m[1mError[22m: Hook timed out in 60000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m472:3[22m[39m
+    [90m470| [39m  [35mlet[39m receivedEvents[33m:[39m unknown[] [33m=[39m [][33m;[39m
+    [90m471| [39m
+    [90m472| [39m  [34mbeforeAll[39m([35masync[39m () [33m=>[39m {
+    [90m   | [39m  [31m^[39m
+    [90m473| [39m    [90m// Create a server to receive trigger events[39m
+    [90m474| [39m    server [33m=[39m [34mcreateServer[39m((req[33m,[39m res) [33m=>[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 16 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Balance[2m > [22mshould return the balance of an address
+[31m[1mAssertionError[22m: expected { …(3) } to have property "balanceInEth"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m73:22[22m[39m
+    [90m 71| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 72| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"balance"[39m)[33m;[39m
+    [90m 73| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"balanceInEth"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m 74| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mbalance)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m 75| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mbalanceInEth)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Transaction Count[2m > [22mshould return the nonce of an address
+[31m[1mAssertionError[22m: expected 'number' to be 'string' // Object.is equality[39m
+
+Expected: [32m"string"[39m
+Received: [31m"number"[39m
+
+[36m [2m❯[22m tests/n8n.test.ts:[2m87:46[22m[39m
+    [90m 85| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 86| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"transactionCount"[39m)[33m;[39m
+    [90m 87| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mtransactionCount)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m   | [39m                                             [31m^[39m
+    [90m 88| [39m    })[33m;[39m
+    [90m 89| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Code[2m > [22mshould return bytecode for contract address
+[31m[1mAssertionError[22m: expected { …(2) } to have property "isContract"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m99:22[22m[39m
+    [90m 97| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 98| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"code"[39m)[33m;[39m
+    [90m 99| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"isContract"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m100| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m101| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39misContract)[33m.[39m[34mtoBe[39m([32m"boolean"[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction[2m > [22mshould return transaction data
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction Receipt[2m > [22mshould return transaction receipt
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mContract Resource[2m > [22mContract Read[2m > [22mshould read data from a contract
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Balance[2m > [22mshould return ERC20 token balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Token Info[2m > [22mshould return ERC20 token information
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Allowance[2m > [22mshould return ERC20 allowance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mGet Balance[2m > [22mshould return ERC721 NFT balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mOwner Of[2m > [22mshould return owner of NFT token
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mToken URI[2m > [22mshould return NFT token URI
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mBalance Of[2m > [22mshould return ERC1155 token balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mURI[2m > [22mshould return ERC1155 token URI
+[31m[1mSyntaxError[22m: Unexpected end of JSON input[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mEstimate Gas[2m > [22mshould estimate gas for a transaction
+[31m[1mAssertionError[22m: expected { gas: '21001' } to have property "estimatedGas"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m194:22[22m[39m
+    [90m192| [39m
+    [90m193| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m194| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"estimatedGas"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m195| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mestimatedGas)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m196| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mValidate Address[2m > [22mshould validate Ethereum address
+[31m[1mAssertionError[22m: expected { …(2) } to have property "isValid"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m418:22[22m[39m
+    [90m416| [39m
+    [90m417| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m418| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"isValid"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m419| [39m      [34mexpect[39m(result[33m.[39misValid)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m420| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: listen EADDRINUSE: address already in use :::3333[39m
+[90m [2m❯[22m Server.setupListenHandle [as _listen2] node:net:[2m1940:16[22m[39m
+[90m [2m❯[22m listenInCluster node:net:[2m1997:12[22m[39m
+[90m [2m❯[22m Server.listen node:net:[2m2102:7[22m[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m489:14[22m[39m
+    [90m487| [39m
+    [90m488| [39m    [35mawait[39m [35mnew[39m [33mPromise[39m[33m<[39m[35mvoid[39m[33m>[39m((resolve) [33m=>[39m
+    [90m489| [39m      server[33m.[39m[34mlisten[39m([33mTEST_SERVER_PORT[39m[33m,[39m resolve)
+    [90m   | [39m             [31m^[39m
+    [90m490| [39m    )[33m;[39m
+    [90m491| [39m  })[33m;[39m
+[90m [2m❯[22m tests/n8n.test.ts:[2m488:11[22m[39m
+[90m [2m❯[22m node_modules/@vitest/runner/dist/index.js:[2m1243:20[22m[39m
+[90m [2m❯[22m runWithTimeout node_modules/@vitest/runner/dist/index.js:[2m1209:10[22m[39m
+[90m [2m❯[22m runHook node_modules/@vitest/runner/dist/index.js:[2m1514:51[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'EADDRINUSE', errno: -48, syscall: 'listen', address: '::', port: 3333 }[39m
+[31mThis error originated in "[1mtests/n8n.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (33)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 00:57:32
+[2m   Duration [22m 61.53s[2m (transform 17ms, setup 0ms, import 49ms, tests 60.28s, environment 0ms)[22m
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
