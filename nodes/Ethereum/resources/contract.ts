@@ -3,53 +3,10 @@ import {
     INodeProperties,
     NodeOperationError,
 } from "n8n-workflow";
-import {
-    PublicClient,
-    WalletClient,
-    decodeEventLog,
-} from "viem";
+import { PublicClient, WalletClient, decodeEventLog } from "viem";
 
 export const contractProperties: INodeProperties[] = [
-    {
-        displayName: "Operation",
-        name: "operation",
-        type: "options",
-        noDataExpression: true,
-        displayOptions: {
-            show: {
-                resource: ["contract"],
-            },
-        },
-        options: [
-            {
-                name: "Read",
-                value: "read",
-                description: "Call view/pure function",
-                action: "Read from contract",
-            },
-            {
-                name: "Write",
-                value: "write",
-                description: "Execute state-changing function",
-                action: "Write to contract",
-            },
-            {
-                name: "Deploy",
-                value: "deploy",
-                description: "Deploy a new contract",
-                action: "Deploy contract",
-            },
-            {
-                name: "Get Logs",
-                value: "getLogs",
-                description: "Query contract events",
-                action: "Get contract logs",
-            },
-        ],
-        default: "read",
-    },
-
-    // Contract: Read/Write
+    // Contract: Read / Write
     {
         displayName: "Contract Address",
         name: "contractAddress",
@@ -76,7 +33,6 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
-        description: "Contract ABI as JSON array",
     },
     {
         displayName: "Use Raw Calldata",
@@ -89,8 +45,7 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: false,
-        description:
-            "Whether to use raw calldata instead of function name and parameters",
+        description: "Whether to use raw hex data instead of function name and arguments",
     },
     {
         displayName: "Function Name",
@@ -105,7 +60,6 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "",
-        description: "Name of the function to call",
     },
     {
         displayName: "Parameters",
@@ -119,7 +73,7 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
-        description: "Function parameters as JSON array",
+        description: "Arguments for the function call",
     },
     {
         displayName: "Calldata",
@@ -133,9 +87,7 @@ export const contractProperties: INodeProperties[] = [
                 useRawCalldata: [true],
             },
         },
-        default: "",
-        placeholder: "0x...",
-        description: "Raw calldata for the function call",
+        default: "0x",
     },
 
     // Contract: Deploy
@@ -150,9 +102,7 @@ export const contractProperties: INodeProperties[] = [
                 operation: ["deploy"],
             },
         },
-        default: "",
-        placeholder: "0x...",
-        description: "Contract bytecode",
+        default: "0x",
     },
     {
         displayName: "Constructor Arguments",
@@ -165,24 +115,9 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
-        description: "Constructor arguments as JSON array",
     },
 
     // Contract: Get Logs
-    {
-        displayName: "ABI",
-        name: "logsAbi",
-        type: "json",
-        required: true,
-        displayOptions: {
-            show: {
-                resource: ["contract"],
-                operation: ["getLogs"],
-            },
-        },
-        default: "[]",
-        description: "Contract ABI as JSON array",
-    },
     {
         displayName: "Event Name",
         name: "eventName",
@@ -195,11 +130,23 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "",
-        placeholder: "Transfer",
-        description: "Event name to filter",
     },
     {
-        displayName: "Event Arguments Filter",
+        displayName: "Logs ABI",
+        name: "logsAbi",
+        type: "json",
+        required: true,
+        displayOptions: {
+            show: {
+                resource: ["contract"],
+                operation: ["getLogs"],
+            },
+        },
+        default: "[]",
+        description: "ABI containing the event definition",
+    },
+    {
+        displayName: "Event Arguments",
         name: "eventArgs",
         type: "json",
         displayOptions: {
@@ -209,8 +156,7 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "{}",
-        placeholder: '{"from": "0x...", "to": "0x..."}',
-        description: "Filter logs by indexed event arguments (optional)",
+        description: "Indexed arguments to filter by",
     },
     {
         displayName: "From Block",
@@ -223,7 +169,6 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "latest",
-        description: 'Starting block (number or "latest"/"earliest")',
     },
     {
         displayName: "To Block",
@@ -236,7 +181,6 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "latest",
-        description: 'Ending block (number or "latest"/"earliest")',
     },
 ];
 
@@ -254,11 +198,11 @@ function parseBlockIdentifier(blockStr: string): any {
 export async function executeContract(
     context: IExecuteFunctions,
     publicClient: PublicClient,
-    walletClient: WalletClient | null,
+    walletClient: WalletClient | undefined | null,
     operation: string,
     i: number
-): Promise<any> {
-    let responseData: any = {};
+): Promise<Record<string, unknown>> {
+    const returnData: Record<string, unknown> = {};
 
     if (operation === "read") {
         const contractAddress = context.getNodeParameter("contractAddress", i) as string;
@@ -272,7 +216,7 @@ export async function executeContract(
                 to: contractAddress as `0x${string}`,
                 data: calldata as `0x${string}`,
             });
-            responseData = {
+            return {
                 data: result.data,
             };
         } else {
@@ -287,12 +231,12 @@ export async function executeContract(
                 args: parameters,
             });
 
-            responseData = {
+            return {
                 result,
             };
         }
     } else if (operation === "write") {
-        if (!walletClient) {
+        if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
                 context.getNode(),
                 "Ethereum Account credential is required for write operations"
@@ -307,12 +251,12 @@ export async function executeContract(
         if (useRawCalldata) {
             const calldata = context.getNodeParameter("calldata", i) as string;
             const hash = await walletClient.sendTransaction({
-                account: walletClient.account!,
+                account: walletClient.account,
                 to: contractAddress as `0x${string}`,
                 data: calldata as `0x${string}`,
                 chain: undefined,
             });
-            responseData = {
+            return {
                 transactionHash: hash,
             };
         } else {
@@ -325,16 +269,16 @@ export async function executeContract(
                 abi,
                 functionName,
                 args: parameters,
-                account: walletClient.account!,
+                account: walletClient.account,
                 chain: undefined,
             });
 
-            responseData = {
+            return {
                 transactionHash: hash,
             };
         }
     } else if (operation === "deploy") {
-        if (!walletClient) {
+        if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
                 context.getNode(),
                 "Ethereum Account credential is required for deployment"
@@ -351,16 +295,12 @@ export async function executeContract(
             abi,
             bytecode: bytecode as `0x${string}`,
             args: constructorArgs,
-            account: walletClient.account!,
+            account: walletClient.account,
             chain: undefined,
         });
 
-        // Wait for transaction receipt to get contract address
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
-        responseData = {
+        return {
             transactionHash: hash,
-            contractAddress: receipt.contractAddress,
         };
     } else if (operation === "getLogs") {
         const contractAddress = context.getNodeParameter("contractAddress", i) as string;
@@ -375,7 +315,6 @@ export async function executeContract(
         const fromBlock = parseBlockIdentifier(fromBlockStr);
         const toBlock = parseBlockIdentifier(toBlockStr);
 
-        // Find event in ABI
         const eventAbi = abi.find(
             (item: any) => item.type === "event" && item.name === eventName
         );
@@ -387,7 +326,6 @@ export async function executeContract(
             );
         }
 
-        // Get logs with event filtering
         const logs = await publicClient.getLogs({
             address: contractAddress as `0x${string}`,
             event: eventAbi,
@@ -396,7 +334,6 @@ export async function executeContract(
             toBlock,
         });
 
-        // Decode logs
         const decodedLogs = logs.map((log: any) => {
             try {
                 const decoded: any = decodeEventLog({
@@ -429,10 +366,10 @@ export async function executeContract(
             }
         });
 
-        responseData = {
+        return {
             logs: decodedLogs,
         };
     }
 
-    return responseData;
+    return {};
 }
