@@ -8,20 +8,6 @@ This document explains how to set up and run integration tests for n8n-nodes-eth
 - npm
 - n8n CLI (`npm install -g n8n`)
 
-## Quick Start
-
-```bash
-# Terminal 1: Start n8n
-npm run test:n8n
-
-# Terminal 2: Start Hardhat node
-npm run test:node
-
-# Terminal 3: Run tests (requires N8N_API_KEY)
-export N8N_API_KEY='your-api-key-here'
-npm run test
-```
-
 ## First-time Setup
 
 ### 1. Create n8n User Account

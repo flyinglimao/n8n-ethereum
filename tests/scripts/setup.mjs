@@ -86,15 +86,75 @@ async function deleteExistingWorkflows() {
     }
 }
 
+// File to persist created credential IDs
+const CREDENTIAL_STORE_FILE = join(__dirname, ".test-credentials.json");
+
+/**
+ * Save credential IDs to a file
+ */
+async function saveCredentialIds() {
+    try {
+        const data = JSON.stringify(Object.fromEntries(credentialIdMap), null, 2);
+        const { writeFile } = await import("fs/promises");
+        await writeFile(CREDENTIAL_STORE_FILE, data);
+    } catch (error) {
+        console.warn("Warning: Could not save credential IDs:", error.message);
+    }
+}
+
+/**
+ * Load credential IDs from file
+ */
+async function loadCredentialIds() {
+    try {
+        const { readFile } = await import("fs/promises");
+        const data = await readFile(CREDENTIAL_STORE_FILE, "utf-8");
+        const entries = Object.entries(JSON.parse(data));
+        for (const [key, value] of entries) {
+            credentialIdMap.set(key, value);
+        }
+    } catch {
+        // Ignore errors (file not found, etc.)
+    }
+}
+
 /**
  * Delete all existing credentials
- * Note: n8n Community Edition doesn't support GET /credentials endpoint,
- * so we skip this operation and rely on credential name uniqueness or
- * let n8n API reject duplicates.
+ * Uses persisted IDs to delete credentials since they cannot be listed via API
  */
 async function deleteExistingCredentials() {
-    console.log("Skipping credential deletion (n8n Community Edition limitation)...");
-    console.log("  Note: Credentials will be created fresh. Duplicates may be rejected.");
+    console.log("Deleting existing credentials...");
+
+    // Try to load any previously saved IDs
+    await loadCredentialIds();
+
+    if (credentialIdMap.size === 0) {
+        console.log("  No tracked credentials found to delete.");
+        return;
+    }
+
+    const { unlink } = await import("fs/promises");
+    const idsToDelete = Array.from(credentialIdMap.values()); // Get all n8n IDs
+
+    for (const id of idsToDelete) {
+        try {
+            await apiRequest("DELETE", `/credentials/${id}`);
+            console.log(`  Deleted credential ID: ${id}`);
+        } catch (error) {
+            // If 404, it's already gone, which is fine
+            if (!error.message.includes("404")) {
+                console.warn(`  Warning: Could not delete credential ${id}:`, error.message);
+            }
+        }
+    }
+
+    // Clear map and remove file
+    credentialIdMap.clear();
+    try {
+        await unlink(CREDENTIAL_STORE_FILE);
+    } catch {
+        // Ignore
+    }
 }
 
 
@@ -128,6 +188,9 @@ async function createCredentials() {
             throw error;
         }
     }
+
+    // Save IDs for later cleanup
+    await saveCredentialIds();
 }
 
 /**
