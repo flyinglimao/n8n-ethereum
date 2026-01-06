@@ -1,6 +1,5 @@
 import {
     IExecuteFunctions,
-    INodeExecutionData,
     INodeProperties,
     NodeOperationError,
     IDataObject,
@@ -227,7 +226,7 @@ export async function executeErc721(
     walletClient: any | undefined,
     operation: string,
     i: number
-): Promise<INodeExecutionData> {
+): Promise<IDataObject> {
     const contractAddress = this.getNodeParameter("contractAddress", i) as string;
     let responseData: IDataObject;
 
@@ -402,8 +401,5 @@ export async function executeErc721(
         );
     }
 
-    return {
-        json: responseData,
-        pairedItem: { item: i },
-    };
+    return responseData;
 }
