@@ -105,8 +105,17 @@ export async function deployContracts() {
     deployedAddresses.erc1155 = erc1155Receipt.contractAddress;
     console.log(`  TestERC1155 deployed at: ${deployedAddresses.erc1155}`);
 
+    // Send a test transaction for Transaction tests
+    console.log("Sending test ETH transaction...");
+    const testTxHash = await walletClient.sendTransaction({
+        to: account.address, // Send to self
+        value: 1n, // 1 wei
+    });
+    await publicClient.waitForTransactionReceipt({ hash: testTxHash });
+    console.log(`  Test transaction sent: ${testTxHash}`);
+
     console.log("\nAll contracts deployed successfully!");
-    return deployedAddresses;
+    return { ...deployedAddresses, testTxHash };
 }
 
 // Allow running directly

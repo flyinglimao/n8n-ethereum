@@ -152,35 +152,59 @@ describe("Block Resource", () => {
 // ============================================
 
 describe("Transaction Resource", () => {
+  // Helper to send a test transaction using viem
+  async function sendTestTransaction(): Promise<string> {
+    const { createWalletClient, createPublicClient, http } = await import("viem");
+    const { hardhat } = await import("viem/chains");
+    const { privateKeyToAccount } = await import("viem/accounts");
+
+    const account = privateKeyToAccount(
+      "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    );
+    const walletClient = createWalletClient({
+      account,
+      chain: hardhat,
+      transport: http("http://127.0.0.1:8545"),
+    });
+    const publicClient = createPublicClient({
+      chain: hardhat,
+      transport: http("http://127.0.0.1:8545"),
+    });
+
+    const hash = await walletClient.sendTransaction({
+      to: account.address,
+      value: 1n,
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    return hash;
+  }
+
   describe("Get Transaction", () => {
     it("should return transaction data", async () => {
-      const response = await callWorkflow("get-transaction");
+      const txHash = await sendTestTransaction();
+      const response = await callWorkflow("get-transaction", { transactionHash: txHash });
 
-      // Transaction might not exist in local network, check for either success or proper error
-      if (response.ok) {
-        const result = await response.json();
-        expect(result).toHaveProperty("hash");
-        expect(result).toHaveProperty("from");
-        expect(result).toHaveProperty("to");
-      } else {
-        // Expected if tx doesn't exist
-        expect(response.status).toBeGreaterThanOrEqual(400);
-      }
+      expect(response.ok).toBe(true);
+
+      const result = await response.json();
+      expect(result).toHaveProperty("hash");
+      expect(result).toHaveProperty("from");
+      expect(result.hash.toLowerCase()).toBe(txHash.toLowerCase());
     });
   });
 
   describe("Get Transaction Receipt", () => {
     it("should return transaction receipt", async () => {
-      const response = await callWorkflow("get-tx-receipt");
+      const txHash = await sendTestTransaction();
+      const response = await callWorkflow("get-tx-receipt", { transactionHash: txHash });
 
-      if (response.ok) {
-        const result = await response.json();
-        expect(result).toHaveProperty("transactionHash");
-        expect(result).toHaveProperty("status");
-        expect(result).toHaveProperty("gasUsed");
-      } else {
-        expect(response.status).toBeGreaterThanOrEqual(400);
-      }
+      expect(response.ok).toBe(true);
+
+      const result = await response.json();
+      expect(result).toHaveProperty("transactionHash");
+      expect(result).toHaveProperty("status");
+      expect(result).toHaveProperty("gasUsed");
+      expect(result.transactionHash.toLowerCase()).toBe(txHash.toLowerCase());
     });
   });
 
@@ -502,18 +526,37 @@ describe("Trigger Nodes", () => {
     it(
       "should receive new block events",
       async () => {
-        // Wait for blocks to be produced (depends on network block time)
-        await new Promise((resolve) => setTimeout(resolve, 15000));
+        // Mine a block to trigger the event
+        const { createPublicClient, http } = await import("viem");
+        const { hardhat } = await import("viem/chains");
+        const publicClient = createPublicClient({
+          chain: hardhat,
+          transport: http("http://127.0.0.1:8545"),
+        });
 
-        // Check if we received any events
-        if (receivedEvents.length > 0) {
-          const event = receivedEvents[0] as Record<string, unknown>;
-          expect(event).toHaveProperty("number");
-          expect(event).toHaveProperty("hash");
-          expect(event).toHaveProperty("timestamp");
-        }
+        // Send a transaction to mine a block
+        const { createWalletClient } = await import("viem");
+        const { privateKeyToAccount } = await import("viem/accounts");
+        const account = privateKeyToAccount(
+          "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        );
+        const walletClient = createWalletClient({
+          account,
+          chain: hardhat,
+          transport: http("http://127.0.0.1:8545"),
+        });
+        await walletClient.sendTransaction({ to: account.address, value: 1n });
+
+        // Wait for blocks to be produced
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        // Must have received at least one event
+        expect(receivedEvents.length).toBeGreaterThan(0);
+        const event = receivedEvents[0] as Record<string, unknown>;
+        expect(event).toHaveProperty("number");
+        expect(event).toHaveProperty("hash");
       },
-      20000
+      15000
     );
   });
 
@@ -521,17 +564,19 @@ describe("Trigger Nodes", () => {
     it(
       "should receive contract events when triggered",
       async () => {
-        // In a real test, you would trigger a contract event here
-        // For example, by sending an ERC20 transfer
+        // This test requires a contract event to be emitted
+        // For now, we skip validation if no events received since
+        // it depends on external trigger setup
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // Wait for events
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-
-        // Validate received events
-        if (receivedEvents.length > 0) {
-          const event = receivedEvents[0] as Record<string, unknown>;
-          expect(event).toHaveProperty("eventName");
+        // Skip this test if no events - contract event triggers require active listening
+        if (receivedEvents.length === 0) {
+          console.log("Skipping Contract Event Trigger validation - no events received");
+          return;
         }
+
+        const event = receivedEvents[0] as Record<string, unknown>;
+        expect(event).toHaveProperty("eventName");
       },
       10000
     );
@@ -541,18 +586,29 @@ describe("Trigger Nodes", () => {
     it(
       "should receive transaction events",
       async () => {
-        // In a real test, you would send a transaction here
-        // to trigger the event
+        // Send a transaction to trigger the event
+        const { createWalletClient, createPublicClient, http } = await import("viem");
+        const { hardhat } = await import("viem/chains");
+        const { privateKeyToAccount } = await import("viem/accounts");
+
+        const account = privateKeyToAccount(
+          "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        );
+        const walletClient = createWalletClient({
+          account,
+          chain: hardhat,
+          transport: http("http://127.0.0.1:8545"),
+        });
+
+        await walletClient.sendTransaction({ to: account.address, value: 1n });
 
         // Wait for events
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        // Validate received events
-        if (receivedEvents.length > 0) {
-          const event = receivedEvents[0] as Record<string, unknown>;
-          expect(event).toHaveProperty("hash");
-          expect(event).toHaveProperty("from");
-        }
+        // Must have received events from the transaction
+        expect(receivedEvents.length).toBeGreaterThan(0);
+        const event = receivedEvents[0] as Record<string, unknown>;
+        expect(event).toHaveProperty("hash");
       },
       10000
     );
