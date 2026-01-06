@@ -195,22 +195,24 @@ export async function executeErc20(
         // In Restore Step 307: const address = this.getNodeParameter("address", i) as string;
         // It does NOT fallback in the viewed code. It relies on parameter being populated.
 
-        const balance = await publicClient.readContract({
-            address: tokenAddress as `0x${string}`,
-            abi: ERC20_ABI,
-            functionName: "balanceOf",
-            args: [address as `0x${string}`],
-        }) as bigint;
-
-        // Tests expect specific format?
-        // Node returned: { address, balance: balance.toString() }
-        // But logic in Step 198 (partial restore) added 'decimals' fetching.
-        // Original node (Step 307) did NOT fetch decimals for 'getBalance'.
-        // Tests: "ERC20 Get Balance" > expect balance property.
+        const [balance, decimals] = await Promise.all([
+            publicClient.readContract({
+                address: tokenAddress as `0x${string}`,
+                abi: ERC20_ABI,
+                functionName: "balanceOf",
+                args: [address as `0x${string}`],
+            }) as Promise<bigint>,
+            publicClient.readContract({
+                address: tokenAddress as `0x${string}`,
+                abi: ERC20_ABI,
+                functionName: "decimals",
+            }) as Promise<number>,
+        ]);
 
         return {
             address,
             balance: balance.toString(),
+            balanceFormatted: formatUnits(balance, decimals),
         };
     } else if (operation === "getTokenInfo") {
         const [name, symbol, decimals, totalSupply] = await Promise.all([
@@ -340,17 +342,25 @@ export async function executeErc20(
         const owner = this.getNodeParameter("owner", i) as string;
         const spender = this.getNodeParameter("spender", i) as string;
 
-        const allowance = await publicClient.readContract({
-            address: tokenAddress as `0x${string}`,
-            abi: ERC20_ABI,
-            functionName: "allowance",
-            args: [owner as `0x${string}`, spender as `0x${string}`],
-        }) as bigint;
+        const [allowance, decimals] = await Promise.all([
+            publicClient.readContract({
+                address: tokenAddress as `0x${string}`,
+                abi: ERC20_ABI,
+                functionName: "allowance",
+                args: [owner as `0x${string}`, spender as `0x${string}`],
+            }) as Promise<bigint>,
+            publicClient.readContract({
+                address: tokenAddress as `0x${string}`,
+                abi: ERC20_ABI,
+                functionName: "decimals",
+            }) as Promise<number>,
+        ]);
 
         return {
             owner,
             spender,
             allowance: allowance.toString(),
+            allowanceFormatted: formatUnits(allowance, decimals),
         };
     }
 
