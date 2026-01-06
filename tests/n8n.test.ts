@@ -580,13 +580,59 @@ describe("Trigger Nodes", () => {
     it(
       "should receive contract events when triggered",
       async () => {
-        // Contract event triggers need specific contract events to be emitted
-        // This test is skipped as it requires ERC20 transfer setup
-        // The trigger workflow would need to monitor a specific contract
-        console.log("Contract Event Trigger test: requires specific contract event setup");
-        expect(true).toBe(true); // Placeholder - setup would require complex contract interaction
+        // Start waiting for event before triggering
+        const eventPromise = waitForEvent(65000); // 65 seconds (trigger polls every minute)
+
+        // Send ERC20 transfer to trigger Transfer event
+        const { createWalletClient, createPublicClient, http } = await import("viem");
+        const { hardhat } = await import("viem/chains");
+        const { privateKeyToAccount } = await import("viem/accounts");
+
+        const account = privateKeyToAccount(
+          "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        );
+        const walletClient = createWalletClient({
+          account,
+          chain: hardhat,
+          transport: http("http://127.0.0.1:8545"),
+        });
+        const publicClient = createPublicClient({
+          chain: hardhat,
+          transport: http("http://127.0.0.1:8545"),
+        });
+
+        // Get the deployed ERC20 address (it's the first deployed contract)
+        // The address is deterministic based on deployer nonce
+        const erc20Address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+        // ERC20 transfer ABI
+        const erc20Abi = [
+          {
+            name: "transfer",
+            type: "function",
+            inputs: [
+              { name: "to", type: "address" },
+              { name: "amount", type: "uint256" },
+            ],
+            outputs: [{ type: "bool" }],
+          },
+        ] as const;
+
+        // Transfer 1 token to trigger the Transfer event
+        const hash = await walletClient.writeContract({
+          address: erc20Address as `0x${string}`,
+          abi: erc20Abi,
+          functionName: "transfer",
+          args: [account.address, 1n],
+        });
+        await publicClient.waitForTransactionReceipt({ hash });
+
+        // Wait for the event (will resolve when received or reject on timeout)
+        const event = (await eventPromise) as Record<string, unknown>;
+        expect(event).toHaveProperty("eventName");
+        expect(event.eventName).toBe("Transfer");
       },
-      5000
+      70000 // 70 second test timeout
     );
   });
 
