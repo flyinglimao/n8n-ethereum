@@ -11,7 +11,7 @@
           ]
         },
         "event": "contractEvent",
-        "addresses": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "addresses": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
         "abiInput": "abiEvent",
         "abi": "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]",
         "eventName": "Transfer"
