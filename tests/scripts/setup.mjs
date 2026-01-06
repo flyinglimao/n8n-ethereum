@@ -156,9 +156,17 @@ async function importWorkflows(deployedAddresses) {
         let content = await readFile(join(WORKFLOWS_DIR, file), "utf-8");
 
         // Replace hardcoded addresses with deployed ones
-        if (deployedAddresses && deployedAddresses.TestERC20) {
+        if (deployedAddresses && deployedAddresses.erc20) {
             // USDC Mainnet: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
-            content = content.replace(/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/g, deployedAddresses.TestERC20);
+            content = content.replace(/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/gi, deployedAddresses.erc20);
+        }
+        if (deployedAddresses && deployedAddresses.erc721) {
+            // BAYC Mainnet: 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
+            content = content.replace(/0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D/gi, deployedAddresses.erc721);
+        }
+        if (deployedAddresses && deployedAddresses.erc1155) {
+            // Example ERC1155: 0x76BE3b62873462d2142405439777e971754E8E77
+            content = content.replace(/0x76BE3b62873462d2142405439777e971754E8E77/gi, deployedAddresses.erc1155);
         }
 
         let workflow = JSON.parse(content);

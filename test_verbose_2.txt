@@ -314,3 +314,135 @@ Received: [31m"number"[39m
 
 [1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
        [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mpackage.json [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34mtests/n8n.test.ts[39m
+
+node:internal/modules/package_json_reader:189
+  const result = modulesBinding.readPackageJSON(nearestParentPackageJSON);
+                                ^
+
+Error: Invalid package config /Users/flyinglimao/Code/n8n-ethereum/package.json.
+    at Object.getNearestParentPackageJSON (node:internal/modules/package_json_reader:189:33)
+    at trySelf (node:internal/modules/cjs/loader:627:33)
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1396:24)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1058:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1063:22)
+    at Module._load (node:internal/modules/cjs/loader:1226:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1503:12)
+    at Module._preloadModules (node:internal/modules/cjs/loader:2045:12) {
+  code: 'ERR_INVALID_PACKAGE_CONFIG'
+}
+
+Node.js v25.2.1
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 16 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Balance[2m > [22mshould return the balance of an address
+[31m[1mAssertionError[22m: expected { …(3) } to have property "balanceInEth"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m73:22[22m[39m
+    [90m 71| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 72| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"balance"[39m)[33m;[39m
+    [90m 73| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"balanceInEth"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m 74| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mbalance)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m 75| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mbalanceInEth)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Transaction Count[2m > [22mshould return the nonce of an address
+[31m[1mAssertionError[22m: expected 'number' to be 'string' // Object.is equality[39m
+
+Expected: [32m"string"[39m
+Received: [31m"number"[39m
+
+[36m [2m❯[22m tests/n8n.test.ts:[2m87:46[22m[39m
+    [90m 85| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 86| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"transactionCount"[39m)[33m;[39m
+    [90m 87| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mtransactionCount)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m   | [39m                                             [31m^[39m
+    [90m 88| [39m    })[33m;[39m
+    [90m 89| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mAccount Resource[2m > [22mGet Code[2m > [22mshould return bytecode for contract address
+[31m[1mAssertionError[22m: expected { …(2) } to have property "isContract"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m99:22[22m[39m
+    [90m 97| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m 98| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"code"[39m)[33m;[39m
+    [90m 99| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"isContract"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m100| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m101| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39misContract)[33m.[39m[34mtoBe[39m([32m"boolean"[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction[2m > [22mshould return transaction data
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mGet Transaction Receipt[2m > [22mshould return transaction receipt
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mContract Resource[2m > [22mContract Read[2m > [22mshould read data from a contract
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Balance[2m > [22mshould return ERC20 token balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Token Info[2m > [22mshould return ERC20 token information
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC20 Resource[2m > [22mGet Allowance[2m > [22mshould return ERC20 allowance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mGet Balance[2m > [22mshould return ERC721 NFT balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mOwner Of[2m > [22mshould return owner of NFT token
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC721 Resource[2m > [22mToken URI[2m > [22mshould return NFT token URI
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mBalance Of[2m > [22mshould return ERC1155 token balance
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mERC1155 Resource[2m > [22mURI[2m > [22mshould return ERC1155 token URI
+[31m[1mSyntaxError[22m: Unexpected end of JSON input[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mTransaction Resource[2m > [22mEstimate Gas[2m > [22mshould estimate gas for a transaction
+[31m[1mAssertionError[22m: expected { gas: '21001' } to have property "estimatedGas"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m194:22[22m[39m
+    [90m192| [39m
+    [90m193| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m194| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"estimatedGas"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m195| [39m      [34mexpect[39m([35mtypeof[39m result[33m.[39mestimatedGas)[33m.[39m[34mtoBe[39m([32m"string"[39m)[33m;[39m
+    [90m196| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/n8n.test.ts[2m > [22mUtils Resource[2m > [22mValidate Address[2m > [22mshould validate Ethereum address
+[31m[1mAssertionError[22m: expected { …(2) } to have property "isValid"[39m
+[36m [2m❯[22m tests/n8n.test.ts:[2m418:22[22m[39m
+    [90m416| [39m
+    [90m417| [39m      [35mconst[39m result [33m=[39m [35mawait[39m response[33m.[39m[34mjson[39m()[33m;[39m
+    [90m418| [39m      [34mexpect[39m(result)[33m.[39m[34mtoHaveProperty[39m([32m"isValid"[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m419| [39m      [34mexpect[39m(result[33m.[39misValid)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m420| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Worker forks emitted error.[39m
+[90m [2m❯[22m EventEmitter.<anonymous> node_modules/vitest/dist/chunks/cli-api.BKg19Fvw.js:[2m8015:22[22m[39m
+[90m [2m❯[22m EventEmitter.emit node:events:[2m508:28[22m[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/cli-api.BKg19Fvw.js:[2m7588:22[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m508:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m[1mCaused by: Error[22m: Worker exited unexpectedly[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/cli-api.BKg19Fvw.js:[2m7587:33[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m508:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (33)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 10:00:24
+[2m   Duration [22m 25.36s
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

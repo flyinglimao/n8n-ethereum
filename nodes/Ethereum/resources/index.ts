@@ -56,6 +56,12 @@ export {
     executeContract,
 } from "./contract";
 
+// Signature Resource
+export {
+    signatureProperties,
+    executeSignature,
+} from "./signature";
+
 // ERC20 Resource
 export { erc20Properties, executeErc20 } from "./erc20";
 

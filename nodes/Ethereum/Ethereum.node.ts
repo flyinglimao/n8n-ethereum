@@ -40,6 +40,8 @@ import {
   executeGas,
   transactionProperties,
   executeTransaction,
+  contractProperties,
+  executeContract,
   customRpcProperties,
   executeCustomRpc,
   erc20Properties,
@@ -48,6 +50,9 @@ import {
   executeErc721,
   erc1155Properties,
   executeErc1155,
+  utilsOperations,
+  utilsProperties,
+  executeUtils,
 } from "./resources";
 
 // Helper functions
@@ -1215,21 +1220,6 @@ export class Ethereum implements INodeType {
         //          Transaction Resource
         // ===========================================
         else if (resource === "transaction") {
-          const operation = this.getNodeParameter("operation", i) as string;
-          const to = this.getNodeParameter("to", i, "") as string;
-          const value = this.getNodeParameter("value", i, "0") as string;
-          const data = this.getNodeParameter("data", i, "0x") as string;
-          const transactionHash = this.getNodeParameter(
-            "transactionHash",
-            i,
-            ""
-          ) as string;
-          const confirmations = this.getNodeParameter(
-            "confirmations",
-            i,
-            1
-          ) as number;
-
           let walletClient = null;
           if (walletCredentials) {
             walletClient = createWalletClient(
@@ -1239,14 +1229,13 @@ export class Ethereum implements INodeType {
             );
           }
 
-          responseData = await executeTransaction(publicClient, walletClient, {
+          responseData = await executeTransaction.call(
+            this,
+            publicClient,
+            walletClient,
             operation,
-            to,
-            value,
-            data,
-            transactionHash,
-            confirmations,
-          });
+            i
+          );
         }
 
         // ===========================================
@@ -1261,14 +1250,13 @@ export class Ethereum implements INodeType {
               walletCredentials
             );
           }
-          const executionData = await executeContract.call(
+          responseData = await executeContract.call(
             this,
             publicClient,
             walletClient,
             operation,
             i
           );
-          responseData = executionData.json;
         }
 
         // ===========================================
@@ -1298,14 +1286,13 @@ export class Ethereum implements INodeType {
               walletCredentials
             );
           }
-          const executionData = await executeErc721.call(
+          responseData = await executeErc721.call(
             this,
             publicClient,
             walletClient,
             operation,
             i
           );
-          responseData = executionData.json;
         }
 
         // ===========================================
