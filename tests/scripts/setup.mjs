@@ -19,9 +19,19 @@ import { deployContracts } from "./deploy-contracts.mjs";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const N8N_API_BASE = "http://localhost:5678/api/v1";
-const API_KEY =
-    process.env.N8N_API_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzZTdjOTM5Yy02ZGMxLTRjMjEtOWJiNC1kNzJiNzVkMjhiZmMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY3NjE2NTgwLCJleHAiOjE3NzAxODEyMDB9.zj5158taNt_qewwg7V4uYd3mUROc6fygC77XN5HPUAw";
+const API_KEY = process.env.N8N_API_KEY;
+
+if (!API_KEY) {
+    console.error("\n❌ N8N_API_KEY environment variable is not set!");
+    console.error("Please set it before running tests:");
+    console.error("  export N8N_API_KEY='your-api-key-here'");
+    console.error("\nTo create an API key:");
+    console.error("  1. Start n8n: npm run test:n8n");
+    console.error("  2. Go to http://localhost:5678");
+    console.error("  3. Navigate to Settings → API");
+    console.error("  4. Create a new API Key and copy it\n");
+    process.exit(1);
+}
 
 const WORKFLOWS_DIR = join(__dirname, "..", "workflows");
 const CREDENTIALS_DIR = join(__dirname, "..", "credentials");

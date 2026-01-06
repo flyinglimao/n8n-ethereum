@@ -32,22 +32,6 @@ async function callWorkflow(
   return response;
 }
 
-/**
- * Helper function to wait for a condition with timeout
- */
-async function waitFor(
-  condition: () => boolean,
-  timeout: number = 10000,
-  interval: number = 100
-): Promise<void> {
-  const start = Date.now();
-  while (!condition()) {
-    if (Date.now() - start > timeout) {
-      throw new Error("Timeout waiting for condition");
-    }
-    await new Promise((resolve) => setTimeout(resolve, interval));
-  }
-}
 
 // ============================================
 //          Account Resource Tests
@@ -546,9 +530,7 @@ describe("Trigger Nodes", () => {
       async () => {
         // Start waiting for event before triggering
         const eventPromise = waitForEvent(65000, event => {
-          console.log('b', event)
-
-          return 'number' in (event as Record<string, unknown>)
+          return 'number' in event && !('eventName' in event);
         }); // 65 seconds (trigger polls every minute)
 
         // Send a transaction to mine a block
@@ -580,9 +562,7 @@ describe("Trigger Nodes", () => {
       async () => {
         // Start waiting for contract event (filter for events with eventName)
         const eventPromise = waitForEvent(65000, (event) => {
-          const e = event as Record<string, unknown>;
-          console.log('ce', event)
-          return "eventName" in e;
+          return "eventName" in event;
         });
 
         // Fixed ERC20 address from Hardhat deployment
@@ -627,7 +607,6 @@ describe("Trigger Nodes", () => {
           args: [account.address, 1n],
         });
         await publicClient.waitForTransactionReceipt({ hash });
-        console.log('transfer sent')
 
         // Wait for the contract event (will resolve when received or reject on timeout)
         const event = (await eventPromise) as Record<string, unknown>;
@@ -644,8 +623,7 @@ describe("Trigger Nodes", () => {
       async () => {
         // Start waiting for event before triggering
         const eventPromise = waitForEvent(65000, event => {
-          console.log('t', event)
-          return 'hash' in (event as Record<string, unknown>) && !('number' in (event as Record<string, unknown>))
+          return 'hash' in event && !('number' in event) && !('eventName' in event);
         }); // 65 seconds (trigger polls every minute)
 
         // Send a transaction to trigger the event
