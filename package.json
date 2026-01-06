@@ -1,6 +1,6 @@
 {
   "name": "@0xlimao/n8n-nodes-ethereum",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Comprehensive Ethereum blockchain integration for n8n with unified node structure using viem",
   "main": "dist/index.js",
   "scripts": {
