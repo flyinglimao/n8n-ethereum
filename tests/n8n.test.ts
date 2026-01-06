@@ -483,7 +483,8 @@ describe("Custom RPC Resource", () => {
 
 describe("Trigger Nodes", () => {
   let server: Server;
-  let eventResolver: ((event: unknown) => void) | null = null;
+  const { EventEmitter } = require("events");
+  const eventBus = new EventEmitter();
 
   beforeAll(async () => {
     // Create a server to receive trigger events
@@ -491,17 +492,12 @@ describe("Trigger Nodes", () => {
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        let event: unknown;
         try {
-          event = JSON.parse(body);
+          const event: Record<string, unknown> = JSON.parse(body);
+          // Broadcast event to all listeners
+          eventBus.emit("event", event);
         } catch {
-          event = body;
-        }
-        // If there's a resolver waiting, call it with the event
-        if (eventResolver) {
-          const resolver = eventResolver;
-          eventResolver = null;
-          resolver(event);
+          // Ignore parse errors
         }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ status: "received" }));
@@ -515,36 +511,32 @@ describe("Trigger Nodes", () => {
 
   afterAll(() => {
     server.close();
-  });
-
-  beforeEach(() => {
-    eventResolver = null;
+    eventBus.removeAllListeners();
   });
 
   /**
-   * Helper to wait for an event with timeout and optional filter
+   * Helper to wait for an event with timeout and filter
    */
   function waitForEvent(
     timeoutMs: number,
-    filter?: (event: unknown) => boolean
-  ): Promise<unknown> {
+    filter: (event: Record<string, unknown>) => boolean
+  ): Promise<Record<string, unknown>> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        eventResolver = null;
+        eventBus.removeListener("event", handler);
         reject(new Error(`Timeout: No matching event received within ${timeoutMs}ms`));
       }, timeoutMs);
 
-      eventResolver = (event) => {
-        console.log(event)
-        // If filter is provided, check if event matches
-        if (filter && !filter(event)) {
-          // Event doesn't match, keep waiting
-          return;
+      function handler(event: Record<string, unknown>) {
+        if (filter(event)) {
+          clearTimeout(timeout);
+          eventBus.removeListener("event", handler);
+          resolve(event);
         }
-        clearTimeout(timeout);
-        eventResolver = null;
-        resolve(event);
-      };
+        // If filter doesn't match, keep listening for more events
+      }
+
+      eventBus.on("event", handler);
     });
   }
 
@@ -553,7 +545,11 @@ describe("Trigger Nodes", () => {
       "should receive new block events",
       async () => {
         // Start waiting for event before triggering
-        const eventPromise = waitForEvent(65000); // 65 seconds (trigger polls every minute)
+        const eventPromise = waitForEvent(65000, event => {
+          console.log('b', event)
+
+          return 'number' in (event as Record<string, unknown>)
+        }); // 65 seconds (trigger polls every minute)
 
         // Send a transaction to mine a block
         const { createWalletClient, http } = await import("viem");
@@ -585,6 +581,7 @@ describe("Trigger Nodes", () => {
         // Start waiting for contract event (filter for events with eventName)
         const eventPromise = waitForEvent(65000, (event) => {
           const e = event as Record<string, unknown>;
+          console.log('ce', event)
           return "eventName" in e;
         });
 
@@ -630,6 +627,7 @@ describe("Trigger Nodes", () => {
           args: [account.address, 1n],
         });
         await publicClient.waitForTransactionReceipt({ hash });
+        console.log('transfer sent')
 
         // Wait for the contract event (will resolve when received or reject on timeout)
         const event = (await eventPromise) as Record<string, unknown>;
@@ -645,7 +643,10 @@ describe("Trigger Nodes", () => {
       "should receive transaction events",
       async () => {
         // Start waiting for event before triggering
-        const eventPromise = waitForEvent(65000); // 65 seconds (trigger polls every minute)
+        const eventPromise = waitForEvent(65000, event => {
+          console.log('t', event)
+          return 'hash' in (event as Record<string, unknown>) && !('number' in (event as Record<string, unknown>))
+        }); // 65 seconds (trigger polls every minute)
 
         // Send a transaction to trigger the event
         const { createWalletClient, http } = await import("viem");
