@@ -81,6 +81,17 @@ export async function deployContracts() {
     deployedAddresses.erc721 = erc721Receipt.contractAddress;
     console.log(`  TestERC721 deployed at: ${deployedAddresses.erc721}`);
 
+    // Mint ERC721 token for testing (token ID 0)
+    console.log("  Minting ERC721 token #0...");
+    const mintHash = await walletClient.writeContract({
+        address: deployedAddresses.erc721,
+        abi: erc721Artifact.abi,
+        functionName: "mint",
+        args: [account.address],
+    });
+    await publicClient.waitForTransactionReceipt({ hash: mintHash });
+    console.log("  ERC721 token #0 minted to deployer");
+
     // Deploy TestERC1155
     console.log("Deploying TestERC1155...");
     const erc1155Artifact = await getContractArtifact("TestERC1155");

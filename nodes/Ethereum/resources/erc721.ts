@@ -393,7 +393,7 @@ export async function executeErc721(
         });
         responseData = {
             tokenId,
-            uri: uri as string,
+            tokenURI: uri as string,
         };
     } else {
         throw new NodeOperationError(
