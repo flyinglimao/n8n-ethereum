@@ -102,6 +102,15 @@ ERC20 是以太坊上最常見的代幣標準。此資源自動處理 ERC20 ABI�
 }
 ```
 
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
 ### Transfer From（從...轉帳）
 
 使用授權轉移代幣（需要事先授權）。
@@ -118,6 +127,25 @@ ERC20 是以太坊上最常見的代幣標準。此資源自動處理 ERC20 ABI�
 - 拉取支付
 - 基於合約的代幣轉帳
 - 自動支付系統
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+  "amount": "100.5"
+}
+```
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### Get Allowance（取得授權額度）
 
@@ -140,6 +168,15 @@ ERC20 是以太坊上最常見的代幣標準。此資源自動處理 ERC20 ABI�
 }
 ```
 
+**輸出**：
+```json
+{
+  "allowance": "1000000.0",
+  "decimals": 6,
+  "rawAllowance": "1000000000000"
+}
+```
+
 ### Get Total Supply（取得總供應量）
 
 取得代幣的總供應量。
@@ -149,6 +186,23 @@ ERC20 是以太坊上最常見的代幣標準。此資源自動處理 ERC20 ABI�
 **參數**：
 - **Token Address**（代幣地址）（必需）：ERC20 代幣合約地址
 - **Format Decimals**（格式化小數）（可選）：使用代幣小數格式化輸出
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "formatDecimals": true
+}
+```
+
+**輸出**：
+```json
+{
+  "totalSupply": "42000000000.0",
+  "decimals": 6,
+  "rawTotalSupply": "42000000000000000"
+}
+```
 
 ### Get Decimals（取得小數位數）
 
