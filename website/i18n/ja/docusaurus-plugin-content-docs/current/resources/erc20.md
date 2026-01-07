@@ -102,6 +102,16 @@ ERC20はEthereumで最も一般的なトークン規格です。このリソー�
 }
 ```
 
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
 ### Transfer From（...から転送）
 
 許可を使用してトークンを転送します（事前の承認が必要）。
@@ -118,6 +128,26 @@ ERC20はEthereumで最も一般的なトークン規格です。このリソー�
 - プル支払い
 - コントラクトベースのトークン転送
 - 自動支払いシステム
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "amount": "100.5"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### Get Allowance（許可額を取得）
 
@@ -140,6 +170,16 @@ ERC20はEthereumで最も一般的なトークン規格です。このリソー�
 }
 ```
 
+
+**輸出**：
+```json
+{
+  "allowance": "1000000.0",
+  "decimals": 6,
+  "rawAllowance": "1000000000000"
+}
+```
+
 ### Get Total Supply（総供給量を取得）
 
 トークンの総供給量を取得します。
@@ -149,6 +189,25 @@ ERC20はEthereumで最も一般的なトークン規格です。このリソー�
 **パラメータ**：
 - **Token Address**（トークンアドレス）（必須）：ERC20トークンコントラクトアドレス
 - **Format Decimals**（小数点形式）（オプション）：トークンの小数点を使用して出力を形式化
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "formatDecimals": true
+}
+```
+
+
+**輸出**：
+```json
+{
+  "totalSupply": "42000000000.0",
+  "decimals": 6,
+  "rawTotalSupply": "42000000000000000"
+}
+```
 
 ### Get Decimals（小数点を取得）
 
@@ -225,6 +284,26 @@ ERC20はEthereumで最も一般的なトークン規格です。このリソー�
 ```
 
 ## 一般的なトークンアドレス
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "amount": "100.5"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### Ethereumメインネット
 

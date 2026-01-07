@@ -82,6 +82,14 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - `42161`：Arbitrum One
 - `10`：Optimism
 
+
+**範例**：
+```json
+{
+  "chainId": 1
+}
+```
+
 ### Validate Address（驗證地址）
 
 驗證並校驗和以太坊地址。
@@ -118,6 +126,24 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - **Arguments**（參數）（可選）：函數參數
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
 - 準備交易資料
 - 創建 multicall 負載
 - 編碼合約互動
@@ -133,6 +159,27 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - **Data**（資料）（必需）：要解碼的編碼資料
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "functionName": "transfer",
+  "args": {
+    "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "amount": "1000000000000000000"
+  }
+}
+```
+
 - 分析交易輸入
 - 除錯合約呼叫
 - 解析交易資料
@@ -147,6 +194,28 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - **Event ABI**（事件 ABI）（必需）：事件 ABI
 - **Arguments**（參數）（可選）：索引參數
 
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb"
+  ]
+}
+```
+
 ### Decode Event Log（解碼事件日誌）
 
 使用 ABI 解碼事件日誌資料。
@@ -159,6 +228,33 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - **Data**（資料）（必需）：日誌資料
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb",
+    "0x0000000000000000000000001111111254fb6c44bac0bed2854e76f90643097d"
+  ],
+  "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "event": "Transfer",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+    "value": "1000000000000000000"
+  }
+}
+```
+
 - 解析事件日誌
 - 提取事件參數
 - 理解發出的事件
@@ -176,6 +272,23 @@ Utils 資源提供格式化、編碼、驗證和其他輔助操作的實用函�
 - **Salt**（鹽）（可選）：CREATE2 的鹽
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "nonce": 5
+}
+```
+
+
+**輸出**：
+```json
+{
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
+
 - 預測合約部署地址
 - 驗證部署地址
 - 計算 CREATE2 地址

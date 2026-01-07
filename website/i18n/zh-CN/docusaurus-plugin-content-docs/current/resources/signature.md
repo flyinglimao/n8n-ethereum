@@ -40,6 +40,22 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "message": "I agree to the terms and conditions"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "signature": "0x1234567890abcdef..."
+}
+```
+
 ### Sign Typed Data（签名类型化资料）
 
 根据 EIP-712 签署结构化资料。
@@ -55,6 +71,43 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 - 签署 permit 交易（无 Gas 批准）
 - 为 dApp 签署结构化讯息
 - 为复杂资料创建可验证签名
+
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"},
+      {"name": "nonce", "type": "uint256"},
+      {"name": "deadline", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000",
+    "nonce": "0",
+    "deadline": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "signature": "0x1234567890abcdef..."
+}
+```
 
 ### Verify Message（验证讯息）
 
@@ -75,6 +128,15 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x..."
+}
+```
+
 ### Verify Typed Data（验证类型化资料）
 
 验证 EIP-712 签名。
@@ -88,6 +150,42 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 - **Signature**（签名）（必需）：要验证的签名
 - **Address**（地址）（必需）：预期签名者地址
 
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000"
+  },
+  "signature": "0x1234567890abcdef...",
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Recover Address（恢复地址）
 
 从签名中恢复签名者地址。
@@ -99,6 +197,14 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 - **Signature**（签名）（必需）：签名
 
 **输出范例**：
+```json
+{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**範例**：
 ```json
 {
   "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
@@ -121,6 +227,14 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
+
 ### Hash Typed Data（杂凑类型化资料）
 
 杂凑类型化资料以进行签名（EIP-712）。
@@ -133,6 +247,37 @@ Signature 资源提供签名和验证讯息和类型化资料的操作。
 - **Value**（值）（必需）：要杂凑的资料
 
 ## 常见使用场景
+
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Message": [
+      {"name": "content", "type": "string"},
+      {"name": "timestamp", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "content": "Hello World",
+    "timestamp": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
 
 ### 用户验证
 

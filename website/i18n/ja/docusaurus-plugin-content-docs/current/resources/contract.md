@@ -118,6 +118,44 @@ Contractリソースは、Ethereumブロックチェーン上のスマートコ�
 - RPC呼び出しを削減してパフォーマンスを向上
 - すべての読み取りが同じブロックから行われることを保証
 
+
+**範例**：
+```json
+{
+  "calls": [
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "balanceOf",
+      "args": "[\"0x...\"]"
+    },
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "totalSupply",
+      "args": "[]"
+    }
+  ]
+}
+```
+
+
+**輸出**：
+```json
+{
+  "results": [
+    {
+      "success": true,
+      "result": "1000000000000000000"
+    },
+    {
+      "success": true,
+      "result": "10000000000000000000000000"
+    }
+  ]
+}
+```
+
 ### Simulate Contract（コントラクトをシミュレート）
 
 トランザクションを送信せずにコントラクト呼び出しをテストします。
@@ -136,6 +174,28 @@ Contractリソースは、Ethereumブロックチェーン上のスマートコ�
 - 送信前にトランザクションをテスト
 - コントラクトの動作を検証
 - リバート理由を確認
+
+
+**範例**：
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]",
+  "from": "0xYourAddress..."
+}
+```
+
+
+**輸出**：
+```json
+{
+  "success": true,
+  "result": true,
+  "gasUsed": "65000"
+}
+```
 
 ### Get Logs（ログを取得）
 
@@ -156,6 +216,37 @@ Contractリソースは、Ethereumブロックチェーン上のスマートコ�
 - コントラクトアクティビティを監視
 
 ## 一般的なユースケース
+
+
+**範例**：
+```json
+{
+  "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "fromBlock": "18000000",
+  "toBlock": "18000100"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "logs": [
+    {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "blockNumber": "18000042",
+      "transactionHash": "0x1234567890abcdef...",
+      "event": "Transfer",
+      "args": {
+        "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+        "value": "1000000000000000000"
+      }
+    }
+  ]
+}
+```
 
 ### コントラクトの状態を読む
 

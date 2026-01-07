@@ -38,6 +38,25 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"balanceOf\",\"type\":\"function\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}]}]",
+  "functionName": "balanceOf",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\"]"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "result": "1000000000000000000"
+}
+```
+
 ### Write Contract（写入合约）
 
 在智能合约上执行状态变更函数。
@@ -65,6 +84,27 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 ```
 
 **输出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+}
+```
+
+
+**範例**：
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]"
+}
+```
+
+
+**輸出**：
 ```json
 {
   "hash": "0x1234567890abcdef...",
@@ -103,6 +143,25 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "bytecode": "0x608060405234801561001057600080fd5b50...",
+  "abi": "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}]}]",
+  "args": "[\"MyToken\"]"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "contractAddress": "0xNewContractAddress..."
+}
+```
+
 ### Multicall（多重呼叫）
 
 将多个读取操作批次处理为单一呼叫以提高效率。
@@ -117,6 +176,44 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 - 在单一呼叫中从一个或多个合约读取多个值
 - 减少 RPC 呼叫并提高效能
 - 确保所有读取都来自同一区块
+
+
+**範例**：
+```json
+{
+  "calls": [
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "balanceOf",
+      "args": "[\"0x...\"]"
+    },
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "totalSupply",
+      "args": "[]"
+    }
+  ]
+}
+```
+
+
+**輸出**：
+```json
+{
+  "results": [
+    {
+      "success": true,
+      "result": "1000000000000000000"
+    },
+    {
+      "success": true,
+      "result": "10000000000000000000000000"
+    }
+  ]
+}
+```
 
 ### Simulate Contract（模拟合约）
 
@@ -137,6 +234,28 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 - 验证合约行为
 - 检查回退原因
 
+
+**範例**：
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]",
+  "from": "0xYourAddress..."
+}
+```
+
+
+**輸出**：
+```json
+{
+  "success": true,
+  "result": true,
+  "gasUsed": "65000"
+}
+```
+
 ### Get Logs（取得日志）
 
 从智能合约查询历史事件日志。
@@ -156,6 +275,37 @@ Contract 资源提供与以太坊区块链上智能合约互动的操作。
 - 监控合约活动
 
 ## 常见使用场景
+
+
+**範例**：
+```json
+{
+  "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "fromBlock": "18000000",
+  "toBlock": "18000100"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "logs": [
+    {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "blockNumber": "18000042",
+      "transactionHash": "0x1234567890abcdef...",
+      "event": "Transfer",
+      "args": {
+        "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+        "value": "1000000000000000000"
+      }
+    }
+  ]
+}
+```
 
 ### 读取合约状态
 

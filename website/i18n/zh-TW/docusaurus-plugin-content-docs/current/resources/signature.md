@@ -52,6 +52,43 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 - **Value**（值）（必需）：要簽署的資料
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"},
+      {"name": "nonce", "type": "uint256"},
+      {"name": "deadline", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000",
+    "nonce": "0",
+    "deadline": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "signature": "0x1234567890abcdef..."
+}
+```
+
 - 簽署 permit 交易（無 Gas 批准）
 - 為 dApp 簽署結構化訊息
 - 為複雜資料創建可驗證簽名
@@ -75,6 +112,15 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x..."
+}
+```
+
 ### Verify Typed Data（驗證類型化資料）
 
 驗證 EIP-712 簽名。
@@ -88,6 +134,42 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 - **Signature**（簽名）（必需）：要驗證的簽名
 - **Address**（地址）（必需）：預期簽名者地址
 
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000"
+  },
+  "signature": "0x1234567890abcdef...",
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Recover Address（恢復地址）
 
 從簽名中恢復簽名者地址。
@@ -99,6 +181,14 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 - **Signature**（簽名）（必需）：簽名
 
 **輸出範例**：
+```json
+{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**範例**：
 ```json
 {
   "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
@@ -121,6 +211,14 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
+
 ### Hash Typed Data（雜湊類型化資料）
 
 雜湊類型化資料以進行簽名（EIP-712）。
@@ -133,6 +231,37 @@ Signature 資源提供簽名和驗證訊息和類型化資料的操作。
 - **Value**（值）（必需）：要雜湊的資料
 
 ## 常見使用場景
+
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Message": [
+      {"name": "content", "type": "string"},
+      {"name": "timestamp", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "content": "Hello World",
+    "timestamp": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
 
 ### 用戶驗證
 

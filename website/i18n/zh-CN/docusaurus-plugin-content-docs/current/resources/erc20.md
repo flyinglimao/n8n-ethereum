@@ -48,6 +48,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "ownerAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "formatDecimals": true
+}
+```
+
+
+**輸出**：
+```json
+{
+  "balance": "1000.50",
+  "decimals": 6,
+  "rawBalance": "1000500000"
+}
+```
+
 ### Transfer（转帐）
 
 将代币转移到另一个地址。
@@ -69,6 +89,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 ```
 
 **输出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "amount": "100.5"
+}
+```
+
+
+**輸出**：
 ```json
 {
   "hash": "0x1234567890abcdef...",
@@ -102,6 +142,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "spender": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+  "amount": "unlimited"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
 ### Transfer From（从...转帐）
 
 使用授权转移代币（需要事先授权）。
@@ -118,6 +178,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 - 拉取支付
 - 基于合约的代币转帐
 - 自动支付系统
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "amount": "100.5"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### Get Allowance（取得授权额度）
 
@@ -140,6 +220,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "spender": "0x1111111254fb6c44bAC0beD2854e76F90643097d"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "allowance": "1000000.0",
+  "decimals": 6,
+  "rawAllowance": "1000000000000"
+}
+```
+
 ### Get Total Supply（取得总供应量）
 
 取得代币的总供应量。
@@ -149,6 +249,25 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 **参数**：
 - **Token Address**（代币地址）（必需）：ERC20 代币合约地址
 - **Format Decimals**（格式化小数）（可选）：使用代币小数格式化输出
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "formatDecimals": true
+}
+```
+
+
+**輸出**：
+```json
+{
+  "totalSupply": "42000000000.0",
+  "decimals": 6,
+  "rawTotalSupply": "42000000000000000"
+}
+```
 
 ### Get Decimals（取得小数位数）
 
@@ -166,6 +285,14 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 }
 ```
 
+
+**輸出**：
+```json
+{
+  "decimals": 6
+}
+```
+
 ### Get Name（取得名称）
 
 取得代币名称。
@@ -176,6 +303,14 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 - **Token Address**（代币地址）（必需）：ERC20 代币合约地址
 
 **输出**：
+```json
+{
+  "name": "USD Coin"
+}
+```
+
+
+**輸出**：
 ```json
 {
   "name": "USD Coin"
@@ -199,6 +334,14 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 ```
 
 ## 常见使用场景
+
+
+**輸出**：
+```json
+{
+  "symbol": "USDC"
+}
+```
 
 ### 监控代币余额
 
@@ -225,6 +368,26 @@ ERC20 是以太坊上最常见的代币标准。此资源自动处理 ERC20 ABI�
 ```
 
 ## 常见代币地址
+
+
+**範例**：
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "amount": "100.5"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### 以太坊主网
 

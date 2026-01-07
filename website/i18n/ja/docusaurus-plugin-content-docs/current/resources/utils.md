@@ -82,6 +82,14 @@ weiを人間が読める形式に変換します。
 - `42161`：Arbitrum One
 - `10`：Optimism
 
+
+**範例**：
+```json
+{
+  "chainId": 1
+}
+```
+
 ### Validate Address（アドレスを検証）
 
 Ethereumアドレスを検証してチェックサム化します。
@@ -122,6 +130,24 @@ ABIから関数呼び出しデータをエンコードします。
 - マルチコールペイロードを作成
 - コントラクトインタラクションをエンコード
 
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
 ### Decode Function Data（関数データをデコード）
 
 ABIを使用して関数呼び出しデータをデコードします。
@@ -137,6 +163,27 @@ ABIを使用して関数呼び出しデータをデコードします。
 - コントラクト呼び出しをデバッグ
 - トランザクションデータを解析
 
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "functionName": "transfer",
+  "args": {
+    "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "amount": "1000000000000000000"
+  }
+}
+```
+
 ### Encode Event Topics（イベントトピックをエンコード）
 
 ログフィルタリング用のイベントトピックをエンコードします。
@@ -146,6 +193,28 @@ ABIを使用して関数呼び出しデータをデコードします。
 **パラメータ**：
 - **Event ABI**（イベントABI）（必須）：イベントABI
 - **Arguments**（引数）（オプション）：インデックス付きパラメータ
+
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb"
+  ]
+}
+```
 
 ### Decode Event Log（イベントログをデコード）
 
@@ -162,6 +231,33 @@ ABIを使用してイベントログデータをデコードします。
 - イベントログを解析
 - イベントパラメータを抽出
 - 発行されたイベントを理解
+
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb",
+    "0x0000000000000000000000001111111254fb6c44bac0bed2854e76f90643097d"
+  ],
+  "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "event": "Transfer",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+    "value": "1000000000000000000"
+  }
+}
+```
 
 ### Get Contract Address（コントラクトアドレスを取得）
 
@@ -181,6 +277,23 @@ CREATEまたはCREATE2デプロイアドレスを計算します。
 - CREATE2アドレスを計算
 
 ## 一般的なユースケース
+
+
+**範例**：
+```json
+{
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "nonce": 5
+}
+```
+
+
+**輸出**：
+```json
+{
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
 
 ### トークン量をフォーマット
 
