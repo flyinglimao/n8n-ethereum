@@ -47,6 +47,20 @@ Analyze historical fee data for EIP-1559 optimization.
 }
 ```
 
+**Output**:
+```json
+{
+  "oldestBlock": "18500000",
+  "baseFeePerGas": ["20000000000", "21000000000", "20500000000"],
+  "gasUsedRatio": [0.5, 0.6, 0.55],
+  "reward": [
+    ["1000000000", "1500000000", "2000000000"],
+    ["1100000000", "1600000000", "2100000000"],
+    ["1050000000", "1550000000", "2050000000"]
+  ]
+}
+```
+
 ### Estimate Max Priority Fee
 
 Estimate the maximum priority fee for transactions.

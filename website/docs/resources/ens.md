@@ -44,7 +44,14 @@ Reverse resolve an address to an ENS name.
 **Parameters**:
 - **Address** (required): The Ethereum address to resolve
 
-**Example Output**:
+**Example**:
+```json
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+}
+```
+
+**Output**:
 ```json
 {
   "ensName": "vitalik.eth"
@@ -60,7 +67,14 @@ Retrieve the avatar URI for an ENS name.
 **Parameters**:
 - **ENS Name** (required): The ENS name to query
 
-**Example Output**:
+**Example**:
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
+**Output**:
 ```json
 {
   "avatar": "https://..."
@@ -112,7 +126,14 @@ Get the resolver contract address for an ENS name.
 **Parameters**:
 - **ENS Name** (required): The ENS name to query
 
-**Example Output**:
+**Example**:
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
+**Output**:
 ```json
 {
   "resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"

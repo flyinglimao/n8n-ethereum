@@ -102,6 +102,15 @@ Approve another address to spend tokens on your behalf.
 }
 ```
 
+**Output**:
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
 ### Transfer From
 
 Transfer tokens using an allowance (requires prior approval).
@@ -118,6 +127,25 @@ Transfer tokens using an allowance (requires prior approval).
 - Pull payments
 - Contract-based token transfers
 - Automated payment systems
+
+**Example**:
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+  "amount": "100.5"
+}
+```
+
+**Output**:
+```json
+{
+  "hash": "0x1234567890abcdef...",
+  "from": "0xYourAddress...",
+  "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
 
 ### Get Allowance
 
@@ -140,6 +168,15 @@ Check how much a spender is allowed to spend on behalf of an owner.
 }
 ```
 
+**Output**:
+```json
+{
+  "allowance": "1000000.0",
+  "decimals": 6,
+  "rawAllowance": "1000000000000"
+}
+```
+
 ### Get Total Supply
 
 Get the total supply of tokens.
@@ -149,6 +186,23 @@ Get the total supply of tokens.
 **Parameters**:
 - **Token Address** (required): The ERC20 token contract address
 - **Format Decimals** (optional): Format output using token decimals
+
+**Example**:
+```json
+{
+  "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "formatDecimals": true
+}
+```
+
+**Output**:
+```json
+{
+  "totalSupply": "42000000000.0",
+  "decimals": 6,
+  "rawTotalSupply": "42000000000000000"
+}
+```
 
 ### Get Decimals
 

@@ -138,6 +138,22 @@ Batch multiple read operations into a single call for efficiency.
 }
 ```
 
+**Output**:
+```json
+{
+  "results": [
+    {
+      "success": true,
+      "result": "1000000000000000000"
+    },
+    {
+      "success": true,
+      "result": "10000000000000000000000000"
+    }
+  ]
+}
+```
+
 ### Simulate Contract
 
 Test a contract call without sending a transaction.
@@ -156,6 +172,26 @@ Test a contract call without sending a transaction.
 - Test transactions before sending
 - Verify contract behavior
 - Check for revert reasons
+
+**Example**:
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]",
+  "from": "0xYourAddress..."
+}
+```
+
+**Output**:
+```json
+{
+  "success": true,
+  "result": true,
+  "gasUsed": "65000"
+}
+```
 
 ### Get Logs
 
@@ -182,6 +218,25 @@ Query historical event logs from smart contracts.
   "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
   "fromBlock": "18000000",
   "toBlock": "18000100"
+}
+```
+
+**Output**:
+```json
+{
+  "logs": [
+    {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "blockNumber": "18000042",
+      "transactionHash": "0x1234567890abcdef...",
+      "event": "Transfer",
+      "args": {
+        "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+        "value": "1000000000000000000"
+      }
+    }
+  ]
 }
 ```
 
