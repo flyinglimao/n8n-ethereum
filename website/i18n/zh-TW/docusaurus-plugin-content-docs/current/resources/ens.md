@@ -51,6 +51,14 @@ ENS 允許用戶註冊人類可讀的名稱（如「alice.eth」）而不是使�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+}
+```
+
 ### Get ENS Avatar（取得 ENS 頭像）
 
 檢索 ENS 名稱的頭像 URI。
@@ -64,6 +72,14 @@ ENS 允許用戶註冊人類可讀的名稱（如「alice.eth」）而不是使�
 ```json
 {
   "avatar": "https://..."
+}
+```
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
 }
 ```
 
@@ -120,6 +136,14 @@ ENS 允許用戶註冊人類可讀的名稱（如「alice.eth」）而不是使�
 ```
 
 ## 常見使用場景
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
 
 ### 解析名稱以進行付款
 

@@ -56,6 +56,43 @@ EIP-712に従って構造化データに署名します。
 - dApp用の構造化メッセージに署名
 - 複雑なデータの検証可能な署名を作成
 
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"},
+      {"name": "nonce", "type": "uint256"},
+      {"name": "deadline", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000",
+    "nonce": "0",
+    "deadline": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "signature": "0x1234567890abcdef..."
+}
+```
+
 ### Verify Message（メッセージを検証）
 
 パーソナルメッセージ署名を検証します。
@@ -68,6 +105,15 @@ EIP-712に従って構造化データに署名します。
 - **Address**（アドレス）（必須）：期待される署名者アドレス
 
 **出力例**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x..."
+}
+```
+
+
+**範例**：
 ```json
 {
   "valid": true,
@@ -88,6 +134,42 @@ EIP-712署名を検証します。
 - **Signature**（署名）（必須）：検証する署名
 - **Address**（アドレス）（必須）：期待される署名者アドレス
 
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000"
+  },
+  "signature": "0x1234567890abcdef...",
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Recover Address（アドレスを復元）
 
 署名から署名者アドレスを復元します。
@@ -99,6 +181,14 @@ EIP-712署名を検証します。
 - **Signature**（署名）（必須）：署名
 
 **出力例**：
+```json
+{
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+
+**範例**：
 ```json
 {
   "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
@@ -121,6 +211,14 @@ EIP-712署名を検証します。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
+
 ### Hash Typed Data（型付きデータをハッシュ化）
 
 署名用の型付きデータをハッシュ化します（EIP-712）。
@@ -133,6 +231,37 @@ EIP-712署名を検証します。
 - **Value**（値）（必須）：ハッシュ化するデータ
 
 ## 一般的なユースケース
+
+
+**範例**：
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Message": [
+      {"name": "content", "type": "string"},
+      {"name": "timestamp", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "content": "Hello World",
+    "timestamp": "1700000000"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
 
 ### ユーザー認証
 

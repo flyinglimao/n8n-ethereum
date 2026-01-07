@@ -51,6 +51,14 @@ ENS名をEthereumアドレスに解決します。
 }
 ```
 
+
+**範例**：
+```json
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+}
+```
+
 ### Get ENS Avatar（ENSアバターを取得）
 
 ENS名のアバターURIを取得します。
@@ -64,6 +72,14 @@ ENS名のアバターURIを取得します。
 ```json
 {
   "avatar": "https://..."
+}
+```
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
 }
 ```
 
@@ -120,6 +136,14 @@ ENS名のリゾルバーコントラクトアドレスを取得します。
 ```
 
 ## 一般的なユースケース
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
 
 ### 支払いのために名前を解決
 

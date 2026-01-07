@@ -35,6 +35,22 @@ ENS 允许用户注册人类可读的名称（如「alice.eth」）而不是使�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+}
+```
+
 ### Get ENS Name（取得 ENS 名称）
 
 反向解析地址为 ENS 名称。
@@ -51,6 +67,22 @@ ENS 允许用户注册人类可读的名称（如「alice.eth」）而不是使�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
 ### Get ENS Avatar（取得 ENS 头像）
 
 检索 ENS 名称的头像 URI。
@@ -61,6 +93,22 @@ ENS 允许用户注册人类可读的名称（如「alice.eth」）而不是使�
 - **ENS Name**（ENS 名称）（必需）：要查询的 ENS 名称
 
 **输出范例**：
+```json
+{
+  "avatar": "https://..."
+}
+```
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
+
+**輸出**：
 ```json
 {
   "avatar": "https://..."
@@ -103,6 +151,23 @@ ENS 允许用户注册人类可读的名称（如「alice.eth」）而不是使�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth",
+  "key": "com.twitter"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "text": "VitalikButerin"
+}
+```
+
 ### Get ENS Resolver（取得 ENS 解析器）
 
 取得 ENS 名称的解析器合约地址。
@@ -120,6 +185,22 @@ ENS 允许用户注册人类可读的名称（如「alice.eth」）而不是使�
 ```
 
 ## 常见使用场景
+
+
+**範例**：
+```json
+{
+  "ensName": "vitalik.eth"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "resolver": "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
+}
+```
 
 ### 解析名称以进行付款
 

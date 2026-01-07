@@ -33,6 +33,23 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "value": "1000000000000000000",
+  "decimals": 18
+}
+```
+
+
+**輸出**：
+```json
+{
+  "formatted": "1.0"
+}
+```
+
 ### Parse Units（解析单位）
 
 将人类可读的格式转换为 wei。
@@ -52,6 +69,23 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 ```
 
 **输出**：
+```json
+{
+  "parsed": "1500000000000000000"
+}
+```
+
+
+**範例**：
+```json
+{
+  "value": "1.5",
+  "decimals": 18
+}
+```
+
+
+**輸出**：
 ```json
 {
   "parsed": "1500000000000000000"
@@ -82,6 +116,14 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 - `42161`：Arbitrum One
 - `10`：Optimism
 
+
+**範例**：
+```json
+{
+  "chainId": 1
+}
+```
+
 ### Validate Address（验证地址）
 
 验证并校验和以太坊地址。
@@ -106,6 +148,23 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 }
 ```
 
+
+**範例**：
+```json
+{
+  "address": "0x742d35cc6634c0532925a3b844bc9e7595f0beb"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "valid": true,
+  "checksummed": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
 ### Encode Function Data（编码函数资料）
 
 从 ABI 编码函数呼叫资料。
@@ -122,6 +181,24 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 - 创建 multicall 负载
 - 编码合约互动
 
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
 ### Decode Function Data（解码函数资料）
 
 使用 ABI 解码函数呼叫资料。
@@ -137,6 +214,27 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 - 除错合约呼叫
 - 解析交易资料
 
+
+**範例**：
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "functionName": "transfer",
+  "args": {
+    "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "amount": "1000000000000000000"
+  }
+}
+```
+
 ### Encode Event Topics（编码事件主题）
 
 为日志筛选编码事件主题。
@@ -146,6 +244,28 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 **参数**：
 - **Event ABI**（事件 ABI）（必需）：事件 ABI
 - **Arguments**（参数）（可选）：索引参数
+
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+  }
+}
+```
+
+
+**輸出**：
+```json
+{
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb"
+  ]
+}
+```
 
 ### Decode Event Log（解码事件日志）
 
@@ -162,6 +282,33 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 - 解析事件日志
 - 提取事件参数
 - 理解发出的事件
+
+
+**範例**：
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb",
+    "0x0000000000000000000000001111111254fb6c44bac0bed2854e76f90643097d"
+  ],
+  "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "event": "Transfer",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+    "value": "1000000000000000000"
+  }
+}
+```
 
 ### Get Contract Address（取得合约地址）
 
@@ -181,6 +328,23 @@ Utils 资源提供格式化、编码、验证和其他辅助操作的实用函�
 - 计算 CREATE2 地址
 
 ## 常见使用场景
+
+
+**範例**：
+```json
+{
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "nonce": 5
+}
+```
+
+
+**輸出**：
+```json
+{
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
 
 ### 格式化代币数量
 

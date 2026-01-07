@@ -114,6 +114,44 @@ Contract 資源提供與以太坊區塊鏈上智能合約互動的操作。
   - 每個呼叫包含：合約地址、ABI、函數名稱、參數
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "calls": [
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "balanceOf",
+      "args": "[\"0x...\"]"
+    },
+    {
+      "address": "0x...",
+      "abi": "[...]",
+      "functionName": "totalSupply",
+      "args": "[]"
+    }
+  ]
+}
+```
+
+
+**輸出**：
+```json
+{
+  "results": [
+    {
+      "success": true,
+      "result": "1000000000000000000"
+    },
+    {
+      "success": true,
+      "result": "10000000000000000000000000"
+    }
+  ]
+}
+```
+
 - 在單一呼叫中從一個或多個合約讀取多個值
 - 減少 RPC 呼叫並提高效能
 - 確保所有讀取都來自同一區塊
@@ -133,6 +171,28 @@ Contract 資源提供與以太坊區塊鏈上智能合約互動的操作。
 - **From**（發送者）（可選）：模擬呼叫的地址
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "contractAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]",
+  "from": "0xYourAddress..."
+}
+```
+
+
+**輸出**：
+```json
+{
+  "success": true,
+  "result": true,
+  "gasUsed": "65000"
+}
+```
+
 - 發送前測試交易
 - 驗證合約行為
 - 檢查回退原因
@@ -151,6 +211,37 @@ Contract 資源提供與以太坊區塊鏈上智能合約互動的操作。
 - **Topics**（主題）（可選）：按索引事件參數篩選
 
 **使用場景**：
+
+**範例**：
+```json
+{
+  "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "fromBlock": "18000000",
+  "toBlock": "18000100"
+}
+```
+
+
+**輸出**：
+```json
+{
+  "logs": [
+    {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "blockNumber": "18000042",
+      "transactionHash": "0x1234567890abcdef...",
+      "event": "Transfer",
+      "args": {
+        "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+        "value": "1000000000000000000"
+      }
+    }
+  ]
+}
+```
+
 - 查詢歷史事件
 - 追蹤代幣轉帳
 - 監控合約活動
