@@ -122,6 +122,22 @@ Encode function call data from ABI.
 - Create multicall payloads
 - Encode contract interactions
 
+**Example**:
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "functionName": "transfer",
+  "args": "[\"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb\", \"1000000000000000000\"]"
+}
+```
+
+**Output**:
+```json
+{
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
 ### Decode Function Data
 
 Decode function call data using ABI.
@@ -137,6 +153,25 @@ Decode function call data using ABI.
 - Debug contract calls
 - Parse transaction data
 
+**Example**:
+```json
+{
+  "abi": "[{\"name\":\"transfer\",\"type\":\"function\",\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"}]}]",
+  "data": "0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+**Output**:
+```json
+{
+  "functionName": "transfer",
+  "args": {
+    "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "amount": "1000000000000000000"
+  }
+}
+```
+
 ### Encode Event Topics
 
 Encode event topics for log filtering.
@@ -146,6 +181,26 @@ Encode event topics for log filtering.
 **Parameters**:
 - **Event ABI** (required): Event ABI
 - **Arguments** (optional): Indexed parameters
+
+**Example**:
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+  }
+}
+```
+
+**Output**:
+```json
+{
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb"
+  ]
+}
+```
 
 ### Decode Event Log
 
@@ -163,6 +218,31 @@ Decode event log data using ABI.
 - Extract event parameters
 - Understand emitted events
 
+**Example**:
+```json
+{
+  "eventAbi": "{\"name\":\"Transfer\",\"type\":\"event\",\"inputs\":[{\"name\":\"from\",\"type\":\"address\",\"indexed\":true},{\"name\":\"to\",\"type\":\"address\",\"indexed\":true},{\"name\":\"value\",\"type\":\"uint256\"}]}",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x000000000000000000000000742d35cc6634c0532925a3b844bc9e7595f0beb",
+    "0x0000000000000000000000001111111254fb6c44bac0bed2854e76f90643097d"
+  ],
+  "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+}
+```
+
+**Output**:
+```json
+{
+  "event": "Transfer",
+  "args": {
+    "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "to": "0x1111111254fb6c44bAC0beD2854e76F90643097d",
+    "value": "1000000000000000000"
+  }
+}
+```
+
 ### Get Contract Address
 
 Calculate CREATE or CREATE2 deployment addresses.
@@ -179,6 +259,37 @@ Calculate CREATE or CREATE2 deployment addresses.
 - Predict contract deployment addresses
 - Verify deployment addresses
 - Calculate CREATE2 addresses
+
+**Example (CREATE)**:
+```json
+{
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "nonce": 5
+}
+```
+
+**Output**:
+```json
+{
+  "address": "0x1234567890123456789012345678901234567890"
+}
+```
+
+**Example (CREATE2)**:
+```json
+{
+  "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "bytecodeHash": "0x1234567890abcdef...",
+  "salt": "0x0000000000000000000000000000000000000000000000000000000000000001"
+}
+```
+
+**Output**:
+```json
+{
+  "address": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+}
+```
 
 ## Common Use Cases
 

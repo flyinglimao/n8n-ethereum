@@ -56,6 +56,41 @@ Sign structured data according to EIP-712.
 - Sign structured messages for dApps
 - Create verifiable signatures for complex data
 
+**Example**:
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"},
+      {"name": "nonce", "type": "uint256"},
+      {"name": "deadline", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000",
+    "nonce": "0",
+    "deadline": "1700000000"
+  }
+}
+```
+
+**Output**:
+```json
+{
+  "signature": "0x1234567890abcdef..."
+}
+```
+
 ### Verify Message
 
 Verify a personal message signature.
@@ -87,6 +122,40 @@ Verify an EIP-712 signature.
 - **Value** (required): The original data
 - **Signature** (required): The signature to verify
 - **Address** (required): Expected signer address
+
+**Example**:
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Permit": [
+      {"name": "owner", "type": "address"},
+      {"name": "spender", "type": "address"},
+      {"name": "value", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "owner": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "spender": "0x...",
+    "value": "1000000000000000000"
+  },
+  "signature": "0x1234567890abcdef...",
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
+
+**Output**:
+```json
+{
+  "valid": true,
+  "recoveredAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+}
+```
 
 ### Recover Address
 
@@ -131,6 +200,35 @@ Hash typed data for signing (EIP-712).
 - **Domain** (required): EIP-712 domain separator
 - **Types** (required): Type definitions
 - **Value** (required): The data to hash
+
+**Example**:
+```json
+{
+  "domain": {
+    "name": "MyDApp",
+    "version": "1",
+    "chainId": 1,
+    "verifyingContract": "0x..."
+  },
+  "types": {
+    "Message": [
+      {"name": "content", "type": "string"},
+      {"name": "timestamp", "type": "uint256"}
+    ]
+  },
+  "value": {
+    "content": "Hello World",
+    "timestamp": "1700000000"
+  }
+}
+```
+
+**Output**:
+```json
+{
+  "hash": "0x1234567890abcdef..."
+}
+```
 
 ## Common Use Cases
 
