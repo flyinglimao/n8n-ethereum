@@ -56,6 +56,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/flyinglimao/n8n-ethereum.git"
-  },
-  "type": "module"
+  }
 }
