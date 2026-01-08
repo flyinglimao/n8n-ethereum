@@ -4,6 +4,35 @@
 
 Comprehensive Ethereum blockchain integration for n8n with a unified node structure using viem. This community node package provides two powerful nodes: **Ethereum** (regular node) and **Ethereum Trigger** (trigger node) for interacting with Ethereum and EVM-compatible blockchains.
 
+## 📦 Project Structure
+
+This project uses a **pnpm workspace** monorepo structure:
+
+- **`packages/n8n-nodes-ethereum`** - Main n8n node package (CommonJS)
+  - The actual n8n nodes and credentials
+  - Published to npm as `@0xlimao/n8n-nodes-ethereum`
+
+- **`packages/n8n-ethereum-test`** - Test environment (ES Module)
+  - Hardhat network setup and smart contracts
+  - Integration test suite
+  - Separate package to support ES Modules required by Hardhat
+
+### Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build main package
+pnpm build
+
+# Start Hardhat test network (in separate terminal)
+pnpm test:node
+
+# Run tests
+pnpm test
+```
+
 ## ⚠️ Disclaimer
 
 > **WARNING**: This package is currently in early development and **has not been thoroughly tested or audited**. Please use at your own risk.

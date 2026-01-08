@@ -14,7 +14,7 @@ import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const projectRoot = dirname(dirname(__dirname));
+const projectRoot = dirname(__dirname);
 
 // Hardhat's default first account private key
 const DEFAULT_PRIVATE_KEY =

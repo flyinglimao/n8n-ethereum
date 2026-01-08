@@ -33,8 +33,8 @@ if (!API_KEY) {
     process.exit(1);
 }
 
-const WORKFLOWS_DIR = join(__dirname, "..", "workflows");
-const CREDENTIALS_DIR = join(__dirname, "..", "credentials");
+const WORKFLOWS_DIR = join(__dirname, "..", "tests", "workflows");
+const CREDENTIALS_DIR = join(__dirname, "..", "tests", "credentials");
 
 /** Stores credential name -> API-assigned ID mapping */
 const credentialIdMap = new Map();

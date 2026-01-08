@@ -16,6 +16,6 @@
     "sourceMap": true,
     "types": ["node"]
   },
-  "include": ["credentials/**/*", "nodes/**/*"],
+  "include": ["credentials/**/*", "nodes/**/*", "utils/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,0 +1,53 @@
+{
+  "name": "@0xlimao/n8n-nodes-ethereum",
+  "version": "1.0.1",
+  "description": "Comprehensive Ethereum blockchain integration for n8n with unified node structure using viem",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.ts\""
+  },
+  "keywords": [
+    "n8n",
+    "n8n-community-node-package",
+    "ethereum",
+    "blockchain",
+    "viem",
+    "web3"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/EthereumRpc.credentials.js",
+      "dist/credentials/EthereumAccount.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Ethereum/Ethereum.node.js",
+      "dist/nodes/EthereumTrigger/EthereumTrigger.node.js"
+    ]
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "abitype": "^1.2.3",
+    "n8n-core": "^2.2.1",
+    "n8n-workflow": "^2.2.1",
+    "viem": "^2.43.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^9.39.2",
+    "gulp": "^5.0.1",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flyinglimao/n8n-ethereum.git"
+  }
+}

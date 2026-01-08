@@ -1,57 +1,31 @@
 {
-  "name": "@0xlimao/n8n-nodes-ethereum",
+  "name": "@0xlimao/n8n-ethereum-workspace",
   "version": "1.0.1",
-  "description": "Comprehensive Ethereum blockchain integration for n8n with unified node structure using viem",
+  "private": true,
+  "description": "Monorepo for n8n Ethereum nodes and testing infrastructure",
   "scripts": {
-    "build": "tsc && gulp build:icons",
-    "dev": "tsc --watch",
-    "test": "vitest",
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm --filter @0xlimao/n8n-ethereum-test test",
     "test:n8n": "N8N_USER_FOLDER=/tmp/.test-n8n n8n",
-    "test:node": "node tests/scripts/start-hardhat-network.mjs",
-    "test:setup": "node tests/scripts/setup.mjs",
-    "test:deploy": "node tests/scripts/deploy-contracts.mjs",
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"**/*.ts\""
+    "test:node": "pnpm --filter @0xlimao/n8n-ethereum-test node",
+    "test:setup": "pnpm --filter @0xlimao/n8n-ethereum-test test:setup",
+    "test:deploy": "pnpm --filter @0xlimao/n8n-ethereum-test deploy",
+    "compile": "pnpm --filter @0xlimao/n8n-ethereum-test compile",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format"
   },
   "keywords": [
     "n8n",
-    "n8n-community-node-package",
     "ethereum",
     "blockchain",
     "viem",
     "web3"
   ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/EthereumRpc.credentials.js",
-      "dist/credentials/EthereumAccount.credentials.js"
-    ],
-    "nodes": [
-      "dist/nodes/Ethereum/Ethereum.node.js",
-      "dist/nodes/EthereumTrigger/EthereumTrigger.node.js"
-    ]
-  },
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "abitype": "^1.2.3",
-    "n8n-core": "^2.2.1",
-    "n8n-workflow": "^2.2.1",
-    "viem": "^2.43.4"
-  },
   "devDependencies": {
-    "@nomicfoundation/hardhat-viem": "^3.0.1",
-    "@openzeppelin/contracts": "^5.4.0",
-    "@types/node": "^22.13.14",
-    "@typescript-eslint/eslint-plugin": "^8.51.0",
-    "@typescript-eslint/parser": "^8.51.0",
-    "eslint": "^9.39.2",
-    "gulp": "^5.0.1",
-    "hardhat": "^3.1.2",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "pnpm": "^9.15.4"
   },
   "repository": {
     "type": "git",

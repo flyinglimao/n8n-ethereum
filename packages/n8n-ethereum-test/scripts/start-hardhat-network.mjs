@@ -13,7 +13,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const projectRoot = dirname(dirname(__dirname));
+const projectRoot = dirname(__dirname);
 
 console.log("Starting Hardhat Network...");
 console.log("Project root:", projectRoot);
