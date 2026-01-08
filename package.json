@@ -43,7 +43,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-viem": "^3.0.1",
     "@openzeppelin/contracts": "^5.4.0",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.19.3",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
     "eslint": "^9.39.2",

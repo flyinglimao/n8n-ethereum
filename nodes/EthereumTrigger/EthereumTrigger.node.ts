@@ -14,6 +14,11 @@ import {
 } from "viem";
 import { getChain } from "../../utils/chainConfig";
 import { parseViemError } from "../../utils/errorHandling";
+import {
+  safeJsonParse,
+  parseAndValidateAbi,
+  validateNameInAbi,
+} from "../../utils/inputValidation";
 
 // Helper function
 function createPublicClient(credentials: any) {
@@ -436,17 +441,21 @@ export class EthereumTrigger implements INodeType {
           let logs;
           if (abiInput === "abiEvent") {
             const abiStr = this.getNodeParameter("abi") as string;
-            const abi = JSON.parse(abiStr);
+            const abi = parseAndValidateAbi(abiStr, "ABI");
             const eventName = this.getNodeParameter("eventName") as string;
+
+            // Validate event exists in ABI
+            validateNameInAbi(abi, eventName, "event", "Event Name");
+
             const eventArgsStr = this.getNodeParameter(
               "eventArgs",
               "{}"
             ) as string;
-            const eventArgs = JSON.parse(eventArgsStr);
+            const eventArgs = safeJsonParse(eventArgsStr, "Event Arguments Filter", "object");
 
             const eventAbi = abi.find(
               (item: any) => item.type === "event" && item.name === eventName
-            );
+            ) as any;
 
             if (!eventAbi) {
               throw new NodeOperationError(
@@ -556,17 +565,21 @@ export class EthereumTrigger implements INodeType {
           let logs;
           if (abiInput === "abiEvent") {
             const abiStr = this.getNodeParameter("abi") as string;
-            const abi = JSON.parse(abiStr);
+            const abi = parseAndValidateAbi(abiStr, "ABI");
             const eventName = this.getNodeParameter("eventName") as string;
+
+            // Validate event exists in ABI
+            validateNameInAbi(abi, eventName, "event", "Event Name");
+
             const eventArgsStr = this.getNodeParameter(
               "eventArgs",
               "{}"
             ) as string;
-            const eventArgs = JSON.parse(eventArgsStr);
+            const eventArgs = safeJsonParse(eventArgsStr, "Event Arguments Filter", "object");
 
             const eventAbi = abi.find(
               (item: any) => item.type === "event" && item.name === eventName
-            );
+            ) as any;
 
             if (!eventAbi) {
               throw new NodeOperationError(

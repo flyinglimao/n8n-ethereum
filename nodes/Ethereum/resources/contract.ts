@@ -4,6 +4,12 @@ import {
     NodeOperationError,
 } from "n8n-workflow";
 import { PublicClient, WalletClient, decodeEventLog } from "viem";
+import {
+    safeJsonParse,
+    validateAddress,
+    parseAndValidateAbi,
+    validateNameInAbi,
+} from "../../../utils/inputValidation";
 
 export const contractProperties: INodeProperties[] = [
     // Contract: Read / Write
@@ -206,8 +212,12 @@ export async function executeContract(
 
     if (operation === "read") {
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+
+        // Validate contract address
+        validateAddress(contractAddress, "Contract Address");
+
         const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAndValidateAbi(abiStr, "ABI");
         const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
 
         if (useRawCalldata) {
@@ -221,8 +231,12 @@ export async function executeContract(
             };
         } else {
             const functionName = this.getNodeParameter("functionName", i) as string;
+
+            // Validate function exists in ABI
+            validateNameInAbi(abi, functionName, "function", "Function Name");
+
             const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
-            const parameters = JSON.parse(parametersStr);
+            const parameters = safeJsonParse(parametersStr, "Parameters", "array");
 
             const result = await publicClient.readContract({
                 address: contractAddress as `0x${string}`,
@@ -244,8 +258,12 @@ export async function executeContract(
         }
 
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+
+        // Validate contract address
+        validateAddress(contractAddress, "Contract Address");
+
         const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAndValidateAbi(abiStr, "ABI");
         const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
 
         if (useRawCalldata) {
@@ -261,8 +279,12 @@ export async function executeContract(
             };
         } else {
             const functionName = this.getNodeParameter("functionName", i) as string;
+
+            // Validate function exists in ABI
+            validateNameInAbi(abi, functionName, "function", "Function Name");
+
             const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
-            const parameters = JSON.parse(parametersStr);
+            const parameters = safeJsonParse(parametersStr, "Parameters", "array");
 
             const hash = await walletClient.writeContract({
                 address: contractAddress as `0x${string}`,
@@ -286,10 +308,10 @@ export async function executeContract(
         }
 
         const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAndValidateAbi(abiStr, "ABI");
         const bytecode = this.getNodeParameter("bytecode", i) as string;
         const constructorArgsStr = this.getNodeParameter("constructorArgs", i, "[]") as string;
-        const constructorArgs = JSON.parse(constructorArgsStr);
+        const constructorArgs = safeJsonParse(constructorArgsStr, "Constructor Arguments", "array");
 
         const hash = await walletClient.deployContract({
             abi,
@@ -304,11 +326,19 @@ export async function executeContract(
         };
     } else if (operation === "getLogs") {
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
+
+        // Validate contract address
+        validateAddress(contractAddress, "Contract Address");
+
         const abiStr = this.getNodeParameter("logsAbi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAndValidateAbi(abiStr, "Logs ABI");
         const eventName = this.getNodeParameter("eventName", i) as string;
+
+        // Validate event exists in ABI
+        validateNameInAbi(abi, eventName, "event", "Event Name");
+
         const eventArgsStr = this.getNodeParameter("eventArgs", i, "{}") as string;
-        const eventArgs = JSON.parse(eventArgsStr);
+        const eventArgs = safeJsonParse(eventArgsStr, "Event Arguments", "object");
         const fromBlockStr = this.getNodeParameter("fromBlock", i) as string;
         const toBlockStr = this.getNodeParameter("toBlock", i) as string;
 
@@ -317,7 +347,7 @@ export async function executeContract(
 
         const eventAbi = abi.find(
             (item: any) => item.type === "event" && item.name === eventName
-        );
+        ) as any;
 
         if (!eventAbi) {
             throw new NodeOperationError(
