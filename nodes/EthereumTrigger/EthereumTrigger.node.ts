@@ -465,13 +465,30 @@ export class EthereumTrigger implements INodeType {
             }
 
             // First run: use currentBlock - blockLimit ~ currentBlock range
-            logs = await publicClient.getLogs({
-              address: addresses,
-              event: eventAbi,
-              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
-              fromBlock,
-              toBlock: currentBlock,
-            });
+            try {
+              logs = await publicClient.getLogs({
+                address: addresses,
+                event: eventAbi,
+                args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                fromBlock,
+                toBlock: currentBlock,
+              });
+            } catch (error) {
+              // Add request context to error
+              const requestContext = {
+                method: 'eth_getLogs',
+                params: {
+                  addresses: addresses || 'all',
+                  eventName,
+                  eventArgs: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                  fromBlock: fromBlock.toString(),
+                  toBlock: currentBlock.toString(),
+                  blockRange: (currentBlock - fromBlock).toString(),
+                },
+              };
+              const errorMessage = parseViemError(error, requestContext);
+              throw new NodeOperationError(this.getNode(), errorMessage);
+            }
 
             for (const log of logs) {
               try {
@@ -588,13 +605,30 @@ export class EthereumTrigger implements INodeType {
               );
             }
 
-            logs = await publicClient.getLogs({
-              address: addresses,
-              event: eventAbi,
-              args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
-              fromBlock: range.from,
-              toBlock: range.to,
-            });
+            try {
+              logs = await publicClient.getLogs({
+                address: addresses,
+                event: eventAbi,
+                args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                fromBlock: range.from,
+                toBlock: range.to,
+              });
+            } catch (error) {
+              // Add request context to error
+              const requestContext = {
+                method: 'eth_getLogs',
+                params: {
+                  addresses: addresses || 'all',
+                  eventName,
+                  eventArgs: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                  fromBlock: range.from.toString(),
+                  toBlock: range.to.toString(),
+                  blockRange: (range.to - range.from + 1n).toString(),
+                },
+              };
+              const errorMessage = parseViemError(error, requestContext);
+              throw new NodeOperationError(this.getNode(), errorMessage);
+            }
 
             for (const log of logs) {
               try {

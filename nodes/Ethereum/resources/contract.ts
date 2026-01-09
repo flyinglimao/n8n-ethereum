@@ -10,6 +10,7 @@ import {
     parseAndValidateAbi,
     validateNameInAbi,
 } from "../../../utils/inputValidation";
+import { parseViemError } from "../../../utils/errorHandling";
 
 export const contractProperties: INodeProperties[] = [
     // Contract: Read / Write
@@ -356,13 +357,32 @@ export async function executeContract(
             );
         }
 
-        const logs = await publicClient.getLogs({
-            address: contractAddress as `0x${string}`,
-            event: eventAbi,
-            args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
-            fromBlock,
-            toBlock,
-        });
+        // Prepare request context for error reporting
+        const requestContext = {
+            method: 'eth_getLogs',
+            params: {
+                address: contractAddress,
+                eventName,
+                eventArgs: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                fromBlock: fromBlockStr,
+                toBlock: toBlockStr,
+            },
+        };
+
+        let logs;
+        try {
+            logs = await publicClient.getLogs({
+                address: contractAddress as `0x${string}`,
+                event: eventAbi,
+                args: Object.keys(eventArgs).length > 0 ? eventArgs : undefined,
+                fromBlock,
+                toBlock,
+            });
+        } catch (error) {
+            // Re-throw with request context
+            const errorMessage = parseViemError(error, requestContext);
+            throw new NodeOperationError(this.getNode(), errorMessage);
+        }
 
         const decodedLogs = logs.map((log: any) => {
             try {

@@ -184,65 +184,92 @@
 
 ## RPC 錯誤
 
-### 錯誤：「RPC provider limit exceeded: Query returned more than X results」（RPC 提供者限制超出：查詢返回超過 X 個結果）
+### 理解 RPC 錯誤訊息
 
-**原因：** 您的 getLogs 查詢返回太多結果。大多數 RPC 提供者將結果限制在 10,000 個日誌。
+當發生 RPC 錯誤時，n8n-ethereum 現在會顯示完整的錯誤資訊：
+
+```
+RPC Error: [RPC 提供者的錯誤訊息]
+
+RPC Response: [提供者的詳細錯誤]
+
+Request Context: {
+  "method": "eth_getLogs",
+  "params": {
+    "address": "0x...",
+    "eventName": "Transfer",
+    "fromBlock": "1000000",
+    "toBlock": "1100000",
+    "blockRange": "100000"
+  }
+}
+```
+
+這幫助您了解：
+1. **發生了什麼** - RPC 提供者的錯誤訊息
+2. **您請求了什麼** - 發送到 RPC 的確切參數
+3. **如何修復** - 將您的請求與提供者限制進行比較
+
+### 常見 RPC 問題
+
+#### 結果太多
+
+**錯誤模式：**
+```
+RPC Response: "query returned more than 10000 results"
+```
+
+**原因：** 您的查詢返回了太多日誌。
+
+**解決方法：** 檢查錯誤上下文中的 `blockRange` 並減少它：
+```
+如果 blockRange 是 100000，嘗試減少到 10000 或更少
+```
+
+#### 區塊範圍太大
+
+**錯誤模式：**
+```
+RPC Response: "block range is too large"
+RPC Response: "Log response size exceeded"
+```
+
+**原因：** RPC 提供者限制區塊範圍。
+
+**解決方法：** 檢查提供者特定的限制：
+- **Infura：** getLogs 為 10,000 個區塊
+- **Alchemy：** getLogs 為 2,000 個區塊
+- **公共 RPC：** 通常為 1,000-5,000 個區塊
+
+根據錯誤將查詢分割成較小的範圍。
+
+#### 速率限制
+
+**錯誤模式：**
+```
+RPC Response: "rate limit exceeded"
+RPC Response: "too many requests"
+```
 
 **解決方法：**
-1. **減少區塊範圍：**
-   ```
-   原本：fromBlock=1000000, toBlock=1100000  (100,000 個區塊)
-   改為：fromBlock=1000000, toBlock=1010000  (10,000 個區塊)
-   ```
-
-2. **添加事件過濾器：**
-   使用索引事件參數來過濾結果：
-   ```json
-   {
-     "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
-   }
-   ```
-
-3. **分割為多個查詢：**
-   將查詢分割成較小的區塊範圍，然後合併結果。
-
-### 錯誤：「RPC provider error: Block range is too large」（RPC 提供者錯誤：區塊範圍太大）
-
-**原因：** RPC 提供者有最大區塊範圍限制。
-
-**解決方法：**
-1. 查看您的 RPC 提供者文件了解限制
-2. 常見限制：
-   - Infura：10,000 個區塊
-   - Alchemy：getLogs 為 2,000 個區塊
-   - 公共 RPC：通常為 1,000-5,000 個區塊
-
-3. 將查詢分割成較小的範圍：
-   ```
-   查詢 1：區塊 1000000-1005000
-   查詢 2：區塊 1005001-1010000
-   查詢 3：區塊 1010001-1015000
-   ```
-
-### 錯誤：「RPC provider rate limit exceeded」（RPC 提供者速率限制超出）
-
-**原因：** 您在短時間內發出了太多請求。
-
-**解決方法：**
-1. 等待片刻後重試
+1. 等待後重試
 2. 降低請求頻率
-3. 考慮升級到付費 RPC 方案
+3. 升級到付費 RPC 方案
 4. 使用不同的 RPC 端點
 
-### 錯誤：「RPC request timed out」（RPC 請求超時）
+#### 超時
 
-**原因：** 查詢執行時間太長。
+**錯誤模式：**
+```
+RPC Response: "timeout"
+RPC Response: "request timed out"
+```
 
 **解決方法：**
-1. 減少區塊範圍
-2. 添加更具體的過濾器
+1. 減少請求上下文中顯示的區塊範圍
+2. 添加更具體的事件過濾器
 3. 使用更快的 RPC 端點
-4. 檢查您的 RPC 端點是否有問題
+4. 檢查 RPC 端點狀態
 
 ---
 
