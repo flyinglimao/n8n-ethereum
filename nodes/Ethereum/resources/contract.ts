@@ -4,9 +4,15 @@ import {
     NodeOperationError,
 } from "n8n-workflow";
 import { PublicClient, WalletClient, decodeEventLog } from "viem";
+import {
+    parseAbiJson,
+    findAbiFunction,
+    findAbiEvent,
+    abiWithSingleFunction,
+} from "../../../utils/abiHelpers";
 
 export const contractProperties: INodeProperties[] = [
-    // Contract: Read / Write
+    // Contract: Read / Write / Get Logs
     {
         displayName: "Contract Address",
         name: "contractAddress",
@@ -19,13 +25,17 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "",
-        placeholder: "0x...",
+        placeholder: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
+        description: "The address of the smart contract",
     },
     {
         displayName: "ABI",
         name: "abi",
         type: "json",
         required: true,
+        typeOptions: {
+            rows: 4,
+        },
         displayOptions: {
             show: {
                 resource: ["contract"],
@@ -33,6 +43,8 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
+        description:
+            "The contract ABI as a JSON array (e.g. copied from Etherscan or your compiler output). Once provided, functions can be picked from a dropdown.",
     },
     {
         displayName: "Use Raw Calldata",
@@ -45,24 +57,52 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: false,
-        description: "Whether to use raw hex data instead of function name and arguments",
+        description: "Whether to use raw hex calldata instead of picking a function and passing arguments",
     },
+
+    // Function dropdowns (populated from the ABI)
     {
-        displayName: "Function Name",
+        displayName: "Function",
         name: "functionName",
-        type: "string",
+        type: "options",
         required: true,
+        typeOptions: {
+            loadOptionsMethod: "getReadFunctions",
+            loadOptionsDependsOn: ["abi"],
+        },
         displayOptions: {
             show: {
                 resource: ["contract"],
-                operation: ["read", "write"],
+                operation: ["read"],
                 useRawCalldata: [false],
             },
         },
         default: "",
+        description:
+            'View/pure function to call, loaded from the ABI. Choose "Expression" to set it dynamically. Choose from the list, or specify a name or full signature using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
     },
     {
-        displayName: "Parameters",
+        displayName: "Function",
+        name: "functionName",
+        type: "options",
+        required: true,
+        typeOptions: {
+            loadOptionsMethod: "getWriteFunctions",
+            loadOptionsDependsOn: ["abi"],
+        },
+        displayOptions: {
+            show: {
+                resource: ["contract"],
+                operation: ["write"],
+                useRawCalldata: [false],
+            },
+        },
+        default: "",
+        description:
+            'State-changing function to execute, loaded from the ABI. Choose from the list, or specify a name or full signature using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+    },
+    {
+        displayName: "Arguments",
         name: "parameters",
         type: "json",
         displayOptions: {
@@ -73,7 +113,24 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
-        description: "Arguments for the function call",
+        placeholder: '["0x742d…", "1000000000000000000"]',
+        description:
+            "Function arguments as a JSON array, in the order shown in the function signature. Use strings for large numbers (uint256 etc.).",
+    },
+    {
+        displayName: "Value (Wei)",
+        name: "payableValue",
+        type: "string",
+        displayOptions: {
+            show: {
+                resource: ["contract"],
+                operation: ["write"],
+            },
+        },
+        default: "",
+        placeholder: "1000000000000000000",
+        description:
+            "Native token amount in wei to send along with the call (for payable functions). Leave empty to send none.",
     },
     {
         displayName: "Calldata",
@@ -88,6 +145,8 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "0x",
+        placeholder: "0xa9059cbb…",
+        description: "Raw ABI-encoded calldata for the call",
     },
 
     // Contract: Deploy
@@ -103,6 +162,8 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "0x",
+        placeholder: "0x6080604052…",
+        description: "The compiled contract bytecode",
     },
     {
         displayName: "Constructor Arguments",
@@ -115,27 +176,18 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
+        description: "Constructor arguments as a JSON array, in order",
     },
 
     // Contract: Get Logs
     {
-        displayName: "Event Name",
-        name: "eventName",
-        type: "string",
-        required: true,
-        displayOptions: {
-            show: {
-                resource: ["contract"],
-                operation: ["getLogs"],
-            },
-        },
-        default: "",
-    },
-    {
-        displayName: "Logs ABI",
+        displayName: "ABI",
         name: "logsAbi",
         type: "json",
         required: true,
+        typeOptions: {
+            rows: 4,
+        },
         displayOptions: {
             show: {
                 resource: ["contract"],
@@ -143,10 +195,30 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "[]",
-        description: "ABI containing the event definition",
+        description:
+            "The contract ABI as a JSON array. Once provided, the event can be picked from a dropdown.",
     },
     {
-        displayName: "Event Arguments",
+        displayName: "Event",
+        name: "eventName",
+        type: "options",
+        required: true,
+        typeOptions: {
+            loadOptionsMethod: "getLogEvents",
+            loadOptionsDependsOn: ["logsAbi"],
+        },
+        displayOptions: {
+            show: {
+                resource: ["contract"],
+                operation: ["getLogs"],
+            },
+        },
+        default: "",
+        description:
+            'Event to query, loaded from the ABI. Choose from the list, or specify a name or full signature using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+    },
+    {
+        displayName: "Event Arguments Filter",
         name: "eventArgs",
         type: "json",
         displayOptions: {
@@ -156,7 +228,8 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "{}",
-        description: "Indexed arguments to filter by",
+        placeholder: '{"from": "0x…", "to": "0x…"}',
+        description: "Filter logs by indexed event arguments (optional)",
     },
     {
         displayName: "From Block",
@@ -169,6 +242,7 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "latest",
+        description: 'Starting block: a number, or "latest"/"earliest"',
     },
     {
         displayName: "To Block",
@@ -181,6 +255,7 @@ export const contractProperties: INodeProperties[] = [
             },
         },
         default: "latest",
+        description: 'Ending block: a number, or "latest"/"earliest"',
     },
 ];
 
@@ -202,12 +277,9 @@ export async function executeContract(
     operation: string,
     i: number
 ): Promise<Record<string, unknown>> {
-    const returnData: Record<string, unknown> = {};
-
     if (operation === "read") {
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
-        const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAbiJson(this.getNodeParameter("abi", i));
         const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
 
         if (useRawCalldata) {
@@ -219,22 +291,23 @@ export async function executeContract(
             return {
                 data: result.data,
             };
-        } else {
-            const functionName = this.getNodeParameter("functionName", i) as string;
-            const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
-            const parameters = JSON.parse(parametersStr);
-
-            const result = await publicClient.readContract({
-                address: contractAddress as `0x${string}`,
-                abi,
-                functionName,
-                args: parameters,
-            });
-
-            return {
-                result,
-            };
         }
+
+        const functionSelector = this.getNodeParameter("functionName", i) as string;
+        const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
+        const parameters = JSON.parse(parametersStr);
+        const fn = findAbiFunction(abi, functionSelector);
+
+        const result = await publicClient.readContract({
+            address: contractAddress as `0x${string}`,
+            abi: abiWithSingleFunction(abi, fn),
+            functionName: fn.name,
+            args: parameters,
+        });
+
+        return {
+            result,
+        };
     } else if (operation === "write") {
         if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
@@ -244,9 +317,10 @@ export async function executeContract(
         }
 
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
-        const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAbiJson(this.getNodeParameter("abi", i));
         const useRawCalldata = this.getNodeParameter("useRawCalldata", i) as boolean;
+        const payableValueStr = this.getNodeParameter("payableValue", i, "") as string;
+        const value = payableValueStr.trim() !== "" ? BigInt(payableValueStr) : undefined;
 
         if (useRawCalldata) {
             const calldata = this.getNodeParameter("calldata", i) as string;
@@ -254,29 +328,32 @@ export async function executeContract(
                 account: walletClient.account,
                 to: contractAddress as `0x${string}`,
                 data: calldata as `0x${string}`,
+                value,
                 chain: undefined,
             });
-            return {
-                transactionHash: hash,
-            };
-        } else {
-            const functionName = this.getNodeParameter("functionName", i) as string;
-            const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
-            const parameters = JSON.parse(parametersStr);
-
-            const hash = await walletClient.writeContract({
-                address: contractAddress as `0x${string}`,
-                abi,
-                functionName,
-                args: parameters,
-                account: walletClient.account,
-                chain: undefined,
-            });
-
             return {
                 transactionHash: hash,
             };
         }
+
+        const functionSelector = this.getNodeParameter("functionName", i) as string;
+        const parametersStr = this.getNodeParameter("parameters", i, "[]") as string;
+        const parameters = JSON.parse(parametersStr);
+        const fn = findAbiFunction(abi, functionSelector);
+
+        const hash = await walletClient.writeContract({
+            address: contractAddress as `0x${string}`,
+            abi: abiWithSingleFunction(abi, fn),
+            functionName: fn.name,
+            args: parameters,
+            value,
+            account: walletClient.account,
+            chain: undefined,
+        });
+
+        return {
+            transactionHash: hash,
+        };
     } else if (operation === "deploy") {
         if (!walletClient || !walletClient.account) {
             throw new NodeOperationError(
@@ -285,8 +362,7 @@ export async function executeContract(
             );
         }
 
-        const abiStr = this.getNodeParameter("abi", i) as string;
-        const abi = JSON.parse(abiStr);
+        const abi = parseAbiJson(this.getNodeParameter("abi", i));
         const bytecode = this.getNodeParameter("bytecode", i) as string;
         const constructorArgsStr = this.getNodeParameter("constructorArgs", i, "[]") as string;
         const constructorArgs = JSON.parse(constructorArgsStr);
@@ -304,9 +380,8 @@ export async function executeContract(
         };
     } else if (operation === "getLogs") {
         const contractAddress = this.getNodeParameter("contractAddress", i) as string;
-        const abiStr = this.getNodeParameter("logsAbi", i) as string;
-        const abi = JSON.parse(abiStr);
-        const eventName = this.getNodeParameter("eventName", i) as string;
+        const abi = parseAbiJson(this.getNodeParameter("logsAbi", i));
+        const eventSelector = this.getNodeParameter("eventName", i) as string;
         const eventArgsStr = this.getNodeParameter("eventArgs", i, "{}") as string;
         const eventArgs = JSON.parse(eventArgsStr);
         const fromBlockStr = this.getNodeParameter("fromBlock", i) as string;
@@ -315,16 +390,7 @@ export async function executeContract(
         const fromBlock = parseBlockIdentifier(fromBlockStr);
         const toBlock = parseBlockIdentifier(toBlockStr);
 
-        const eventAbi = abi.find(
-            (item: any) => item.type === "event" && item.name === eventName
-        );
-
-        if (!eventAbi) {
-            throw new NodeOperationError(
-                this.getNode(),
-                `Event "${eventName}" not found in ABI`
-            );
-        }
+        const eventAbi = findAbiEvent(abi, eventSelector);
 
         const logs = await publicClient.getLogs({
             address: contractAddress as `0x${string}`,

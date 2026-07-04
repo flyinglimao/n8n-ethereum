@@ -187,7 +187,7 @@ export async function executeErc20(
     const tokenAddress = this.getNodeParameter("tokenAddress", i) as string;
 
     if (operation === "getBalance") {
-        let address = this.getNodeParameter("address", i) as string;
+        const address = this.getNodeParameter("address", i) as string;
         // Logic from node: use credential address if empty parameter.
         // Node logic passed 'address' param explicitly.
         // Wait, node logic: const address = this.getNodeParameter("address", i) as string;

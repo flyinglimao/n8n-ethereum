@@ -22,13 +22,6 @@ export {
     executeBlock,
 } from "./block";
 
-// Gas Resource
-export {
-    gasOperations,
-    gasProperties,
-    executeGas,
-} from "./gas";
-
 // Transaction Resource
 export {
     transactionProperties,
@@ -43,24 +36,11 @@ export {
     type CustomRpcExecuteParams,
 } from "./customRpc";
 
-// Utils Resource
-export {
-    utilsOperations,
-    utilsProperties,
-    executeUtils,
-} from "./utils";
-
 // Contract Resource
 export {
     contractProperties,
     executeContract,
 } from "./contract";
-
-// Signature Resource
-export {
-    signatureProperties,
-    executeSignature,
-} from "./signature";
 
 // ERC20 Resource
 export { erc20Properties, executeErc20 } from "./erc20";

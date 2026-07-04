@@ -5,7 +5,6 @@ import {
   ICredentialDataDecryptedObject,
   IHttpRequestOptions,
 } from "n8n-workflow";
-import { chainOptions } from "../utils/chainConfig";
 
 export class EthereumRpc implements ICredentialType {
   name = "ethereumRpc";

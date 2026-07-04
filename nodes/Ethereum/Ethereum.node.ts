@@ -1,6 +1,8 @@
 import {
   IExecuteFunctions,
+  ILoadOptionsFunctions,
   INodeExecutionData,
+  INodePropertyOptions,
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
@@ -15,29 +17,23 @@ import {
   isAddress,
   encodeFunctionData,
   decodeFunctionData,
-  decodeEventLog,
   keccak256,
-  toHex,
-  fromHex,
-  parseAbi,
   PublicClient,
   recoverMessageAddress,
   verifyMessage,
 } from "viem";
 import { privateKeyToAccount, mnemonicToAccount } from "viem/accounts";
-import { getChain } from "../../utils/chainConfig";
-import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "../../utils/constants";
 import { parseViemError } from "../../utils/errorHandling";
 import {
-  accountOperations,
-  accountProperties,
+  parseAbiJson,
+  getFunctionOptions,
+  getEventOptions,
+  findAbiFunction,
+  abiWithSingleFunction,
+} from "../../utils/abiHelpers";
+import {
   executeAccount,
-  blockOperations,
-  blockProperties,
   executeBlock,
-  gasOperations,
-  gasProperties,
-  executeGas,
   transactionProperties,
   executeTransaction,
   contractProperties,
@@ -50,9 +46,6 @@ import {
   executeErc721,
   erc1155Properties,
   executeErc1155,
-  utilsOperations,
-  utilsProperties,
-  executeUtils,
 } from "./resources";
 
 // Helper functions
@@ -171,26 +164,6 @@ function createWalletClient(
     chain: publicClient.chain,
     transport,
   });
-}
-
-function parseBlockIdentifier(blockStr: string): any {
-  if (
-    blockStr === "latest" ||
-    blockStr === "earliest" ||
-    blockStr === "pending"
-  ) {
-    return blockStr;
-  }
-  return BigInt(blockStr);
-}
-
-function parseTokenAmount(amountStr: string, decimals: number): bigint {
-  // Check if it's already in wei (numeric string with no decimal point)
-  if (/^\d+$/.test(amountStr)) {
-    return BigInt(amountStr);
-  }
-  // Otherwise parse as decimal
-  return parseUnits(amountStr, decimals);
 }
 
 export class Ethereum implements INodeType {
@@ -549,195 +522,7 @@ export class Ethereum implements INodeType {
         default: "read",
       },
 
-      // Contract: Read/Write
-      {
-        displayName: "Contract Address",
-        name: "contractAddress",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write", "getLogs"],
-          },
-        },
-        default: "",
-        placeholder: "0x...",
-      },
-      {
-        displayName: "ABI",
-        name: "abi",
-        type: "json",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write", "deploy"],
-          },
-        },
-        default: "[]",
-        description: "Contract ABI as JSON array",
-      },
-      {
-        displayName: "Use Raw Calldata",
-        name: "useRawCalldata",
-        type: "boolean",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write"],
-          },
-        },
-        default: false,
-        description:
-          "Whether to use raw calldata instead of function name and parameters",
-      },
-      {
-        displayName: "Function Name",
-        name: "functionName",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write"],
-            useRawCalldata: [false],
-          },
-        },
-        default: "",
-        description: "Name of the function to call",
-      },
-      {
-        displayName: "Parameters",
-        name: "parameters",
-        type: "json",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write"],
-            useRawCalldata: [false],
-          },
-        },
-        default: "[]",
-        description: "Function parameters as JSON array",
-      },
-      {
-        displayName: "Calldata",
-        name: "calldata",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["read", "write"],
-            useRawCalldata: [true],
-          },
-        },
-        default: "",
-        placeholder: "0x...",
-        description: "Raw calldata for the function call",
-      },
-
-      // Contract: Deploy
-      {
-        displayName: "Bytecode",
-        name: "bytecode",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["deploy"],
-          },
-        },
-        default: "",
-        placeholder: "0x...",
-        description: "Contract bytecode",
-      },
-      {
-        displayName: "Constructor Arguments",
-        name: "constructorArgs",
-        type: "json",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["deploy"],
-          },
-        },
-        default: "[]",
-        description: "Constructor arguments as JSON array",
-      },
-
-      // Contract: Get Logs
-      {
-        displayName: "ABI",
-        name: "logsAbi",
-        type: "json",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["getLogs"],
-          },
-        },
-        default: "[]",
-        description: "Contract ABI as JSON array",
-      },
-      {
-        displayName: "Event Name",
-        name: "eventName",
-        type: "string",
-        required: true,
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["getLogs"],
-          },
-        },
-        default: "",
-        placeholder: "Transfer",
-        description: "Event name to filter",
-      },
-      {
-        displayName: "Event Arguments Filter",
-        name: "eventArgs",
-        type: "json",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["getLogs"],
-          },
-        },
-        default: "{}",
-        placeholder: '{"from": "0x...", "to": "0x..."}',
-        description: "Filter logs by indexed event arguments (optional)",
-      },
-      {
-        displayName: "From Block",
-        name: "fromBlock",
-        type: "string",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["getLogs"],
-          },
-        },
-        default: "latest",
-        description: 'Starting block (number or "latest"/"earliest")',
-      },
-      {
-        displayName: "To Block",
-        name: "toBlock",
-        type: "string",
-        displayOptions: {
-          show: {
-            resource: ["contract"],
-            operation: ["getLogs"],
-          },
-        },
-        default: "latest",
-        description: 'Ending block (number or "latest"/"earliest")',
-      },
+      ...contractProperties,
 
       // ===========================================
       ...erc20Properties,
@@ -1111,6 +896,9 @@ export class Ethereum implements INodeType {
         name: "abi",
         type: "json",
         required: true,
+        typeOptions: {
+          rows: 4,
+        },
         displayOptions: {
           show: {
             resource: ["utils"],
@@ -1118,12 +906,18 @@ export class Ethereum implements INodeType {
           },
         },
         default: "[]",
+        description:
+          "The contract ABI as a JSON array. Once provided, the function can be picked from a dropdown.",
       },
       {
-        displayName: "Function Name",
+        displayName: "Function",
         name: "functionName",
-        type: "string",
+        type: "options",
         required: true,
+        typeOptions: {
+          loadOptionsMethod: "getAllFunctions",
+          loadOptionsDependsOn: ["abi"],
+        },
         displayOptions: {
           show: {
             resource: ["utils"],
@@ -1131,6 +925,8 @@ export class Ethereum implements INodeType {
           },
         },
         default: "",
+        description:
+          'Function to encode, loaded from the ABI. Choose from the list, or specify a name or full signature using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
       {
         displayName: "Arguments",
@@ -1164,6 +960,31 @@ export class Ethereum implements INodeType {
       // ===========================================
       ...customRpcProperties,
     ],
+  };
+
+  methods = {
+    loadOptions: {
+      async getReadFunctions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        return getFunctionOptions(this.getCurrentNodeParameter("abi"), "read");
+      },
+      async getWriteFunctions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        return getFunctionOptions(this.getCurrentNodeParameter("abi"), "write");
+      },
+      async getAllFunctions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        return getFunctionOptions(this.getCurrentNodeParameter("abi"), "all");
+      },
+      async getLogEvents(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        return getEventOptions(this.getCurrentNodeParameter("logsAbi"));
+      },
+    },
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -1544,18 +1365,18 @@ export class Ethereum implements INodeType {
               chainId,
             };
           } else if (operation === "encodeFunctionData") {
-            const abiStr = this.getNodeParameter("abi", i) as string;
-            const abi = JSON.parse(abiStr);
-            const functionName = this.getNodeParameter(
+            const abi = parseAbiJson(this.getNodeParameter("abi", i));
+            const functionSelector = this.getNodeParameter(
               "functionName",
               i
             ) as string;
             const argsStr = this.getNodeParameter("args", i, "[]") as string;
             const args = JSON.parse(argsStr);
+            const fn = findAbiFunction(abi, functionSelector);
 
             const data = encodeFunctionData({
-              abi,
-              functionName,
+              abi: abiWithSingleFunction(abi, fn),
+              functionName: fn.name,
               args,
             });
             responseData = {

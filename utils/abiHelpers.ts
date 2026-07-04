@@ -1,157 +1,151 @@
-import type { Abi, AbiFunction, AbiEvent } from 'viem';
-import type { ParsedAbi, AbiCredentials } from './types';
+import type { Abi, AbiFunction, AbiEvent } from "viem";
+import type { INodePropertyOptions } from "n8n-workflow";
 
 /**
- * Parse and validate ABI
+ * Parse an ABI provided as a JSON string (or already-parsed array) and
+ * validate its basic shape.
  */
-export function parseAbi(abiCredentials: AbiCredentials): ParsedAbi {
-	let abi: Abi;
+export function parseAbiJson(raw: unknown): Abi {
+  let abi: unknown;
 
-	try {
-		abi = typeof abiCredentials.abi === 'string'
-			? JSON.parse(abiCredentials.abi)
-			: abiCredentials.abi;
-	} catch (error) {
-		throw new Error(`Invalid ABI JSON: ${error}`);
-	}
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (trimmed === "") {
+      throw new Error("ABI is empty. Paste the contract ABI JSON array.");
+    }
+    try {
+      abi = JSON.parse(trimmed);
+    } catch (error) {
+      throw new Error(
+        `Invalid ABI JSON: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  } else {
+    abi = raw;
+  }
 
-	if (!Array.isArray(abi)) {
-		throw new Error('ABI must be an array');
-	}
+  if (!Array.isArray(abi)) {
+    throw new Error("ABI must be a JSON array");
+  }
 
-	// Extract functions and events
-	const functions: { [key: string]: AbiFunction } = {};
-	const events: { [key: string]: AbiEvent } = {};
-
-	for (const item of abi) {
-		if (item.type === 'function') {
-			const func = item as AbiFunction;
-			const signature = buildFunctionSignature(func);
-			functions[signature] = func;
-		} else if (item.type === 'event') {
-			const event = item as AbiEvent;
-			const signature = buildEventSignature(event);
-			events[signature] = event;
-		}
-	}
-
-	return {
-		abi,
-		functions,
-		events,
-	};
+  return abi as Abi;
 }
 
 /**
- * Build function signature for display
+ * Canonical signature used as the stored parameter value,
+ * e.g. "transfer(address,uint256)". Stable across param renames and
+ * unambiguous for overloaded functions.
  */
-export function buildFunctionSignature(func: AbiFunction): string {
-	const inputs = func.inputs?.map(input => {
-		const name = input.name || '';
-		return name ? `${input.type} ${name}` : input.type;
-	}).join(', ') || '';
+export function canonicalSignature(item: AbiFunction | AbiEvent): string {
+  const types = (item.inputs ?? []).map((input) => input.type).join(",");
+  return `${item.name}(${types})`;
+}
 
-	const stateMutability = func.stateMutability ? ` (${func.stateMutability})` : '';
-	return `${func.name}(${inputs})${stateMutability}`;
+/** Human-friendly signature shown in the dropdown, with parameter names. */
+function displayInputs(item: AbiFunction | AbiEvent): string {
+  return (item.inputs ?? [])
+    .map((input) => (input.name ? `${input.type} ${input.name}` : input.type))
+    .join(", ");
+}
+
+export function isReadFunction(fn: AbiFunction): boolean {
+  return fn.stateMutability === "view" || fn.stateMutability === "pure";
 }
 
 /**
- * Build event signature for display
+ * Build dropdown options for the functions contained in an ABI.
+ * The option value is the canonical signature so overloads stay distinct.
  */
-export function buildEventSignature(event: AbiEvent): string {
-	const inputs = event.inputs?.map(input => {
-		const indexed = input.indexed ? ' indexed' : '';
-		const name = input.name || '';
-		return name ? `${input.type}${indexed} ${name}` : `${input.type}${indexed}`;
-	}).join(', ') || '';
+export function getFunctionOptions(
+  raw: unknown,
+  filter: "read" | "write" | "all" = "all"
+): INodePropertyOptions[] {
+  const abi = parseAbiJson(raw);
 
-	return `${event.name}(${inputs})`;
+  return abi
+    .filter((item): item is AbiFunction => item.type === "function")
+    .filter((fn) => {
+      if (filter === "read") return isReadFunction(fn);
+      if (filter === "write") return !isReadFunction(fn);
+      return true;
+    })
+    .map((fn) => {
+      const outputs = (fn.outputs ?? []).map((o) => o.type).join(", ");
+      return {
+        name: `${fn.name}(${displayInputs(fn)})`,
+        value: canonicalSignature(fn),
+        description: `${fn.stateMutability}${outputs ? ` → (${outputs})` : ""}`,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** Build dropdown options for the events contained in an ABI. */
+export function getEventOptions(raw: unknown): INodePropertyOptions[] {
+  const abi = parseAbiJson(raw);
+
+  return abi
+    .filter((item): item is AbiEvent => item.type === "event")
+    .map((event) => {
+      const inputs = (event.inputs ?? [])
+        .map((input) => {
+          const indexed = input.indexed ? " indexed" : "";
+          return input.name
+            ? `${input.type}${indexed} ${input.name}`
+            : `${input.type}${indexed}`;
+        })
+        .join(", ");
+      return {
+        name: `${event.name}(${inputs})`,
+        value: canonicalSignature(event),
+        description: "event",
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
- * Get function by name from parsed ABI
+ * Resolve a function selected in the UI back to its ABI entry.
+ * Accepts a canonical signature ("transfer(address,uint256)") or, for
+ * backwards compatibility with workflows created before the dropdown
+ * existed, a plain function name ("transfer").
  */
-export function getFunctionByName(parsedAbi: ParsedAbi, functionName: string): AbiFunction | undefined {
-	return Object.values(parsedAbi.functions).find(func => func.name === functionName);
+export function findAbiFunction(abi: Abi, selector: string): AbiFunction {
+  const functions = abi.filter(
+    (item): item is AbiFunction => item.type === "function"
+  );
+
+  const match = selector.includes("(")
+    ? functions.find((fn) => canonicalSignature(fn) === selector)
+    : functions.find((fn) => fn.name === selector);
+
+  if (!match) {
+    throw new Error(`Function "${selector}" not found in the provided ABI`);
+  }
+  return match;
 }
 
 /**
- * Get event by name from parsed ABI
+ * Resolve an event selected in the UI back to its ABI entry.
+ * Accepts a canonical signature or a plain event name (legacy workflows).
  */
-export function getEventByName(parsedAbi: ParsedAbi, eventName: string): AbiEvent | undefined {
-	return Object.values(parsedAbi.events).find(event => event.name === eventName);
+export function findAbiEvent(abi: Abi, selector: string): AbiEvent {
+  const events = abi.filter((item): item is AbiEvent => item.type === "event");
+
+  const match = selector.includes("(")
+    ? events.find((event) => canonicalSignature(event) === selector)
+    : events.find((event) => event.name === selector);
+
+  if (!match) {
+    throw new Error(`Event "${selector}" not found in the provided ABI`);
+  }
+  return match;
 }
 
 /**
- * Create options list for function selector
+ * Narrow a full ABI down to a single resolved function while keeping
+ * non-function entries (errors, structs) so viem can still decode reverts.
  */
-export function createFunctionOptions(parsedAbi: ParsedAbi, filter?: 'read' | 'write'): Array<{ name: string; value: string }> {
-	return Object.entries(parsedAbi.functions)
-		.filter(([_, func]) => {
-			if (!filter) return true;
-			if (filter === 'read') {
-				return func.stateMutability === 'view' || func.stateMutability === 'pure';
-			}
-			if (filter === 'write') {
-				return func.stateMutability !== 'view' && func.stateMutability !== 'pure';
-			}
-			return true;
-		})
-		.map(([signature, func]) => ({
-			name: signature,
-			value: func.name,
-		}));
-}
-
-/**
- * Create options list for event selector
- */
-export function createEventOptions(parsedAbi: ParsedAbi): Array<{ name: string; value: string }> {
-	return Object.entries(parsedAbi.events).map(([signature, event]) => ({
-		name: signature,
-		value: event.name,
-	}));
-}
-
-/**
- * Validate contract address format
- */
-export function isValidAddress(address: string): boolean {
-	return /^0x[a-fA-F0-9]{40}$/.test(address);
-}
-
-/**
- * Parse function arguments from node parameters
- */
-export function parseFunctionArgs(func: AbiFunction, parameters: any): any[] {
-	if (!func.inputs || func.inputs.length === 0) {
-		return [];
-	}
-
-	const args: any[] = [];
-	for (let i = 0; i < func.inputs.length; i++) {
-		const input = func.inputs[i];
-		const paramName = `arg${i}`;
-		let value = parameters[paramName];
-
-		// Type conversion
-		if (input.type.startsWith('uint') || input.type.startsWith('int')) {
-			value = BigInt(value);
-		} else if (input.type === 'bool') {
-			value = value === 'true' || value === true;
-		} else if (input.type.startsWith('bytes')) {
-			// Ensure hex prefix
-			value = value.startsWith('0x') ? value : `0x${value}`;
-		}
-		// Arrays handling
-		else if (input.type.endsWith('[]')) {
-			if (typeof value === 'string') {
-				value = JSON.parse(value);
-			}
-		}
-
-		args.push(value);
-	}
-
-	return args;
+export function abiWithSingleFunction(abi: Abi, fn: AbiFunction): Abi {
+  return [...abi.filter((item) => item.type !== "function"), fn];
 }

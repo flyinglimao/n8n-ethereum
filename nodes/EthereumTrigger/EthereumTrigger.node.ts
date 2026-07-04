@@ -1,8 +1,10 @@
 import {
+  ILoadOptionsFunctions,
+  INodeExecutionData,
+  INodePropertyOptions,
   INodeType,
   INodeTypeDescription,
   IPollFunctions,
-  INodeExecutionData,
   IDataObject,
   NodeOperationError,
 } from "n8n-workflow";
@@ -12,8 +14,12 @@ import {
   webSocket,
   decodeEventLog,
 } from "viem";
-import { getChain } from "../../utils/chainConfig";
 import { parseViemError } from "../../utils/errorHandling";
+import {
+  parseAbiJson,
+  getEventOptions,
+  findAbiEvent,
+} from "../../utils/abiHelpers";
 
 // Helper function
 function createPublicClient(credentials: any) {
@@ -143,13 +149,18 @@ export class EthereumTrigger implements INodeType {
           },
         },
         default: "[]",
-        description: "The contract ABI as JSON array",
+        description:
+          "The contract ABI as a JSON array. Once provided, the event can be picked from a dropdown.",
       },
       {
-        displayName: "Event Name",
+        displayName: "Event",
         name: "eventName",
-        type: "string",
+        type: "options",
         required: true,
+        typeOptions: {
+          loadOptionsMethod: "getContractEvents",
+          loadOptionsDependsOn: ["abi"],
+        },
         displayOptions: {
           show: {
             event: ["contractEvent"],
@@ -157,8 +168,8 @@ export class EthereumTrigger implements INodeType {
           },
         },
         default: "",
-        placeholder: "Transfer",
-        description: "Name of the event to listen for",
+        description:
+          'Event to listen for, loaded from the ABI. Choose from the list, or specify a name or full signature using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
       },
       {
         displayName: "Event Arguments Filter",
@@ -317,6 +328,16 @@ export class EthereumTrigger implements INodeType {
     ],
   };
 
+  methods = {
+    loadOptions: {
+      async getContractEvents(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        return getEventOptions(this.getCurrentNodeParameter("abi"));
+      },
+    },
+  };
+
   async poll(this: IPollFunctions): Promise<INodeExecutionData[][] | null> {
     try {
       const event = this.getNodeParameter("event") as string;
@@ -435,8 +456,7 @@ export class EthereumTrigger implements INodeType {
 
           let logs;
           if (abiInput === "abiEvent") {
-            const abiStr = this.getNodeParameter("abi") as string;
-            const abi = JSON.parse(abiStr);
+            const abi = parseAbiJson(this.getNodeParameter("abi"));
             const eventName = this.getNodeParameter("eventName") as string;
             const eventArgsStr = this.getNodeParameter(
               "eventArgs",
@@ -444,16 +464,7 @@ export class EthereumTrigger implements INodeType {
             ) as string;
             const eventArgs = JSON.parse(eventArgsStr);
 
-            const eventAbi = abi.find(
-              (item: any) => item.type === "event" && item.name === eventName
-            );
-
-            if (!eventAbi) {
-              throw new NodeOperationError(
-                this.getNode(),
-                `Event "${eventName}" not found in ABI`
-              );
-            }
+            const eventAbi = findAbiEvent(abi, eventName);
 
             // First run: use currentBlock - blockLimit ~ currentBlock range
             logs = await publicClient.getLogs({
@@ -555,8 +566,7 @@ export class EthereumTrigger implements INodeType {
         for (const range of blockRanges) {
           let logs;
           if (abiInput === "abiEvent") {
-            const abiStr = this.getNodeParameter("abi") as string;
-            const abi = JSON.parse(abiStr);
+            const abi = parseAbiJson(this.getNodeParameter("abi"));
             const eventName = this.getNodeParameter("eventName") as string;
             const eventArgsStr = this.getNodeParameter(
               "eventArgs",
@@ -564,16 +574,7 @@ export class EthereumTrigger implements INodeType {
             ) as string;
             const eventArgs = JSON.parse(eventArgsStr);
 
-            const eventAbi = abi.find(
-              (item: any) => item.type === "event" && item.name === eventName
-            );
-
-            if (!eventAbi) {
-              throw new NodeOperationError(
-                this.getNode(),
-                `Event "${eventName}" not found in ABI`
-              );
-            }
+            const eventAbi = findAbiEvent(abi, eventName);
 
             logs = await publicClient.getLogs({
               address: addresses,

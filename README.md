@@ -19,10 +19,11 @@ Comprehensive Ethereum blockchain integration for n8n with a unified node struct
 ## Features
 
 - ✨ **Unified Node Structure**: Single Ethereum node with Resource/Operation pattern for cleaner UX
+- 🧩 **ABI-Driven Dropdowns**: Paste a contract ABI once and pick functions and events from a dropdown — full signatures (parameter types and names) are shown, overloaded functions are handled correctly, and no manual typing is needed
 - 🔐 **Secure Credentials**: Separate RPC and Account credentials with optional wallet for read operations
 - 🔄 **10 Resource Types**: Account, Block, Transaction, Contract, ERC20, ERC721, ERC1155, ENS, Gas, Utils
 - ⚡ **Trigger Support**: Monitor new blocks, contract events, and transactions in real-time
-- 🌐 **Multi-Chain**: Supports Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, Fantom, Base, and custom networks
+- 🌐 **Multi-Chain**: Works with any EVM-compatible network — just point the RPC credential at the endpoint of your chain
 - 🪙 **Complete Token Standards**: ERC20, ERC721, ERC1155 with automatic ABI handling
 - 📦 **Built with viem**: Modern, type-safe TypeScript library for Ethereum interactions
 
@@ -107,12 +108,13 @@ Triggers when transactions occur at specified addresses.
 
 ### Contract Operations
 
-- **Read Contract**: Call view/pure functions with dynamic parameter inputs
-- **Write Contract**: Execute state-changing contract functions
+Provide the contract ABI once, then select the target function or event from a dropdown — read operations list only `view`/`pure` functions, write operations list only state-changing ones, and each entry shows the full signature (e.g. `transfer(address to, uint256 amount)`).
+
+- **Read Contract**: Call view/pure functions selected from the ABI dropdown
+- **Write Contract**: Execute state-changing functions selected from the ABI dropdown, with optional payable value (wei)
 - **Deploy Contract**: Deploy smart contracts with constructor arguments
-- **Multicall**: Batch multiple read operations efficiently
-- **Simulate Contract**: Test contract calls without sending transactions
-- **Get Logs**: Query historical event logs with automatic decoding
+- **Get Logs**: Query historical event logs with the event picked from the ABI dropdown and automatic decoding
+- **Raw Calldata**: Advanced mode for calling with pre-encoded hex calldata
 
 ### ERC20 Token Standard (9 nodes)
 
@@ -212,39 +214,14 @@ Triggers when transactions occur at specified addresses.
 
 ## Supported Networks
 
-The package includes pre-configured support for 18 major Ethereum-compatible networks:
+The nodes work with **any EVM-compatible network** — the network is determined by the RPC endpoint you configure in the Ethereum RPC credential. This includes (but is not limited to):
 
-**Ethereum:**
+- Ethereum Mainnet and testnets (Sepolia, Holesky, Hoodi)
+- Layer 2s: Arbitrum One, Optimism, Base, and their Sepolia testnets
+- Sidechains & alternative L1s: Polygon, BNB Smart Chain, Avalanche C-Chain, Gnosis Chain, Celo
+- Local development networks (Hardhat, Anvil, Ganache)
 
-- Mainnet
-- Sepolia (testnet)
-- Goerli (testnet)
-- Holesky (testnet)
-
-**Layer 2 & Scaling:**
-
-- Arbitrum One
-- Arbitrum Sepolia
-- Optimism
-- Optimism Sepolia
-- Base
-- Base Sepolia
-
-**Sidechains & Alternative L1s:**
-
-- Polygon (Matic)
-- Polygon Amoy (testnet)
-- BNB Smart Chain (BSC)
-- BSC Testnet
-- Avalanche C-Chain
-- Avalanche Fuji (testnet)
-
-**Additional Networks:**
-
-- Gnosis Chain
-- Celo
-
-You can also add custom networks by configuring the RPC endpoint directly.
+Both HTTP(S) and WebSocket (`ws://`, `wss://`) endpoints are supported.
 
 ## License
 
